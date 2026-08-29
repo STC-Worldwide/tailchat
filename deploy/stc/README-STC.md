@@ -45,7 +45,7 @@ Nightly cron on the VPS (`/etc/cron.d/tailchat-backup`) dumps MongoDB and tars t
 MinIO volume into `/root/backups/tailchat/`, keeping 14 days.
 
 Restore: stop the stack, `mongorestore` the dump into the `mongo` container, untar the
-MinIO volume back into `tailchat-server_storage`, start the stack.
+MinIO volume back into `tailchat_storage`, start the stack.
 
 ## Ports exposed publicly
 
