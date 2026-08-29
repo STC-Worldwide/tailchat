@@ -142,6 +142,7 @@ services:
       CHAT_DOMAIN: ${CHAT_DOMAIN:?set CHAT_DOMAIN in .env (symlink docker-compose.env)}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - /opt/landing:/srv/landing:ro
       - caddy_data:/data
       - caddy_config:/config
     networks:

@@ -2,3 +2,11 @@
 	encode zstd gzip
 	reverse_proxy traefik:80
 }
+
+# Company landing page (content deployed to /opt/landing on the host,
+# source: STC-Worldwide/stc-worldwide.com)
+stc-worldwide.com, www.stc-worldwide.com {
+	encode zstd gzip
+	root * /srv/landing
+	file_server
+}
