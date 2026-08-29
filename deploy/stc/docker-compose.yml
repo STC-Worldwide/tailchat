@@ -1,0 +1,158 @@
+# STC Worldwide production deployment — chat.<domain> on netcup-vps-01
+# Adapted from /docker-compose.yml + /docker/admin.yml upstream.
+# Differences from upstream:
+#   - pinned published image instead of local build
+#   - Caddy terminates public TLS (80/443); traefik stays internal (loopback debug bind only)
+#   - MinIO root credentials come from .env (symlink to docker-compose.env), not hard-coded
+#   - legacy admin only; admin-next postdates the 1.11.12 image and is not in it
+#
+# The ONLY publicly exposed ports are Caddy's 80/443. Docker published ports
+# bypass the host's default-deny nftables, so every other service must stay
+# unpublished (loopback binds are fine).
+
+services:
+  service-core:
+    image: moonrailgun/tailchat:1.11.12
+    restart: unless-stopped
+    env_file: docker-compose.env
+    environment:
+      SERVICES: core/gateway,core/user/*.service.js,core/group/*.service.js,core/chat/*.service.js,core/file,core/plugin/registry,core/config
+      PORT: 3000
+    depends_on:
+      - mongo
+      - redis
+      - minio
+    healthcheck:
+      # 127.0.0.1, not localhost: the gateway listens IPv4-only and busybox
+      # wget resolves localhost to ::1 with no fallback -> permanent unhealthy,
+      # and traefik drops unhealthy containers from routing.
+      test: ["CMD", "wget", "http://127.0.0.1:3000/health", "-q", "-O", "-"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api-gw.rule=PathPrefix(`/`)"
+      - "traefik.http.services.api-gw.loadbalancer.server.port=3000"
+    networks:
+      - internal
+
+  service-openapi:
+    image: moonrailgun/tailchat:1.11.12
+    restart: unless-stopped
+    env_file: docker-compose.env
+    environment:
+      SERVICES: openapi/app,openapi/bot,openapi/integration,openapi/oidc/oidc
+      OPENAPI_PORT: 3003
+      OPENAPI_UNDER_PROXY: "true"
+    depends_on:
+      - mongo
+      - redis
+      - minio
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.openapi-oidc.rule=PathPrefix(`/open`)"
+      - "traefik.http.services.openapi-oidc.loadbalancer.server.port=3003"
+    networks:
+      - internal
+
+  service-all-plugins:
+    image: moonrailgun/tailchat:1.11.12
+    restart: unless-stopped
+    env_file: docker-compose.env
+    environment:
+      SERVICEDIR: plugins
+    depends_on:
+      - mongo
+      - redis
+      - minio
+    networks:
+      - internal
+
+  tailchat-admin:
+    image: moonrailgun/tailchat:1.11.12
+    restart: unless-stopped
+    env_file: docker-compose.env
+    depends_on:
+      - mongo
+      - redis
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.admin.rule=PathPrefix(`/admin`)"
+      - "traefik.http.routers.admin.priority=50"
+      - "traefik.http.services.admin.loadbalancer.server.port=3000"
+    networks:
+      - internal
+    command: pnpm start:admin
+
+  mongo:
+    image: mongo:4
+    restart: on-failure
+    volumes:
+      - data:/data/db
+    networks:
+      - internal
+
+  redis:
+    image: redis:alpine
+    restart: on-failure
+    networks:
+      - internal
+
+  minio:
+    image: minio/minio
+    restart: on-failure
+    networks:
+      - internal
+    environment:
+      MINIO_ROOT_USER: ${MINIO_USER:?set MINIO_USER in .env (symlink docker-compose.env)}
+      MINIO_ROOT_PASSWORD: ${MINIO_PASS:?set MINIO_PASS in .env (symlink docker-compose.env)}
+    volumes:
+      - storage:/data
+    command: minio server /data --console-address ":9001"
+
+  traefik:
+    image: traefik:v3.7.8
+    restart: unless-stopped
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entryPoints.web.address=:80"
+      # Only Caddy can reach this entrypoint (internal network); headers it
+      # forwards are trustworthy in this topology.
+      - "--entryPoints.web.forwardedHeaders.insecure"
+    ports:
+      - 127.0.0.1:11000:80 # host-local debug access only
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - internal
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - traefik
+    ports:
+      - 80:80
+      - 443:443
+      - 443:443/udp
+    environment:
+      CHAT_DOMAIN: ${CHAT_DOMAIN:?set CHAT_DOMAIN in .env (symlink docker-compose.env)}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - internal
+
+networks:
+  internal:
+    name: tailchat-internal
+
+volumes:
+  data:
+  storage:
+  caddy_data:
+  caddy_config:

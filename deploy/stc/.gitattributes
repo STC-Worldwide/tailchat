@@ -1,0 +1,2 @@
+# Deploy files run on Linux; a stray CR breaks env parsing and Caddyfile directives
+deploy/stc/** text eol=lf
