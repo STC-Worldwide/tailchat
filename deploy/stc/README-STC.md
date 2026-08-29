@@ -53,6 +53,31 @@ Only Caddy's 80/443 (+443/udp for HTTP/3). Docker-published ports bypass the hos
 default-deny nftables — never add a `ports:` mapping to any other service unless it is
 bound to `127.0.0.1` or the tailnet IP.
 
+## Firewall (nftables)
+
+`vps-nftables.conf` in this directory is a custody copy of the live
+`/etc/nftables.conf` (backup on the host: `/etc/nftables.conf.bak-20260829`).
+Two amendments were made 2026-08-29 for this stack: input accepts tcp 80/443,
+and the forward chain accepts `docker0`/`br-*` traffic — without the forward
+rules containers have NO outbound at all (first symptom: Caddy cannot reach
+Let's Encrypt). Apply changes with `nft -c -f` (check) then `nft -f`.
+
+## Email (Resend SMTP)
+
+Sender domain `stc-worldwide.com` is verified in Resend (DKIM/SPF/MX + DMARC
+in Cloudflare). The env uses a sending-only API key scoped to that domain.
+**netcup blocks outbound 465/587** — `SMTP_URI` must use Resend's alternate
+port 2465 (`smtps://resend:<key>@smtp.resend.com:2465`). Healthy boot logs
+`SMTP 服务可用` from the MAIL service; `SMTP 服务不可用` means the transporter
+verify failed (check port reachability first). `EMAIL_VERIFY=true` is live.
+
+## Landing page
+
+Caddy also serves https://stc-worldwide.com (+www) from `/opt/landing`
+(read-only mount). Source: `STC-Worldwide/stc-worldwide.com`; redeploy is
+`scp site/index.html site/fonts/* root@152.53.82.15:/opt/landing/...` — no
+container restart needed for content changes.
+
 ## Admin panel
 
 `https://$CHAT_DOMAIN/admin/` (trailing slash required). Credentials: `ADMIN_USER` /
