@@ -4,7 +4,7 @@ Production chat for STC Worldwide, served publicly at `https://$CHAT_DOMAIN`.
 
 - **Host:** netcup-vps-01 (152.53.82.15 public / 100.66.129.67 tailnet), Debian 13, root over key-only SSH
 - **Location on host:** `/opt/tailchat/`
-- **Image:** `moonrailgun/tailchat:1.11.12` (pinned; official upstream image — the STC fork is source custody, not the build source)
+- **Image:** `ghcr.io/stc-worldwide/tailchat:1.12.0` (pinned; built from this fork by `.github/workflows/docker-publish.yml` on `v*.*.*` tags and on `master` pushes. The GHCR package must be set public once — org packages default private — or the VPS needs `docker login ghcr.io` with a read:packages PAT. Before 1.12.0 the deployment ran upstream's `moonrailgun/tailchat:1.11.12`.)
 - **Topology:** Caddy (public 80/443, Let's Encrypt) → traefik (internal path router) → tailchat services. MongoDB/Redis/MinIO are internal-only.
 
 ## Deploy / redeploy
@@ -26,12 +26,16 @@ The compose file in the git fork is not what runs — `/opt/tailchat/docker-comp
 on the VPS is. After changing the fork, copy the files over and `docker compose up -d`,
 then check `docker compose ps` and `docker inspect --format '{{.Config.Image}}' <ctr>`.
 
-## Update to a newer Tailchat
+## Ship a new release
 
-1. Check upstream releases / Docker Hub tags (`moonrailgun/tailchat`).
+1. Tag the fork: `git tag v1.x.y && git push origin v1.x.y` — `docker-publish.yml`
+   builds and pushes `ghcr.io/stc-worldwide/tailchat:1.x.y` (~30–60 min; watch the
+   Actions run).
 2. Edit the pinned tag in `deploy/stc/docker-compose.yml` (all four app services), PR it.
 3. Copy to VPS, `docker compose pull && docker compose up -d`.
 4. Smoke-test: login, send message, upload image, `/admin/`.
+
+(Upstream `moonrailgun/tailchat` images are no longer used; the fork builds its own.)
 
 ## Registration control
 
