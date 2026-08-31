@@ -1,3 +1,4 @@
+@reference "../styles/tailwind.css";
 .pill-tabs.ant-tabs.ant-tabs-card {
   @apply text-gray-700 dark:text-gray-100 max-h-full;
 
@@ -12,13 +13,13 @@
       border: 0;
       margin: 2px;
       padding: 2px 8px;
-      @apply text-gray-800 dark:text-gray-200 bg-black bg-opacity-0 dark:bg-white dark:bg-opacity-0;
+      @apply text-gray-800 dark:text-gray-200 bg-black/0 dark:bg-white/0;
 
       &:not(.ant-tabs-tab-disabled) {
         &.ant-tabs-tab-active,
         &:hover,
         &:active {
-          @apply rounded bg-opacity-20;
+          @apply rounded bg-black/20 dark:bg-white/20;
 
           .ant-tabs-tab-btn {
             @apply text-black dark:text-white;
@@ -27,10 +28,10 @@
       }
 
       &.ant-tabs-tab-disabled {
-        @apply text-opacity-50;
+        @apply text-gray-800/50 dark:text-gray-200/50;
 
         &.ant-tabs-tab-active {
-          @apply text-red-500 rounded bg-opacity-20 bg-red-500;
+          @apply text-red-500 rounded bg-red-500/20;
         }
       }
 
