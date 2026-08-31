@@ -75,14 +75,19 @@
     --tc-text-muted: var(--tc-slate-500);
     --tc-border-subtle: oklch(0% 0 0 / 8%);
 
-    /* 消息密度 (舒适模式默认值; .density-compact 收紧) */
-    --tc-msg-group-gap: 10px;
+    /* 消息密度 (舒适模式默认值; .density-compact 收紧)
+       舒适值对齐实测的 Discord cozy: 组间距 ~16px, 正文 15px/22px */
+    --tc-msg-group-gap: 16px;
     --tc-msg-row-pad: 2px;
+    --tc-msg-font-size: 15px;
+    --tc-msg-line-height: 22px;
   }
 
   .density-compact {
-    --tc-msg-group-gap: 3px;
+    --tc-msg-group-gap: 4px;
     --tc-msg-row-pad: 0px;
+    --tc-msg-font-size: 14px;
+    --tc-msg-line-height: 20px;
   }
 
   @media (prefers-reduced-motion: reduce) {

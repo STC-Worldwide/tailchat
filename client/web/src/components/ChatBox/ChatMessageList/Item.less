@@ -1,4 +1,8 @@
 .chat-message-item {
+  // 正文字号/行高由密度变量驱动 (舒适 15px/22px, 紧凑 14px/20px)
+  font-size: var(--tc-msg-font-size);
+  line-height: var(--tc-msg-line-height);
+
   .chat-message-item_quote {
     img {
       max-height: 60px !important;

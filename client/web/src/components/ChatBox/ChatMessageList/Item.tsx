@@ -92,9 +92,10 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
     return (
       <div
         className={clsx(
-          'chat-message-item flex px-2 mobile:px-0 group relative select-text text-sm py-[var(--tc-msg-row-pad)]',
+          'chat-message-item flex px-2 mobile:px-0 group relative select-text py-[var(--tc-msg-row-pad)]',
           // 分组首条消息与上一组拉开间距; 间距值由密度设置驱动
-          showAvatar && 'mt-[var(--tc-msg-group-gap)]',
+          // min-h-11 (44px) 锁定头像行节奏, 避免短消息挤压
+          showAvatar && 'mt-[var(--tc-msg-group-gap)] min-h-11',
           {
             'bg-black/10 dark:bg-white/10': isActionBtnActive,
             'hover:bg-black/5 dark:hover:bg-white/5': !isActionBtnActive,
@@ -122,7 +123,7 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
               />
             </Popover>
           ) : (
-            <div className="hidden group-hover:block text-xs text-muted leading-6">
+            <div className="hidden group-hover:block text-xs text-muted leading-[var(--tc-msg-line-height)]">
               {formatShortTime(payload.createdAt)}
             </div>
           )}
@@ -142,7 +143,7 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
           >
             {showAvatar && (
               <div className="flex items-center">
-                <div className="font-bold">
+                <div className="font-semibold">
                   {userInfo.nickname || <span>&nbsp;</span>}
                 </div>
                 {/* 分组首条的时间常显, 不再只在 hover 时出现 */}
@@ -162,7 +163,7 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
                 </div>
               }
             >
-              <div className="chat-message-item_body leading-6 break-words">
+              <div className="chat-message-item_body break-words">
                 <MessageQuote payload={payload} />
 
                 <span>{getMessageRender(payload.content)}</span>
