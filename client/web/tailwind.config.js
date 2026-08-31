@@ -175,10 +175,19 @@ const tailchat = plugin(({ e, addUtilities }) => {
 });
 
 module.exports = {
-  purge: {
-    enabled: process.env.NODE_ENV !== 'development',
-    content: [path.resolve(__dirname, './src/**/*.{js,jsx,ts,tsx}')],
-  },
+  // v2 `purge` only scanned ./src, so classes used solely in plugins or the
+  // design package were never generated in production builds. These globs fix
+  // that: every surface that renders against the main app's stylesheet is
+  // scanned.
+  content: [
+    path.resolve(__dirname, './src/**/*.{js,jsx,ts,tsx}'),
+    path.resolve(__dirname, './plugins/*/src/**/*.{js,jsx,ts,tsx}'),
+    path.resolve(__dirname, '../packages/design/components/**/*.{ts,tsx}'),
+    path.resolve(
+      __dirname,
+      '../../server/plugins/*/web/plugins/*/src/**/*.{js,jsx,ts,tsx}'
+    ),
+  ],
   darkMode: 'class', // or 'media'
   important: '#app',
   theme: {
@@ -197,19 +206,19 @@ module.exports = {
           DEFAULT: 'inherit',
         },
         navbar: {
-          light: colors.coolGray[300],
-          dark: colors.coolGray[900],
+          light: colors.gray[300],
+          dark: colors.gray[900],
         },
         sidebar: {
-          light: colors.coolGray[200],
-          dark: colors.coolGray[800],
+          light: colors.gray[200],
+          dark: colors.gray[800],
         },
         content: {
-          light: colors.coolGray[100],
-          dark: colors.coolGray[700],
+          light: colors.gray[100],
+          dark: colors.gray[700],
         },
         typography: {
-          light: colors.coolGray[700],
+          light: colors.gray[700],
           dark: 'rgba(255, 255, 255, 0.85)',
         },
       },
@@ -235,16 +244,8 @@ module.exports = {
       },
     },
   },
-  variants: {
-    extend: {
-      opacity: ['disabled'],
-      display: ['group-hover'],
-      borderRadius: ['hover'],
-      borderWidth: ['last'],
-      height: ['group-hover'],
-      overflow: ['hover'],
-    },
-  },
+  // v2 `variants` config removed: every variant is available on every utility
+  // in Tailwind 3.
   plugins: [tailchat],
   corePlugins: {
     gap: false,
