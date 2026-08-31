@@ -87,3 +87,18 @@ container restart needed for content changes.
 `https://$CHAT_DOMAIN/admin/` (trailing slash required). Credentials: `ADMIN_USER` /
 `ADMIN_PASS` from `docker-compose.env`. The newer `admin-next` app is NOT deployed —
 it postdates the 1.11.12 image.
+
+## Deploy safety
+
+Tag deploys run a **canary boot check** first: the new image's gateway is
+started against the live backends under `NAMESPACE=canary` (isolated from the
+production moleculer cluster) and `/health` must answer before the stack
+rolls. Added after the v1.13.0 incident, where a Node-22-only moleculer
+tracing crash passed every build-time gate.
+
+Emergency levers (env in `docker-compose.env`, then `docker compose up -d`):
+- `DISABLE_TRACING=true` — disables moleculer tracing entirely (the v1.13.0
+  crash was in the tracing middleware; this would have been a viable
+  mitigation).
+- Rollback = edit the image pin in `/opt/tailchat/docker-compose.yml` (or run
+  the Deploy workflow with the previous version) and `docker compose up -d`.
