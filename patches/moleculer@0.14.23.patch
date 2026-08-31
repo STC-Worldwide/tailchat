@@ -1,5 +1,5 @@
 diff --git a/src/runner-esm.mjs b/src/runner-esm.mjs
-index 97b78b59c8931ed2c71e719c12d23bd5172da977..b14e9e0c61be8b0460e60f448781103c49f563e5 100644
+index 97b78b59c8931ed2c71e719c12d23bd5172da977..7bbd301dd485c76720401a5396fd7cee97c749e0 100644
 --- a/src/runner-esm.mjs
 +++ b/src/runner-esm.mjs
 @@ -332,83 +332,87 @@ export default class MoleculerRunner {
@@ -158,7 +158,7 @@ index 97b78b59c8931ed2c71e719c12d23bd5172da977..b14e9e0c61be8b0460e60f448781103c
  	}
  
 diff --git a/src/runner.js b/src/runner.js
-index 695e5affcb21b456ce5b0f69f2c02e776ad4216a..34cc885fd80279b1b91f8013263c522ff6f1d42b 100644
+index 695e5affcb21b456ce5b0f69f2c02e776ad4216a..03a8a1d7db73968639187595b8e003986c87b3cc 100644
 --- a/src/runner.js
 +++ b/src/runner.js
 @@ -335,83 +335,87 @@ class MoleculerRunner {
@@ -315,3 +315,18 @@ index 695e5affcb21b456ce5b0f69f2c02e776ad4216a..34cc885fd80279b1b91f8013263c522f
  	}
  
  	/**
+diff --git a/src/tracing/span.js b/src/tracing/span.js
+index 19d7e071068f12e7cab39184b667c5ec63ab3195..8dcce6ece07ee8dd94c84fa9e04c6787715a2141 100644
+--- a/src/tracing/span.js
++++ b/src/tracing/span.js
+@@ -1,6 +1,9 @@
+ "use strict";
+ 
+-const { now } = require("perf_hooks").performance;
++// Node >=19 brand-checks the Performance receiver: a destructured `now`
++// throws ERR_INVALID_THIS on every span. Bind it. (STC patch for Node 22)
++const { performance } = require("perf_hooks");
++const now = performance.now.bind(performance);
+ 
+ function defProp(instance, propName, value, readOnly = false) {
+ 	Object.defineProperty(instance, propName, {
