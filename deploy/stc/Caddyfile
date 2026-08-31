@@ -9,4 +9,8 @@ stc-worldwide.com, www.stc-worldwide.com {
 	encode zstd gzip
 	root * /srv/landing
 	file_server
+
+	# Tailchat plugins are loaded cross-origin from chat.stc-worldwide.com
+	@plugins path /plugins/*
+	header @plugins Access-Control-Allow-Origin "*"
 }
