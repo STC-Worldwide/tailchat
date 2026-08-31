@@ -74,6 +74,25 @@
     --tc-text-body: var(--tc-slate-700);
     --tc-text-muted: var(--tc-slate-500);
     --tc-border-subtle: oklch(0% 0 0 / 8%);
+
+    /* 消息密度 (舒适模式默认值; .density-compact 收紧) */
+    --tc-msg-group-gap: 10px;
+    --tc-msg-row-pad: 2px;
+  }
+
+  .density-compact {
+    --tc-msg-group-gap: 3px;
+    --tc-msg-row-pad: 0px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 
   /* tier 2 — semantic, dark. The `dark` class lives on #tailchat-app; the

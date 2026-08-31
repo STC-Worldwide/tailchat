@@ -92,9 +92,9 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
     return (
       <div
         className={clsx(
-          'chat-message-item flex px-2 mobile:px-0 group relative select-text text-sm py-0.5',
-          // 分组首条消息与上一组拉开间距
-          showAvatar && 'mt-2.5',
+          'chat-message-item flex px-2 mobile:px-0 group relative select-text text-sm py-[var(--tc-msg-row-pad)]',
+          // 分组首条消息与上一组拉开间距; 间距值由密度设置驱动
+          showAvatar && 'mt-[var(--tc-msg-group-gap)]',
           {
             'bg-black/10 dark:bg-white/10': isActionBtnActive,
             'hover:bg-black/5 dark:hover:bg-white/5': !isActionBtnActive,
