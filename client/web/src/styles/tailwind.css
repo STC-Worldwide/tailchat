@@ -72,7 +72,9 @@
     --tc-surface-content: var(--tc-slate-100);
     --tc-surface-raised: #ffffff;
     --tc-text-body: var(--tc-slate-700);
-    --tc-text-muted: var(--tc-slate-500);
+    /* 对比度审计 2026-08-31: slate-500 在 sidebar 上只有 3.86:1;
+       50% 亮度在全部三个表面 ≥4.5:1 (WCAG 1.4.3) */
+    --tc-text-muted: oklch(50% 0.045 257);
     --tc-border-subtle: oklch(0% 0 0 / 8%);
 
     /* 消息密度 (舒适模式默认值; .density-compact 收紧)
@@ -110,7 +112,9 @@
     --tc-surface-content: var(--tc-slate-800);
     --tc-surface-raised: var(--tc-slate-700);
     --tc-text-body: oklch(93% 0.006 256 / 0.92);
-    --tc-text-muted: oklch(78% 0.02 256 / 0.65);
+    /* 对比度审计 2026-08-31: 78%/.65 在 content 3.97:1, raised 3.12:1;
+       84%/.85 在三个表面 ≥5:1 (WCAG 1.4.3) 且仍明显弱于 body */
+    --tc-text-muted: oklch(84% 0.016 256 / 0.85);
     --tc-border-subtle: oklch(100% 0 0 / 8%);
   }
 
