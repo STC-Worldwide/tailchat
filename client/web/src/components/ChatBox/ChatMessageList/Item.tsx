@@ -26,6 +26,7 @@ import { AutoFolder, Avatar, Icon } from 'tailchat-design';
 import { MessageAckContainer } from './MessageAckContainer';
 import { UserPopover } from '@/components/popover/UserPopover';
 import { TcTooltip } from '@/components/ui/tooltip';
+import { TcDropdown, type TcDropdownMenu } from '@/components/ui/dropdown';
 import _isEmpty from 'lodash/isEmpty';
 import type { LocalChatMessage } from 'tailchat-shared/model/message';
 import './Item.less';
@@ -207,10 +208,9 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
             )}
           >
             <TcPopover
-              overlayClassName="chat-message-item_action-popover"
+              overlayClassName="chat-message-item_action-popover p-1"
               content={emojiAction}
               placement="bottomLeft"
-              trigger={['click']}
               onOpenChange={setIsActionBtnActive}
             >
               <div>
@@ -221,10 +221,9 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
               </div>
             </TcPopover>
 
-            <Dropdown
-              menu={moreActions}
-              placement="bottomRight"
-              trigger={['click']}
+            <TcDropdown
+              menu={moreActions as unknown as TcDropdownMenu}
+              placement="bottomEnd"
               onOpenChange={setIsActionBtnActive}
             >
               <div>
@@ -233,7 +232,7 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
                   label={t('更多')}
                 />
               </div>
-            </Dropdown>
+            </TcDropdown>
           </div>
         )}
       </div>
