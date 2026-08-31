@@ -3,14 +3,10 @@
 exports[`IconBtn render 1`] = `
 <div>
   <button
-    class="ant-btn ant-btn-circle ant-btn-default ant-btn-icon-only border-0 text-white/80 hover:text-white bg-black/20 hover:bg-black/60"
+    class="inline-flex items-center justify-center shrink-0 border-0 transition-colors cursor-pointer select-none disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 rounded-full h-8 w-8 bg-black/20 hover:bg-black/60"
     type="button"
   >
-    <span
-      class="anticon"
-    >
-      [iconify icon="mdi:close"]
-    </span>
+    [iconify icon="mdi:close"]
   </button>
 </div>
 `;

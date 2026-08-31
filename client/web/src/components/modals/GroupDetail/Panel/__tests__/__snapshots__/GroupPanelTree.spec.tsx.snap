@@ -95,28 +95,22 @@ exports[`GroupPanelTree simple render snapshot 1`] = `
                           style="margin-right: 8px;"
                         >
                           <button
-                            class="ant-btn ant-btn-circle ant-btn-text ant-btn-sm ant-btn-icon-only border-0 text-white/80 hover:text-white bg-black/20 hover:bg-black/60"
+                            class="inline-flex items-center justify-center shrink-0 border-0 transition-colors cursor-pointer select-none disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 rounded-full h-6 w-6 bg-transparent hover:bg-white/10"
+                            id="base-ui-:r1:"
                             type="button"
                           >
-                            <span
-                              class="anticon"
-                            >
-                              [iconify icon="mdi:pencil-outline"]
-                            </span>
+                            [iconify icon="mdi:pencil-outline"]
                           </button>
                         </div>
                         <div
                           class="ant-space-item"
                         >
                           <button
-                            class="ant-btn ant-btn-circle ant-btn-text ant-btn-sm ant-btn-icon-only border-0 text-white/80 hover:text-white bg-black/20 hover:bg-black/60"
+                            class="inline-flex items-center justify-center shrink-0 border-0 transition-colors cursor-pointer select-none disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 rounded-full h-6 w-6 bg-transparent hover:bg-white/10"
+                            id="base-ui-:r3:"
                             type="button"
                           >
-                            <span
-                              class="anticon"
-                            >
-                              [iconify icon="mdi:trash-can-outline"]
-                            </span>
+                            [iconify icon="mdi:trash-can-outline"]
                           </button>
                         </div>
                       </div>
@@ -165,28 +159,22 @@ exports[`GroupPanelTree simple render snapshot 1`] = `
                           style="margin-right: 8px;"
                         >
                           <button
-                            class="ant-btn ant-btn-circle ant-btn-text ant-btn-sm ant-btn-icon-only border-0 text-white/80 hover:text-white bg-black/20 hover:bg-black/60"
+                            class="inline-flex items-center justify-center shrink-0 border-0 transition-colors cursor-pointer select-none disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 rounded-full h-6 w-6 bg-transparent hover:bg-white/10"
+                            id="base-ui-:r5:"
                             type="button"
                           >
-                            <span
-                              class="anticon"
-                            >
-                              [iconify icon="mdi:pencil-outline"]
-                            </span>
+                            [iconify icon="mdi:pencil-outline"]
                           </button>
                         </div>
                         <div
                           class="ant-space-item"
                         >
                           <button
-                            class="ant-btn ant-btn-circle ant-btn-text ant-btn-sm ant-btn-icon-only border-0 text-white/80 hover:text-white bg-black/20 hover:bg-black/60"
+                            class="inline-flex items-center justify-center shrink-0 border-0 transition-colors cursor-pointer select-none disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 rounded-full h-6 w-6 bg-transparent hover:bg-white/10"
+                            id="base-ui-:r7:"
                             type="button"
                           >
-                            <span
-                              class="anticon"
-                            >
-                              [iconify icon="mdi:trash-can-outline"]
-                            </span>
+                            [iconify icon="mdi:trash-can-outline"]
                           </button>
                         </div>
                       </div>
@@ -235,28 +223,22 @@ exports[`GroupPanelTree simple render snapshot 1`] = `
                           style="margin-right: 8px;"
                         >
                           <button
-                            class="ant-btn ant-btn-circle ant-btn-text ant-btn-sm ant-btn-icon-only border-0 text-white/80 hover:text-white bg-black/20 hover:bg-black/60"
+                            class="inline-flex items-center justify-center shrink-0 border-0 transition-colors cursor-pointer select-none disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 rounded-full h-6 w-6 bg-transparent hover:bg-white/10"
+                            id="base-ui-:r9:"
                             type="button"
                           >
-                            <span
-                              class="anticon"
-                            >
-                              [iconify icon="mdi:pencil-outline"]
-                            </span>
+                            [iconify icon="mdi:pencil-outline"]
                           </button>
                         </div>
                         <div
                           class="ant-space-item"
                         >
                           <button
-                            class="ant-btn ant-btn-circle ant-btn-text ant-btn-sm ant-btn-icon-only border-0 text-white/80 hover:text-white bg-black/20 hover:bg-black/60"
+                            class="inline-flex items-center justify-center shrink-0 border-0 transition-colors cursor-pointer select-none disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 rounded-full h-6 w-6 bg-transparent hover:bg-white/10"
+                            id="base-ui-:rb:"
                             type="button"
                           >
-                            <span
-                              class="anticon"
-                            >
-                              [iconify icon="mdi:trash-can-outline"]
-                            </span>
+                            [iconify icon="mdi:trash-can-outline"]
                           </button>
                         </div>
                       </div>
@@ -321,28 +303,22 @@ exports[`GroupPanelTree simple render snapshot 1`] = `
                           style="margin-right: 8px;"
                         >
                           <button
-                            class="ant-btn ant-btn-circle ant-btn-text ant-btn-sm ant-btn-icon-only border-0 text-white/80 hover:text-white bg-black/20 hover:bg-black/60"
+                            class="inline-flex items-center justify-center shrink-0 border-0 transition-colors cursor-pointer select-none disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 rounded-full h-6 w-6 bg-transparent hover:bg-white/10"
+                            id="base-ui-:rd:"
                             type="button"
                           >
-                            <span
-                              class="anticon"
-                            >
-                              [iconify icon="mdi:pencil-outline"]
-                            </span>
+                            [iconify icon="mdi:pencil-outline"]
                           </button>
                         </div>
                         <div
                           class="ant-space-item"
                         >
                           <button
-                            class="ant-btn ant-btn-circle ant-btn-text ant-btn-sm ant-btn-icon-only border-0 text-white/80 hover:text-white bg-black/20 hover:bg-black/60"
+                            class="inline-flex items-center justify-center shrink-0 border-0 transition-colors cursor-pointer select-none disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 rounded-full h-6 w-6 bg-transparent hover:bg-white/10"
+                            id="base-ui-:rf:"
                             type="button"
                           >
-                            <span
-                              class="anticon"
-                            >
-                              [iconify icon="mdi:trash-can-outline"]
-                            </span>
+                            [iconify icon="mdi:trash-can-outline"]
                           </button>
                         </div>
                       </div>
@@ -391,28 +367,22 @@ exports[`GroupPanelTree simple render snapshot 1`] = `
                           style="margin-right: 8px;"
                         >
                           <button
-                            class="ant-btn ant-btn-circle ant-btn-text ant-btn-sm ant-btn-icon-only border-0 text-white/80 hover:text-white bg-black/20 hover:bg-black/60"
+                            class="inline-flex items-center justify-center shrink-0 border-0 transition-colors cursor-pointer select-none disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 rounded-full h-6 w-6 bg-transparent hover:bg-white/10"
+                            id="base-ui-:rh:"
                             type="button"
                           >
-                            <span
-                              class="anticon"
-                            >
-                              [iconify icon="mdi:pencil-outline"]
-                            </span>
+                            [iconify icon="mdi:pencil-outline"]
                           </button>
                         </div>
                         <div
                           class="ant-space-item"
                         >
                           <button
-                            class="ant-btn ant-btn-circle ant-btn-text ant-btn-sm ant-btn-icon-only border-0 text-white/80 hover:text-white bg-black/20 hover:bg-black/60"
+                            class="inline-flex items-center justify-center shrink-0 border-0 transition-colors cursor-pointer select-none disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 rounded-full h-6 w-6 bg-transparent hover:bg-white/10"
+                            id="base-ui-:rj:"
                             type="button"
                           >
-                            <span
-                              class="anticon"
-                            >
-                              [iconify icon="mdi:trash-can-outline"]
-                            </span>
+                            [iconify icon="mdi:trash-can-outline"]
                           </button>
                         </div>
                       </div>
@@ -461,28 +431,22 @@ exports[`GroupPanelTree simple render snapshot 1`] = `
                           style="margin-right: 8px;"
                         >
                           <button
-                            class="ant-btn ant-btn-circle ant-btn-text ant-btn-sm ant-btn-icon-only border-0 text-white/80 hover:text-white bg-black/20 hover:bg-black/60"
+                            class="inline-flex items-center justify-center shrink-0 border-0 transition-colors cursor-pointer select-none disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 rounded-full h-6 w-6 bg-transparent hover:bg-white/10"
+                            id="base-ui-:rl:"
                             type="button"
                           >
-                            <span
-                              class="anticon"
-                            >
-                              [iconify icon="mdi:pencil-outline"]
-                            </span>
+                            [iconify icon="mdi:pencil-outline"]
                           </button>
                         </div>
                         <div
                           class="ant-space-item"
                         >
                           <button
-                            class="ant-btn ant-btn-circle ant-btn-text ant-btn-sm ant-btn-icon-only border-0 text-white/80 hover:text-white bg-black/20 hover:bg-black/60"
+                            class="inline-flex items-center justify-center shrink-0 border-0 transition-colors cursor-pointer select-none disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1 rounded-full h-6 w-6 bg-transparent hover:bg-white/10"
+                            id="base-ui-:rn:"
                             type="button"
                           >
-                            <span
-                              class="anticon"
-                            >
-                              [iconify icon="mdi:trash-can-outline"]
-                            </span>
+                            [iconify icon="mdi:trash-can-outline"]
                           </button>
                         </div>
                       </div>
