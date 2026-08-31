@@ -29,7 +29,7 @@ overrides:
 
 patchedDependencies:
   moleculer@0.14.23:
-    hash: ahhlgpfy57fntn2aftq6beaeja
+    hash: gvlqs6y6tfliucjy57cvn6u6x4
     path: patches/moleculer@0.14.23.patch
   vite-express@0.8.0:
     hash: u6touqej4dt3zxnslnszarl7vq
@@ -1512,7 +1512,7 @@ importers:
         version: 1.3.1
       moleculer:
         specifier: 0.14.23
-        version: 0.14.23(patch_hash=ahhlgpfy57fntn2aftq6beaeja)(ioredis@4.28.5)(nats@1.4.12)(redlock@4.2.0)
+        version: 0.14.23(patch_hash=gvlqs6y6tfliucjy57cvn6u6x4)(ioredis@4.28.5)(nats@1.4.12)(redlock@4.2.0)
       moleculer-cli:
         specifier: ^0.7.1
         version: 0.7.1(ejs@3.1.8)(ioredis@4.28.5)(redlock@4.2.0)
@@ -1821,7 +1821,7 @@ importers:
         version: 7.1.1
       moleculer:
         specifier: 0.14.23
-        version: 0.14.23(patch_hash=ahhlgpfy57fntn2aftq6beaeja)(ioredis@4.28.5)(nats@1.4.12)(redlock@4.2.0)
+        version: 0.14.23(patch_hash=gvlqs6y6tfliucjy57cvn6u6x4)(ioredis@4.28.5)(nats@1.4.12)(redlock@4.2.0)
       moleculer-db:
         specifier: 0.8.19
         version: 0.8.19(moleculer@0.14.23)
@@ -14013,7 +14013,7 @@ packages:
       caniuse-lite: 1.0.30001457
       fraction.js: 4.2.0
       normalize-range: 0.1.2
-      picocolors: 1.1.1
+      picocolors: 1.0.0
       postcss: 8.5.26
       postcss-value-parser: 4.2.0
     dev: false
@@ -24754,7 +24754,7 @@ packages:
       metalsmith: 2.5.0
       minimatch: 3.1.2
       mkdirp: 1.0.4
-      moleculer: 0.14.23(patch_hash=ahhlgpfy57fntn2aftq6beaeja)(ioredis@4.28.5)(nats@1.4.12)(redlock@4.2.0)
+      moleculer: 0.14.23(patch_hash=gvlqs6y6tfliucjy57cvn6u6x4)(ioredis@4.28.5)(nats@1.4.12)(redlock@4.2.0)
       moleculer-repl: 0.6.6
       multimatch: 4.0.0
       nats: 1.4.12
@@ -24852,7 +24852,7 @@ packages:
       bluebird: 3.7.2
       flat: 5.0.2
       lodash: 4.17.21
-      moleculer: 0.14.23(patch_hash=ahhlgpfy57fntn2aftq6beaeja)(ioredis@4.28.5)(nats@1.4.12)(redlock@4.2.0)
+      moleculer: 0.14.23(patch_hash=gvlqs6y6tfliucjy57cvn6u6x4)(ioredis@4.28.5)(nats@1.4.12)(redlock@4.2.0)
     dev: false
 
   /moleculer-repl@0.6.6:
@@ -24887,7 +24887,7 @@ packages:
       yargs-parser: 21.1.1
     dev: false
 
-  /moleculer@0.14.23(patch_hash=ahhlgpfy57fntn2aftq6beaeja)(ioredis@4.28.5)(nats@1.4.12)(redlock@4.2.0):
+  /moleculer@0.14.23(patch_hash=gvlqs6y6tfliucjy57cvn6u6x4)(ioredis@4.28.5)(nats@1.4.12)(redlock@4.2.0):
     resolution: {integrity: sha512-DE84fy8+1QiA7kUkF9ce4nyDdptBDlLFQfsaUccTScMGAbEjye5e+zfoI9iSA9rznwvshC8tgLhbOcnQBMn/HA==}
     engines: {node: '>= 10.x.x'}
     hasBin: true
@@ -32578,7 +32578,7 @@ packages:
       ioredis: 4.28.5
       kleur: 4.1.5
       lodash: 4.17.21
-      moleculer: 0.14.23(patch_hash=ahhlgpfy57fntn2aftq6beaeja)(ioredis@4.28.5)(nats@1.4.12)(redlock@4.2.0)
+      moleculer: 0.14.23(patch_hash=gvlqs6y6tfliucjy57cvn6u6x4)(ioredis@4.28.5)(nats@1.4.12)(redlock@4.2.0)
       moleculer-db: 0.8.19(moleculer@0.14.23)
       moleculer-repl: 0.6.6
       moment: 2.29.4
