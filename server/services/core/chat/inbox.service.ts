@@ -181,7 +181,7 @@ class InboxService extends TcService {
       messageId,
     } = ctx.params;
 
-    await this.adapter.model.remove({
+    await this.adapter.model.deleteMany({
       userId,
       type: 'message',
       payload: {

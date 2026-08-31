@@ -104,7 +104,13 @@ export class MongooseDbAdapter<TDocument extends Document>
         .createConnection(this.uri, this.opts)
         .asPromise()
         .then((conn) => {
-          this.model = conn.model(this.modelName, this.schema);
+          // no generic on conn.model(): instantiating Model<TDocument> with
+          // TDocument extends Document sends tsc's type expansion exponential
+          // under mongoose 8 (observed 8GB OOM)
+          this.model = conn.model(
+            this.modelName as string,
+            this.schema as Schema
+          ) as unknown as Model<TDocument>;
           return conn;
         });
     }
@@ -136,17 +142,11 @@ export class MongooseDbAdapter<TDocument extends Document>
    * @memberof MongooseDbAdapter
    */
   disconnect() {
-    return new Promise<void>((resolve) => {
-      if (this.conn && this.conn.close) {
-        this.conn.close(() => {
-          resolve();
-        });
-      } else {
-        mongoose.connection.close(() => {
-          resolve();
-        });
-      }
-    });
+    // mongoose 7+ removed callback signatures: close() returns a promise
+    if (this.conn && this.conn.close) {
+      return this.conn.close();
+    }
+    return mongoose.connection.close();
   }
 
   /**
@@ -262,9 +262,7 @@ export class MongooseDbAdapter<TDocument extends Document>
    * @memberof MongooseDbAdapter
    */
   updateMany(query, update) {
-    return this.model
-      .updateMany(query, update, { multi: true, new: true })
-      .then((res) => res.matchedCount);
+    return this.model.updateMany(query, update).then((res) => res.matchedCount);
   }
 
   /**
@@ -301,7 +299,7 @@ export class MongooseDbAdapter<TDocument extends Document>
    * @memberof MongooseDbAdapter
    */
   removeById(_id): any {
-    return this.model.findByIdAndRemove(_id);
+    return this.model.findByIdAndDelete(_id);
   }
 
   /**

@@ -1,5 +1,4 @@
 import { RequestHandler, Router } from 'express';
-import type { LeanDocument } from 'mongoose';
 import statusMessages from './statusMessages';
 import type { ADPBaseModel, ADPBaseSchema } from './utils/baseModel.interface';
 import castFilter from './utils/castFilter';
@@ -158,9 +157,8 @@ export function raExpressMongoose<T extends ADPBaseModel, I>(
           );
         }
 
-        return res.json(
-          virtualId((await query.lean()) as LeanDocument<ADPBaseSchema>)
-        );
+        // mongoose 8 移除了 LeanDocument 类型, lean() 的 _id 推断为 unknown
+        return res.json(virtualId((await query.lean()) as ADPBaseSchema[]));
       }
     );
 
@@ -176,7 +174,7 @@ export function raExpressMongoose<T extends ADPBaseModel, I>(
           .findById(req.params.id)
           .select(extraSelects)
           .lean()
-          .then((result) => res.json(virtualId(result)))
+          .then((result) => res.json(virtualId(result as ADPBaseSchema)))
           .catch((e) => {
             return statusMessages.error(res, 400, e);
           });
@@ -229,7 +227,7 @@ export function raExpressMongoose<T extends ADPBaseModel, I>(
             runValidators: true,
           })
           .lean()
-          .then((result) => res.json(virtualId(result)))
+          .then((result) => res.json(virtualId(result as ADPBaseSchema)))
           .catch((e) => {
             return statusMessages.error(res, 400, e, 'Bad request');
           });
