@@ -23,6 +23,8 @@ import { Helmet } from 'react-helmet';
 import { useRecordMeasure } from './utils/measure-helper';
 import { getPopupContainer, preventDefault } from './utils/dom-helper';
 import { LoadingSpinner } from './components/LoadingSpinner';
+import { TcTooltipProvider } from './components/ui/tooltip';
+import { useMessageDensity } from './hooks/useMessageDensity';
 import { pluginRootRoute } from './plugin/common';
 import { PortalHost as FallbackPortalHost } from './components/Portal';
 import isElectron from 'is-electron';
@@ -98,6 +100,7 @@ AppProvider.displayName = 'AppProvider';
 
 const AppContainer: React.FC<PropsWithChildren> = React.memo((props) => {
   const { isDarkMode, extraSchemeName } = useColorScheme();
+  const { density } = useMessageDensity();
 
   return (
     <div
@@ -107,12 +110,13 @@ const AppContainer: React.FC<PropsWithChildren> = React.memo((props) => {
         'absolute inset-0 select-none overflow-hidden',
         {
           dark: isDarkMode,
+          'density-compact': density === 'compact',
         },
         extraSchemeName
       )}
       onContextMenu={preventDefault}
     >
-      {props.children}
+      <TcTooltipProvider>{props.children}</TcTooltipProvider>
     </div>
   );
 });

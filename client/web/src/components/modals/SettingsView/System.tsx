@@ -11,11 +11,13 @@ import {
   useUserSettings,
 } from 'tailchat-shared';
 import _get from 'lodash/get';
+import { useMessageDensity } from '@/hooks/useMessageDensity';
 
 export const SettingsSystem: React.FC = React.memo(() => {
   const { colorScheme, setColorScheme } = useColorScheme();
   const { settings, setSettings, loading } = useUserSettings();
   const { isAlphaMode, setAlphaMode } = useAlphaMode();
+  const { density, setDensity } = useMessageDensity();
 
   return (
     <div>
@@ -38,6 +40,21 @@ export const SettingsSystem: React.FC = React.memo(() => {
                 {pcs.label}
               </Select.Option>
             ))}
+          </Select>
+        }
+      />
+
+      <FullModalField
+        title={t('消息密度')}
+        content={
+          <Select
+            style={{ width: 280 }}
+            size="large"
+            value={density}
+            onChange={setDensity}
+          >
+            <Select.Option value="comfortable">{t('舒适')}</Select.Option>
+            <Select.Option value="compact">{t('紧凑')}</Select.Option>
           </Select>
         }
       />

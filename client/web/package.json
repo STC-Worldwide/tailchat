@@ -25,12 +25,17 @@
     "plugins:declaration:generate": "cross-env TS_NODE_PROJECT='tsconfig.node.json' ts-node ./scripts/generate-plugin-declaration.typescript.ts"
   },
   "dependencies": {
+    "@base-ui-components/react": "1.0.0-rc.0",
     "@bytemd/plugin-gfm": "^1.21.0",
     "@bytemd/react": "^1.21.0",
     "@emoji-mart/data": "^1.1.2",
     "@emoji-mart/react": "^1.1.1",
     "@loadable/component": "^5.15.3",
     "@tanstack/react-query-devtools": "4.33.0",
+    "@tiptap/extension-mention": "^3.30.5",
+    "@tiptap/react": "^3.30.5",
+    "@tiptap/starter-kit": "^3.30.5",
+    "@tiptap/suggestion": "^3.30.5",
     "@use-gesture/react": "^10.2.24",
     "ahooks": "^3.7.4",
     "antd": "^4.24.13",

@@ -25,6 +25,7 @@ import { stopPropagation } from '@/utils/dom-helper';
 import { AutoFolder, Avatar, Icon } from 'tailchat-design';
 import { MessageAckContainer } from './MessageAckContainer';
 import { UserPopover } from '@/components/popover/UserPopover';
+import { TcTooltip } from '@/components/ui/tooltip';
 import _isEmpty from 'lodash/isEmpty';
 import type { LocalChatMessage } from 'tailchat-shared/model/message';
 import './Item.less';
@@ -53,10 +54,14 @@ const MessageQuote: React.FC<{ payload: ChatMessage }> = React.memo(
 );
 MessageQuote.displayName = 'MessageQuote';
 
-const MessageActionIcon: React.FC<{ icon: string }> = (props) => (
-  <div className="px-0.5 w-6 h-6 flex justify-center items-center opacity-60 hover:opacity-100">
-    <Icon icon={props.icon} />
-  </div>
+const MessageActionIcon: React.FC<{ icon: string; label: string }> = (
+  props
+) => (
+  <TcTooltip label={props.label}>
+    <div className="px-0.5 w-6 h-6 flex justify-center items-center opacity-60 hover:opacity-100">
+      <Icon icon={props.icon} />
+    </div>
+  </TcTooltip>
 );
 
 /**
@@ -87,9 +92,10 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
     return (
       <div
         className={clsx(
-          'chat-message-item flex px-2 mobile:px-0 group relative select-text text-sm py-0.5',
-          // 分组首条消息与上一组拉开间距
-          showAvatar && 'mt-2.5',
+          'chat-message-item flex px-2 mobile:px-0 group relative select-text py-[var(--tc-msg-row-pad)]',
+          // 分组首条消息与上一组拉开间距; 间距值由密度设置驱动
+          // min-h-11 (44px) 锁定头像行节奏, 避免短消息挤压
+          showAvatar && 'mt-[var(--tc-msg-group-gap)] min-h-11',
           {
             'bg-black/10 dark:bg-white/10': isActionBtnActive,
             'hover:bg-black/5 dark:hover:bg-white/5': !isActionBtnActive,
@@ -117,7 +123,7 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
               />
             </Popover>
           ) : (
-            <div className="hidden group-hover:block text-xs text-muted leading-6">
+            <div className="hidden group-hover:block text-xs text-muted leading-[var(--tc-msg-line-height)]">
               {formatShortTime(payload.createdAt)}
             </div>
           )}
@@ -137,7 +143,7 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
           >
             {showAvatar && (
               <div className="flex items-center">
-                <div className="font-bold">
+                <div className="font-semibold">
                   {userInfo.nickname || <span>&nbsp;</span>}
                 </div>
                 {/* 分组首条的时间常显, 不再只在 hover 时出现 */}
@@ -157,7 +163,7 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
                 </div>
               }
             >
-              <div className="chat-message-item_body leading-6 break-words">
+              <div className="chat-message-item_body break-words">
                 <MessageQuote payload={payload} />
 
                 <span>{getMessageRender(payload.content)}</span>
@@ -208,7 +214,10 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
               onOpenChange={setIsActionBtnActive}
             >
               <div>
-                <MessageActionIcon icon="mdi:emoticon-happy-outline" />
+                <MessageActionIcon
+                  icon="mdi:emoticon-happy-outline"
+                  label={t('添加反应')}
+                />
               </div>
             </TcPopover>
 
@@ -219,7 +228,10 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
               onOpenChange={setIsActionBtnActive}
             >
               <div>
-                <MessageActionIcon icon="mdi:dots-horizontal" />
+                <MessageActionIcon
+                  icon="mdi:dots-horizontal"
+                  label={t('更多')}
+                />
               </div>
             </Dropdown>
           </div>

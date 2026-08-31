@@ -11,12 +11,12 @@ import './input.less';
 const defaultChatInputBoxInputStyle = {
   input: {
     overflow: 'auto',
-    maxHeight: 70,
+    maxHeight: '40vh',
   },
   highlighter: {
     boxSizing: 'border-box',
     overflow: 'hidden',
-    maxHeight: 70,
+    maxHeight: '40vh',
   },
 };
 
