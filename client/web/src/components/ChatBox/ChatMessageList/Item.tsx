@@ -44,7 +44,7 @@ const MessageQuote: React.FC<{ payload: ChatMessage }> = React.memo(
     }
 
     return (
-      <div className="chat-message-item_quote border-l-4 border-black border-opacity-20 pl-2 opacity-80">
+      <div className="chat-message-item_quote border-l-4 border-black/20 pl-2 opacity-80">
         {t('回复')} <UserName userId={String(quote.author)} />:{' '}
         <span>{getMessageRender(quote.content)}</span>
       </div>
@@ -89,8 +89,8 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
         className={clsx(
           'chat-message-item flex px-2 mobile:px-0 group relative select-text text-sm',
           {
-            'bg-black bg-opacity-10': isActionBtnActive,
-            'hover:bg-black hover:bg-opacity-5': !isActionBtnActive,
+            'bg-black/10 ': isActionBtnActive,
+            'hover:bg-black/5 ': !isActionBtnActive,
           }
         )}
         data-message-id={payload._id}
@@ -189,11 +189,11 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
         {!disableOperate && (
           <div
             className={clsx(
-              'bg-white dark:bg-black rounded absolute right-2 cursor-pointer -top-3 shadow-sm flex',
+              'rounded absolute right-2 cursor-pointer -top-3 shadow-sm flex',
               {
-                'opacity-0 group-hover:opacity-100 bg-opacity-80 hover:bg-opacity-100':
+                'opacity-0 group-hover:opacity-100 bg-white/80 hover:bg-white dark:bg-black/80 dark:hover:bg-black':
                   !isActionBtnActive,
-                'opacity-100 bg-opacity-100': isActionBtnActive,
+                'opacity-100 bg-white dark:bg-black': isActionBtnActive,
               }
             )}
           >
@@ -234,7 +234,7 @@ const SystemMessage: React.FC<ChatMessageItemProps> = React.memo(
   ({ payload }) => {
     return (
       <div className="text-center">
-        <div className="bg-black bg-opacity-20 rounded inline-block py-0.5 px-2 my-1 mx-2 text-sm">
+        <div className="bg-black/20 rounded inline-block py-0.5 px-2 my-1 mx-2 text-sm">
           {payload.content}
         </div>
       </div>

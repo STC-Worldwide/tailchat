@@ -41,7 +41,7 @@ export function usePasteHandler() {
       } else if (handlers.length >= 2) {
         // 弹出popup
         setInner(
-          <div className="absolute bottom-2 bg-content-light bg-opacity-90 dark:bg-content-dark dark:bg-opacity-90 border dark:border-gray-900 shadow rounded px-2 py-1 space-y-1 w-72">
+          <div className="absolute bottom-2 bg-content-light/90 dark:bg-content-dark/90 border dark:border-gray-900 shadow rounded px-2 py-1 space-y-1 w-72">
             <div>
               {t(
                 '看起来有多个剪切板处理工具被同时匹配，请选择其中一项或者忽略'
@@ -50,7 +50,7 @@ export function usePasteHandler() {
             {handlers.map((h) => (
               <div
                 key={h.name}
-                className="bg-black bg-opacity-40 hover:bg-opacity-80 rounded px-2 py-1 cursor-pointer"
+                className="bg-black/40 hover:bg-black/80 rounded px-2 py-1 cursor-pointer"
                 onClick={() => {
                   console.log(`Running paste handler: ${h.name}`);
                   h.handler(data, context);

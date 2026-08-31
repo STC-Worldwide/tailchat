@@ -86,7 +86,7 @@ export const ImagePicker: React.FC<ImagePickerProps> = React.memo((props) => {
 
           <div
             className={
-              'absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center transition opacity-0 group-hover:opacity-100'
+              'absolute inset-0 bg-black/50 flex items-center justify-center transition opacity-0 group-hover:opacity-100'
             }
           >
             <Icon

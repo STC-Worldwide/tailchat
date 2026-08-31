@@ -131,7 +131,7 @@ export const RegisterView: React.FC = React.memo(() => {
           />
 
           <Icon
-            className="absolute bottom-1 right-1 w-8 h-8 p-2 rounded cursor-pointer bg-opacity-20 bg-black z-10"
+            className="absolute bottom-1 right-1 w-8 h-8 p-2 rounded cursor-pointer bg-black/20 z-10"
             icon={customNickname ? 'mdi:pencil-off' : 'mdi:pencil'}
             onClick={() =>
               setCustomNickname((customNickname) => !customNickname)

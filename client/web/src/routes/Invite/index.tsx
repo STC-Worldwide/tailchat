@@ -32,7 +32,7 @@ const InviteRoute: React.FC = React.memo(() => {
         className="h-full w-full bg-gray-600 flex justify-center items-center bg-center bg-cover bg-no-repeat"
         style={style}
       >
-        <div className="w-96 p-4 rounded-lg shadow-lg bg-black bg-opacity-60 text-center">
+        <div className="w-96 p-4 rounded-lg shadow-lg bg-black/60 text-center">
           <InviteInfo
             inviteCode={inviteCode}
             onLoadInfo={(info) => {

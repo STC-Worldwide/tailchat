@@ -3,7 +3,6 @@
 // 默认配置文件: https://unpkg.com/browse/tailwindcss@2.2.7/stubs/defaultConfig.stub.js
 
 const plugin = require('tailwindcss/plugin');
-const colors = require('tailwindcss/colors');
 const path = require('path');
 
 const customTheme = {
@@ -207,22 +206,8 @@ module.exports = {
         inherit: {
           DEFAULT: 'inherit',
         },
-        navbar: {
-          light: colors.gray[300],
-          dark: colors.gray[900],
-        },
-        sidebar: {
-          light: colors.gray[200],
-          dark: colors.gray[800],
-        },
-        content: {
-          light: colors.gray[100],
-          dark: colors.gray[700],
-        },
-        typography: {
-          light: colors.gray[700],
-          dark: 'rgba(255, 255, 255, 0.85)',
-        },
+        // navbar/sidebar/content/typography moved to OKLCH tokens in
+        // src/styles/tailwind.css @theme (facelift design-token pass)
       },
       borderRadius: {
         '1/2': '50%',

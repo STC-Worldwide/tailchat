@@ -89,7 +89,7 @@ export const Modal: React.FC<ModalProps> = React.memo((props) => {
       appear={true}
     >
       <div
-        className="absolute left-0 right-0 top-0 bottom-0 bg-black bg-opacity-60 flex justify-center items-center z-10"
+        className="absolute left-0 right-0 top-0 bottom-0 bg-black/60 flex justify-center items-center z-10"
         onClick={handleClose}
         data-tc-role="modal-mask"
       >

@@ -35,16 +35,14 @@ export const IconBtn: React.FC<IconBtnProps> = React.memo(
 
     // 默认情况下的背景颜色
     const normalBg = props.active
-      ? 'bg-black bg-opacity-60'
-      : 'bg-black bg-opacity-20 hover:bg-opacity-60';
+      ? 'bg-black/60 '
+      : 'bg-black/20 hover:bg-black/60';
 
     const btnEl = (
       <Button
         className={clsx(
-          'border-0 text-white text-opacity-80 hover:text-opacity-100',
-          props.danger
-            ? 'bg-red-600 bg-opacity-80 hover:bg-opacity-100'
-            : normalBg,
+          'border-0 text-white/80 hover:text-white',
+          props.danger ? 'bg-red-600/80 hover:bg-red-600' : normalBg,
           className
         )}
         {...props}

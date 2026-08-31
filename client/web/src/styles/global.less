@@ -14,7 +14,7 @@ body {
   --tc-background-image: url(../../assets/images/bg.webp);
   --tc-content-background-image: '';
   --tc-content-background-image-opacity: 0.2;
-  --tc-content-background-color: rgba(243, 244, 246, 1); // copy from bg-content-light
+  --tc-content-background-color: var(--tc-surface-content);
 
   .tc-background {
     @apply bg-center bg-cover bg-no-repeat;
@@ -72,7 +72,6 @@ body {
   // 深色模式覆盖
   &.dark {
     @apply text-typography-dark bg-content-dark;
-    --tc-content-background-color: rgba(55, 65, 81, 1);; // copy from bg-content-light
 
     h1,h2,h3,h4,h5,h6 {
       @apply text-typography-dark;
@@ -83,15 +82,15 @@ body {
     }
 
     ::-webkit-scrollbar-thumb {
-      background-color: #202225;
+      background-color: var(--tc-slate-950);
 
       &:hover {
-        background-color: #202225;
+        background-color: var(--tc-slate-950);
       }
     }
 
     ::-webkit-scrollbar-track {
-      background-color: #2f3136;
+      background-color: var(--tc-slate-900);
     }
   }
 }

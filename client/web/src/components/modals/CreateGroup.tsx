@@ -121,7 +121,7 @@ export const ModalCreateGroup: React.FC = React.memo(() => {
                 {index === 1 && <Divider />}
                 <div
                   key={template.key}
-                  className="w-full border rounded text-base py-2 px-3 cursor-pointer font-bold hover:bg-white hover:bg-opacity-10"
+                  className="w-full border rounded text-base py-2 px-3 cursor-pointer font-bold hover:bg-white/10 "
                   onClick={() => handleSelectTemplate(template.panels)}
                 >
                   {template.label}

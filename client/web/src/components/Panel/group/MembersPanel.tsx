@@ -140,7 +140,7 @@ export const MembersPanel: React.FC<MembersPanelProps> = React.memo((props) => {
           groupCounts={groupCounts}
           groupContent={(index) => {
             return (
-              <div className="pt-4 px-2.5 font-bold text-sm text-opacity-80 bg-content-light dark:bg-content-dark">
+              <div className="pt-4 px-2.5 font-bold text-sm bg-content-light dark:bg-content-dark">
                 {groupNames[index]} - {groupCounts[index]}
               </div>
             );

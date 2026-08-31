@@ -82,7 +82,7 @@ export const ImageUploadPreviewer: React.FC<ImageUploadPreviewerProps> =
     return (
       <ModalWrapper style={{ maxHeight: '60vh', maxWidth: '60vw' }}>
         <div className="flex">
-          <div className="w-2/3 p-2.5 bg-black bg-opacity-20 rounded">
+          <div className="w-2/3 p-2.5 bg-black/20 rounded">
             <img
               className="max-h-72 m-auto"
               src={imageUrl}
