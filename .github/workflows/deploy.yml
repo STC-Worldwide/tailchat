@@ -27,6 +27,32 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Canary boot check
+        run: |
+          V="${{ inputs.version }}"
+          IMG="ghcr.io/stc-worldwide/tailchat:${V}"
+          docker pull -q "$IMG"
+          docker rm -f tailchat-canary 2>/dev/null || true
+          docker run -d --name tailchat-canary \
+            --network tailchat-internal \
+            --env-file /opt/tailchat/docker-compose.env \
+            -e SERVICES=core/gateway \
+            -e NAMESPACE=canary \
+            -e PORT=3000 \
+            "$IMG"
+          ok=0
+          for i in $(seq 1 12); do
+            if docker exec tailchat-canary wget -q -O /dev/null http://127.0.0.1:3000/health; then ok=1; break; fi
+            sleep 10
+          done
+          if [ "$ok" != 1 ]; then
+            echo "::error::canary never became healthy — aborting deploy. Last logs:"
+            docker logs --tail 60 tailchat-canary || true
+            docker rm -f tailchat-canary
+            exit 1
+          fi
+          docker rm -f tailchat-canary
+          echo "canary healthy — proceeding"
       - name: Roll the stack to requested version
         run: |
           V="${{ inputs.version }}"

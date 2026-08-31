@@ -71,6 +71,38 @@ jobs:
           TAG="${GITHUB_REF_NAME#v}"
           grep -q "ghcr.io/stc-worldwide/tailchat:${TAG}" deploy/stc/docker-compose.yml \
             || { echo "compose pin does not match tag ${TAG} — update deploy/stc/docker-compose.yml first"; exit 1; }
+      - name: Canary boot check
+        # Boots the new image's gateway against the LIVE backends before any
+        # traffic moves — catches runtime-only failures (the v1.13.0 moleculer
+        # tracing crash) that no build-time gate can see. NAMESPACE=canary
+        # isolates it from the production moleculer cluster on the shared
+        # Redis transporter, so it registers no services and receives no
+        # routed traffic.
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          IMG="ghcr.io/stc-worldwide/tailchat:${TAG}"
+          docker pull -q "$IMG"
+          docker rm -f tailchat-canary 2>/dev/null || true
+          docker run -d --name tailchat-canary \
+            --network tailchat-internal \
+            --env-file /opt/tailchat/docker-compose.env \
+            -e SERVICES=core/gateway \
+            -e NAMESPACE=canary \
+            -e PORT=3000 \
+            "$IMG"
+          ok=0
+          for i in $(seq 1 12); do
+            if docker exec tailchat-canary wget -q -O /dev/null http://127.0.0.1:3000/health; then ok=1; break; fi
+            sleep 10
+          done
+          if [ "$ok" != 1 ]; then
+            echo "::error::canary never became healthy — aborting deploy. Last logs:"
+            docker logs --tail 60 tailchat-canary || true
+            docker rm -f tailchat-canary
+            exit 1
+          fi
+          docker rm -f tailchat-canary
+          echo "canary healthy — proceeding"
       - name: Roll the stack
         run: |
           cp deploy/stc/docker-compose.yml /opt/tailchat/docker-compose.yml
