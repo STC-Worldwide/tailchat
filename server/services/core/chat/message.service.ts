@@ -617,7 +617,8 @@ class MessageService extends TcService {
         groupId: groupId ?? null,
         converseId,
         content: {
-          $regex: text,
+          // 用户输入需转义，避免正则注入 / ReDoS
+          $regex: _.escapeRegExp(text),
         },
         author: {
           $not: {
