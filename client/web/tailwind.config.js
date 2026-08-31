@@ -17,7 +17,7 @@ const customTheme = {
   },
 };
 
-const tailchat = plugin(({ e, addUtilities }) => {
+const tailchat = plugin(({ addUtilities, matchUtilities }) => {
   // Reference: https://www.tailwindcss.cn/docs/plugins#adding-utilities
   const newUtilities = {
     '.thin-line-bottom': {
@@ -161,17 +161,19 @@ const tailchat = plugin(({ e, addUtilities }) => {
     },
   ];
 
-  const zoom = percents.map((item) => {
-    return {
-      [`.${e(`zoom-${item.key}`)}`]: {
-        zoom: item.value,
-      },
-    };
-  });
-
-  addUtilities(zoom, {
-    variants: ['responsive', 'hover'],
-  });
+  // matchUtilities instead of addUtilities+e(): Tailwind 4's plugin compat no
+  // longer provides the `e` escape helper, and matchUtilities handles
+  // fraction/decimal keys (zoom-1/2, zoom-1.5) itself.
+  matchUtilities(
+    {
+      zoom: (value) => ({ zoom: value }),
+    },
+    {
+      values: Object.fromEntries(
+        percents.map((item) => [item.key, item.value])
+      ),
+    }
+  );
 });
 
 module.exports = {
@@ -247,7 +249,4 @@ module.exports = {
   // v2 `variants` config removed: every variant is available on every utility
   // in Tailwind 3.
   plugins: [tailchat],
-  corePlugins: {
-    gap: false,
-  },
 };

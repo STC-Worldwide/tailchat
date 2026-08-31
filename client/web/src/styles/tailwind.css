@@ -1,0 +1,29 @@
+@import 'tailwindcss';
+
+/* Legacy JS config (content globs, custom colors/screens/plugin, darkMode,
+   important scope) loaded through Tailwind 4's compatibility layer. The
+   CSS-first @theme token migration is deliberately deferred to the design
+   token pass of the facelift. */
+@config '../../tailwind.config.js';
+
+@layer base {
+  body,
+  body pre {
+    /* zhihu style */
+    font-family: -apple-system, BlinkMacSystemFont, Helvetica Neue, PingFang SC,
+      Microsoft YaHei, Source Han Sans SC, Noto Sans CJK SC, WenQuanYi Micro Hei,
+      sans-serif;
+  }
+
+  h1 {
+    @apply text-2xl;
+  }
+
+  h2 {
+    @apply text-xl;
+  }
+
+  h3 {
+    @apply text-lg;
+  }
+}
