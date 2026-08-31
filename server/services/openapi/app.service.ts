@@ -221,7 +221,7 @@ class OpenAppService extends TcService {
 
     // 可能会出现ws机器人不会立即中断连接的问题，不重要暂时不处理
 
-    await this.adapter.model.remove({
+    await this.adapter.model.deleteMany({
       appId,
       owner: userId,
     });

@@ -1,7 +1,6 @@
 import { createTestServiceBroker } from '../../utils';
 import OpenAppService from '../../../services/openapi/app.service';
 import { Types } from 'mongoose';
-import _ from 'lodash';
 import { generateRandomStr } from '../../../lib/utils';
 import type { OpenApp } from '../../../models/openapi/app';
 import { nanoid } from 'nanoid';
@@ -51,7 +50,7 @@ describe('Test "openapi.app" service', () => {
       expect(res.appSecret).toHaveLength(32);
       expect(res.appName).toBe(name);
     } finally {
-      await service.adapter.model.findByIdAndRemove(res._id);
+      await service.adapter.model.findByIdAndDelete(res._id);
     }
   });
 

@@ -95,7 +95,7 @@ describe('Test "group" service', () => {
       expect(panels[1].id).toBe(panels[2].parentId);
       expect(res.roles).toEqual([]);
     } finally {
-      await service.adapter.model.findByIdAndRemove(res._id);
+      await service.adapter.model.findByIdAndDelete(res._id);
     }
   });
 

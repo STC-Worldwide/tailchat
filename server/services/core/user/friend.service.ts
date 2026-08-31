@@ -85,7 +85,7 @@ class FriendService extends TcService {
     const { friendUserId } = ctx.params;
     const { userId } = ctx.meta;
 
-    await this.adapter.model.findOneAndRemove({
+    await this.adapter.model.findOneAndDelete({
       from: userId,
       to: friendUserId,
     });

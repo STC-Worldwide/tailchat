@@ -25,7 +25,9 @@ interface FindFilters<T extends Document> {
 }
 
 // 复写部分 adapter 的方法类型
-interface TcDbAdapterOverwrite<T extends Document, M extends Model<T>> {
+// M 的约束放宽为 Model<any>: typegoose 12 的 ReturnModelType 不再在结构上满足
+// Model<DocumentType<T>>（hydrated-document 泛型形参变了），运行时行为不变
+interface TcDbAdapterOverwrite<T extends Document, M extends Model<any>> {
   model: M;
   insert(entity: Partial<T>): Promise<T>;
   find(filters: FindFilters<T>): Promise<T>;
@@ -34,7 +36,7 @@ interface TcDbAdapterOverwrite<T extends Document, M extends Model<T>> {
 
 export interface TcDbService<
   T extends Document = Document,
-  M extends Model<T> = Model<T>
+  M extends Model<any> = Model<T>
 > extends MoleculerDBMethods {
   entityChanged(type: EntityChangedType, json: {}, ctx: Context): Promise<void>;
 
@@ -88,10 +90,8 @@ export function TcDbService(model: TcDbModel): Partial<ServiceSchema> {
 
   return {
     mixins: [BaseDBService],
-    adapter: new MongooseDbAdapter(config.mongoUrl, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    }),
+    // useNewUrlParser/useUnifiedTopology 在 mongodb driver 4+ 已无效, driver 6 移除
+    adapter: new MongooseDbAdapter(config.mongoUrl, undefined),
     model,
     actions,
     methods,

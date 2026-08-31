@@ -17,13 +17,11 @@ if (!process.env.MONGO_URL) {
   process.exit(1);
 }
 
-// 链接数据库
-mongoose.connect(process.env.MONGO_URL, (error: any) => {
-  if (!error) {
-    return console.info('Datebase connected');
-  }
-  console.error('Datebase connect error', error);
-});
+// 链接数据库 (mongoose 8 移除了 callback 签名)
+mongoose
+  .connect(process.env.MONGO_URL)
+  .then(() => console.info('Datebase connected'))
+  .catch((error) => console.error('Datebase connect error', error));
 
 app.use(compression());
 app.use(express.json());

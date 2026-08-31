@@ -913,7 +913,6 @@ class GroupService extends TcService {
           },
         },
         {
-          new: true,
           arrayFilters: [{ 'element.id': panelId }],
         }
       )

@@ -3,20 +3,17 @@ import {
   prop,
   DocumentType,
   Ref,
-  plugin,
   ReturnModelType,
 } from '@typegoose/typegoose';
-import { Base, FindOrCreate } from '@typegoose/typegoose/lib/defaultClasses';
+import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { User } from './user';
-import findorcreate from 'mongoose-findorcreate';
-import type { Types } from 'mongoose';
+import type { FilterQuery, Types } from 'mongoose';
 
 /**
  * 好友请求
  * 单向好友结构
  */
-@plugin(findorcreate)
-export class Friend extends FindOrCreate implements Base {
+export class Friend implements Base {
   _id: Types.ObjectId;
   id: string;
 
@@ -40,8 +37,24 @@ export class Friend extends FindOrCreate implements Base {
   @prop()
   createdAt: Date;
 
+  /**
+   * typegoose 12 移除了 FindOrCreate / mongoose-findorcreate(已停止维护),
+   * 改为原生 static 实现
+   */
+  static async findOrCreate(
+    this: ReturnModelType<typeof Friend>,
+    condition: FilterQuery<Friend>
+  ): Promise<{ doc: FriendDocument; created: boolean }> {
+    const existed = await this.findOne(condition);
+    if (existed) {
+      return { doc: existed, created: false };
+    }
+    const doc = await this.create(condition);
+    return { doc, created: true };
+  }
+
   static async buildFriendRelation(
-    this: ReturnModelType<FriendModel>,
+    this: ReturnModelType<typeof Friend>,
     user1: string,
     user2: string
   ) {
