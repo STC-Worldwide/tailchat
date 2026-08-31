@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "tailchat-web",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--dir",
+        "client/web",
+        "exec",
+        "cross-env",
+        "TS_NODE_PROJECT=tsconfig.node.json",
+        "NODE_ENV=development",
+        "SERVICE_URL=https://chat.stc-worldwide.com",
+        "webpack",
+        "serve",
+        "--config",
+        "./build/webpack.config.ts"
+      ],
+      "port": 11011
+    }
+  ]
+}

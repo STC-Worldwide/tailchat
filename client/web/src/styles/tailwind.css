@@ -1,12 +1,95 @@
 @import 'tailwindcss';
 
-/* Legacy JS config (content globs, custom colors/screens/plugin, darkMode,
-   important scope) loaded through Tailwind 4's compatibility layer. The
-   CSS-first @theme token migration is deliberately deferred to the design
-   token pass of the facelift. */
+/* Legacy JS config (content globs, custom screens/shadows/plugin, darkMode,
+   important scope) loaded through Tailwind 4's compatibility layer. */
 @config '../../tailwind.config.js';
 
+/* ---------------------------------------------------------------------------
+ * Design tokens — three tiers:
+ *   1. primitives: an OKLCH slate ramp (--tc-slate-*), never used directly
+ *      by components
+ *   2. semantic runtime vars (--tc-surface-*, --tc-text-*), re-pointed by
+ *      `.dark` — this is the only place light/dark differ
+ *   3. Tailwind utilities via @theme below
+ *
+ * New code uses the single-name utilities (bg-navbar, bg-sidebar, bg-surface,
+ * bg-raised, text-body, text-muted, border-subtle, *-primary) with no dark:
+ * prefix. The old paired utilities (bg-content-light dark:bg-content-dark …)
+ * stay compiling as aliases of the same vars; nothing in the repo uses a
+ * -dark utility outside a dark: variant, so both halves of every pair may
+ * safely resolve to the same theme-aware value.
+ * ------------------------------------------------------------------------- */
+
+/* `inline` is load-bearing: these tokens reference runtime vars, and a plain
+   @theme would declare them on :root, where var(--tc-*) resolves ONCE against
+   the light values and descendants inherit the already-resolved color — the
+   .dark re-point would never reach any utility. `inline` puts the var()
+   reference into each utility itself, so it resolves per-element under the
+   nearest .dark ancestor. */
+@theme inline {
+  /* semantic, theme-aware — preferred for new code */
+  --color-navbar: var(--tc-surface-navbar);
+  --color-sidebar: var(--tc-surface-sidebar);
+  --color-surface: var(--tc-surface-content);
+  --color-raised: var(--tc-surface-raised);
+  --color-body: var(--tc-text-body);
+  --color-muted: var(--tc-text-muted);
+  --color-subtle: var(--tc-border-subtle);
+  --color-primary: var(--tc-primary-color);
+  --color-primary-hover: var(--tc-primary-hover-color);
+  --color-danger: var(--tc-dangerous-color);
+  --color-danger-hover: var(--tc-dangerous-hover-color);
+
+  /* legacy aliases for the pre-facelift paired utilities */
+  --color-navbar-light: var(--tc-surface-navbar);
+  --color-navbar-dark: var(--tc-surface-navbar);
+  --color-sidebar-light: var(--tc-surface-sidebar);
+  --color-sidebar-dark: var(--tc-surface-sidebar);
+  --color-content-light: var(--tc-surface-content);
+  --color-content-dark: var(--tc-surface-content);
+  --color-typography-light: var(--tc-text-body);
+  --color-typography-dark: var(--tc-text-body);
+}
+
 @layer base {
+  :root {
+    /* tier 1 — OKLCH slate primitives (cool hue, gentle chroma) */
+    --tc-slate-50: oklch(98.4% 0.003 248);
+    --tc-slate-100: oklch(96.8% 0.007 248);
+    --tc-slate-200: oklch(92.9% 0.013 256);
+    --tc-slate-300: oklch(86.9% 0.022 253);
+    --tc-slate-400: oklch(70.4% 0.04 257);
+    --tc-slate-500: oklch(55.4% 0.046 257);
+    --tc-slate-600: oklch(44.6% 0.043 257);
+    --tc-slate-700: oklch(37.2% 0.044 257);
+    --tc-slate-800: oklch(27.9% 0.041 260);
+    --tc-slate-900: oklch(20.8% 0.042 266);
+    --tc-slate-950: oklch(12.9% 0.042 265);
+
+    /* tier 2 — semantic, light */
+    --tc-surface-navbar: var(--tc-slate-300);
+    --tc-surface-sidebar: var(--tc-slate-200);
+    --tc-surface-content: var(--tc-slate-100);
+    --tc-surface-raised: #ffffff;
+    --tc-text-body: var(--tc-slate-700);
+    --tc-text-muted: var(--tc-slate-500);
+    --tc-border-subtle: oklch(0% 0 0 / 8%);
+  }
+
+  /* tier 2 — semantic, dark. The `dark` class lives on #tailchat-app; the
+     re-point cascades from there, matching where the dark: variant applies.
+     One step deeper than the old gray-900/800/700 mapping for a richer,
+     higher-contrast dark theme. */
+  .dark {
+    --tc-surface-navbar: var(--tc-slate-950);
+    --tc-surface-sidebar: var(--tc-slate-900);
+    --tc-surface-content: var(--tc-slate-800);
+    --tc-surface-raised: var(--tc-slate-700);
+    --tc-text-body: oklch(93% 0.006 256 / 0.92);
+    --tc-text-muted: oklch(78% 0.02 256 / 0.65);
+    --tc-border-subtle: oklch(100% 0 0 / 8%);
+  }
+
   body,
   body pre {
     /* zhihu style */
