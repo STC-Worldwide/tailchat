@@ -24,3 +24,14 @@ console.error = (...args) => {
 // Mock location
 delete window.location;
 window.location = new URL('https://www.example.com/foo/index');
+
+// jsdom has no ResizeObserver (cmdk needs it)
+global.ResizeObserver = class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+};
+
+// jsdom has no scrollIntoView (cmdk scrolls the selected item into view)
+Element.prototype.scrollIntoView =
+  Element.prototype.scrollIntoView || function () {};

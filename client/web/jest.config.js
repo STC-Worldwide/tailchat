@@ -57,6 +57,9 @@ module.exports = {
   testEnvironment: 'jsdom',
   moduleNameMapper: {
     '\\.(css|less|scss)$': 'identity-obj-proxy',
+    // jest 27 cannot resolve package-exports subpaths (cmdk -> radix-ui)
+    '^@radix-ui/primitive/is-development$':
+      '@radix-ui/primitive/dist/internal/is-development.true.js',
     ...pathsToModuleNameMapper(webCompilerOptions.paths, {
       prefix: '<rootDir>/',
     }),
