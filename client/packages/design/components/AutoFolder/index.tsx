@@ -27,7 +27,7 @@ export const AutoFolder: React.FC<AutoFolderProps> = React.memo((props) => {
       if (entries[0]) {
         const { height } = entries[0].contentRect;
 
-        if (height > maxHeight) {
+        if (height > props.maxHeight) {
           setIsShowFull(false);
           setIsShowFullBtn(true);
 

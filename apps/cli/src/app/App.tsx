@@ -1,6 +1,5 @@
 import React, { useLayoutEffect, useState } from 'react';
-import { Box, Text, useStdout } from 'ink';
-import { Tabs, Tab } from 'ink-tab';
+import { Box, useStdout } from 'ink';
 import TextInput from 'ink-text-input';
 import { useScreenSize } from './hooks/useScreenSize';
 
@@ -29,17 +28,8 @@ export const App: React.FC = React.memo(() => {
         <TextInput value={text} onChange={setText} />
       </Box>
 
-      <Box>
-        <Tabs flexDirection="column" onChange={() => {}}>
-          {/* Temporary comments due to react version issues */}
-          {/* <Tab name="tab1">
-            <Text>Foo</Text>
-          </Tab>
-          <Tab name="tab2">
-            <Text>Bar</Text>
-          </Tab> */}
-        </Tabs>
-      </Box>
+      {/* ink-tab removed: its React-17-era types reject children under React 18,
+          and this app view was never finished upstream */}
     </Box>
   );
 });

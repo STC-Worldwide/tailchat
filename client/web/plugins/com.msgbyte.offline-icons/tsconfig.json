@@ -3,6 +3,5 @@
     "esModuleInterop": true,
     "jsx": "react",
     "resolveJsonModule": true,
-    "importsNotUsedAsValues": "error"
   }
 }
