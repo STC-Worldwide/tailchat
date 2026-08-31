@@ -41,3 +41,7 @@ jobs:
         run: pnpm --filter tailchat-server-sdk build
       - name: typecheck server
         run: cd server && NODE_OPTIONS=--max-old-space-size=8192 npx tsc --noEmit
+      - name: typecheck legacy admin
+        # server/admin has its own tsconfig and is NOT covered by the server
+        # workspace typecheck — v1.14.0's first build failure hid here
+        run: cd server/admin && npx tsc -p tsconfig.server.json --noEmit
