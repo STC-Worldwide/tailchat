@@ -2,7 +2,6 @@ import { FullModalFactory } from '@/components/FullModal/Factory';
 import { FullModalField } from '@/components/FullModal/Field';
 import { LanguageSelect } from '@/components/LanguageSelect';
 import { pluginColorScheme, pluginSettings } from '@/plugin/common';
-import { Select, Switch, Button } from 'antd';
 import React from 'react';
 import {
   t,
@@ -12,6 +11,9 @@ import {
 } from 'tailchat-shared';
 import _get from 'lodash/get';
 import { useMessageDensity } from '@/hooks/useMessageDensity';
+import { TcSelect } from '@/components/ui/select';
+import { TcSwitch } from '@/components/ui/switch';
+import { TcButton } from '@/components/ui/button';
 
 export const SettingsSystem: React.FC = React.memo(() => {
   const { colorScheme, setColorScheme } = useColorScheme();
@@ -26,43 +28,42 @@ export const SettingsSystem: React.FC = React.memo(() => {
       <FullModalField
         title={t('配色方案')}
         content={
-          <Select
-            style={{ width: 280 }}
-            size="large"
+          <TcSelect
+            triggerClassName="w-[280px]"
             value={colorScheme}
             onChange={setColorScheme}
-          >
-            <Select.Option value="dark">{t('暗黑模式')}</Select.Option>
-            <Select.Option value="light">{t('亮色模式')}</Select.Option>
-            <Select.Option value="auto">{t('自动')}</Select.Option>
-            {pluginColorScheme.map((pcs, i) => (
-              <Select.Option key={pcs.name + i} value={pcs.name}>
-                {pcs.label}
-              </Select.Option>
-            ))}
-          </Select>
+            options={[
+              { value: 'dark', label: t('暗黑模式') },
+              { value: 'light', label: t('亮色模式') },
+              { value: 'auto', label: t('自动') },
+              ...pluginColorScheme.map((pcs) => ({
+                value: pcs.name,
+                label: pcs.label,
+              })),
+            ]}
+          />
         }
       />
 
       <FullModalField
         title={t('消息密度')}
         content={
-          <Select
-            style={{ width: 280 }}
-            size="large"
+          <TcSelect
+            triggerClassName="w-[280px]"
             value={density}
             onChange={setDensity}
-          >
-            <Select.Option value="comfortable">{t('舒适')}</Select.Option>
-            <Select.Option value="compact">{t('紧凑')}</Select.Option>
-          </Select>
+            options={[
+              { value: 'comfortable', label: t('舒适') },
+              { value: 'compact', label: t('紧凑') },
+            ]}
+          />
         }
       />
 
       <FullModalField
         title={t('关闭消息右键菜单')}
         content={
-          <Switch
+          <TcSwitch
             checked={settings['disableMessageContextMenu'] ?? false}
             onChange={(checked) =>
               setSettings({
@@ -96,8 +97,8 @@ export const SettingsSystem: React.FC = React.memo(() => {
           '在 Alpha 模式下会有一些尚处于测试阶段的功能将会被开放，如果出现问题欢迎反馈'
         )}
         content={
-          <Switch
-            checked={isAlphaMode}
+          <TcSwitch
+            checked={isAlphaMode ?? false}
             onChange={(checked) => setAlphaMode(checked)}
           />
         }
@@ -107,9 +108,8 @@ export const SettingsSystem: React.FC = React.memo(() => {
         <FullModalField
           title={t('聊天列表虚拟化') + ' (Beta)'}
           content={
-            <Switch
+            <TcSwitch
               disabled={loading}
-              loading={loading}
               checked={settings.messageListVirtualization ?? false}
               onChange={(checked) =>
                 setSettings({
@@ -120,9 +120,9 @@ export const SettingsSystem: React.FC = React.memo(() => {
           }
         />
       )}
-      <Button type="primary" onClick={() => window.location.reload()}>
+      <TcButton variant="primary" onClick={() => window.location.reload()}>
         {t('重新加载')}
-      </Button>
+      </TcButton>
     </div>
   );
 });

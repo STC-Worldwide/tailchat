@@ -1,6 +1,7 @@
 import React from 'react';
 import { Dialog } from '@base-ui-components/react/dialog';
 import clsx from 'clsx';
+import { useAppPortalContainer } from '@/hooks/useAppPortalContainer';
 
 /**
  * 基于 Base UI 的 token 化 Dialog (facelift ui/ 基础组件)
@@ -13,9 +14,11 @@ export const TcDialog: React.FC<{
   className?: string;
   children: React.ReactNode;
 }> = React.memo(({ open, onOpenChange, title, className, children }) => {
+  const portalContainer = useAppPortalContainer();
+
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Portal>
+      <Dialog.Portal container={portalContainer}>
         <Dialog.Backdrop className="fixed inset-0 bg-black/60 z-40" />
         <Dialog.Popup
           className={clsx(

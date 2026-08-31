@@ -1,5 +1,6 @@
 import React from 'react';
 import { Tooltip } from '@base-ui-components/react/tooltip';
+import { useAppPortalContainer } from '@/hooks/useAppPortalContainer';
 
 /**
  * 基于 Base UI 的 token 化 Tooltip (facelift ui/ 基础组件)
@@ -12,10 +13,12 @@ export const TcTooltip: React.FC<{
   side?: 'top' | 'bottom' | 'left' | 'right';
   children: React.ReactElement;
 }> = React.memo(({ label, side = 'top', children }) => {
+  const portalContainer = useAppPortalContainer();
+
   return (
     <Tooltip.Root>
       <Tooltip.Trigger render={children} />
-      <Tooltip.Portal>
+      <Tooltip.Portal container={portalContainer}>
         <Tooltip.Positioner side={side} sideOffset={6} className="z-50">
           <Tooltip.Popup className="rounded-md bg-raised text-body border border-subtle shadow-elevationMedium px-2 py-1 text-xs select-none">
             {label}

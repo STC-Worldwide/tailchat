@@ -317,7 +317,7 @@ importers:
         version: 1.0.13(react@18.2.0)
       remirror:
         specifier: ^2.0.9
-        version: 2.0.9(@remirror/pm@2.0.0)(@types/node@18.11.9)(prettier@2.8.4)(prosemirror-model@1.18.1)(prosemirror-state@1.4.1)(prosemirror-view@1.28.2)
+        version: 2.0.9(@remirror/pm@2.0.0)(@types/node@18.11.9)(prettier@2.8.4)(prosemirror-model@1.25.11)(prosemirror-state@1.4.4)(prosemirror-view@1.42.3)
       str2int:
         specifier: ^1.1.0
         version: 1.1.0
@@ -579,13 +579,13 @@ importers:
         version: 3.30.5(@tiptap/core@3.30.5)(@tiptap/pm@3.30.5)(@tiptap/suggestion@3.30.5)
       '@tiptap/react':
         specifier: ^3.30.5
-        version: 3.30.5(@floating-ui/dom@1.4.5)(@tiptap/core@3.30.5)(@tiptap/pm@3.30.5)(@types/react-dom@18.0.6)(@types/react@18.0.20)(react-dom@18.2.0)(react@18.2.0)
+        version: 3.30.5(@floating-ui/dom@1.8.0)(@tiptap/core@3.30.5)(@tiptap/pm@3.30.5)(@types/react-dom@18.0.6)(@types/react@18.0.20)(react-dom@18.2.0)(react@18.2.0)
       '@tiptap/starter-kit':
         specifier: ^3.30.5
         version: 3.30.5
       '@tiptap/suggestion':
         specifier: ^3.30.5
-        version: 3.30.5(@floating-ui/dom@1.4.5)(@tiptap/core@3.30.5)(@tiptap/pm@3.30.5)
+        version: 3.30.5(@floating-ui/dom@1.8.0)(@tiptap/core@3.30.5)(@tiptap/pm@3.30.5)
       '@use-gesture/react':
         specifier: ^10.2.24
         version: 10.2.24(react@18.2.0)
@@ -604,6 +604,9 @@ importers:
       bytemd:
         specifier: ^1.21.0
         version: 1.21.0
+      class-variance-authority:
+        specifier: ^0.7.1
+        version: 0.7.1
       clsx:
         specifier: ^1.2.1
         version: 1.2.1
@@ -733,6 +736,9 @@ importers:
       tailchat-shared:
         specifier: workspace:^1.0.0
         version: link:../shared
+      tailwind-merge:
+        specifier: ^3.6.0
+        version: 3.6.0
       tailwindcss:
         specifier: ^4.3.3
         version: 4.3.3
@@ -9411,7 +9417,7 @@ packages:
       - jsdom
     dev: false
 
-  /@remirror/extension-yjs@3.0.5(@remirror/pm@2.0.0)(@types/node@18.11.9)(prosemirror-model@1.18.1)(prosemirror-state@1.4.1)(prosemirror-view@1.28.2)(yjs@13.5.41):
+  /@remirror/extension-yjs@3.0.5(@remirror/pm@2.0.0)(@types/node@18.11.9)(prosemirror-model@1.25.11)(prosemirror-state@1.4.4)(prosemirror-view@1.42.3)(yjs@13.5.41):
     resolution: {integrity: sha512-Uz6Eokq+4pF28YERLULlHLBaCYb6CJgm2VR7eNyAgFNIvaLbsnzvRksklILtcLF1gi+QqBosSOJp1mf1bnPBJw==}
     peerDependencies:
       '@remirror/pm': ^2.0.0
@@ -9421,7 +9427,7 @@ packages:
       '@remirror/core': 2.0.5(@remirror/pm@2.0.0)(@types/node@18.11.9)
       '@remirror/messages': 2.0.1
       '@remirror/pm': 2.0.0
-      y-prosemirror: 1.1.3(prosemirror-model@1.18.1)(prosemirror-state@1.4.1)(prosemirror-view@1.28.2)(y-protocols@1.0.5)(yjs@13.5.41)
+      y-prosemirror: 1.1.3(prosemirror-model@1.25.11)(prosemirror-state@1.4.4)(prosemirror-view@1.42.3)(y-protocols@1.0.5)(yjs@13.5.41)
       y-protocols: 1.0.5
       yjs: 13.5.41
     transitivePeerDependencies:
@@ -9635,7 +9641,7 @@ packages:
       react: 18.2.0
       react-color: 2.19.3(react@18.2.0)
       react-dom: 18.2.0(react@18.2.0)
-      remirror: 2.0.9(@remirror/pm@2.0.0)(@types/node@18.11.9)(prettier@2.8.4)(prosemirror-model@1.18.1)(prosemirror-state@1.4.1)(prosemirror-view@1.28.2)
+      remirror: 2.0.9(@remirror/pm@2.0.0)(@types/node@18.11.9)(prettier@2.8.4)(prosemirror-model@1.25.11)(prosemirror-state@1.4.4)(prosemirror-view@1.42.3)
     transitivePeerDependencies:
       - '@babel/core'
       - '@types/node'
@@ -12161,7 +12167,7 @@ packages:
       '@tiptap/extensions': 3.30.5(@tiptap/core@3.30.5)(@tiptap/pm@3.30.5)
     dev: false
 
-  /@tiptap/extension-floating-menu@3.30.5(@floating-ui/dom@1.4.5)(@tiptap/core@3.30.5)(@tiptap/pm@3.30.5):
+  /@tiptap/extension-floating-menu@3.30.5(@floating-ui/dom@1.8.0)(@tiptap/core@3.30.5)(@tiptap/pm@3.30.5):
     resolution: {integrity: sha512-gTjGPWUpGn8IoW533TciZJZC/81LmBgU7zee+aRMRF3ix3K2z1pJjl6knDvrRQA6Kom+yWFaiueqGNXkrk38XQ==}
     requiresBuild: true
     peerDependencies:
@@ -12169,7 +12175,7 @@ packages:
       '@tiptap/core': 3.30.5
       '@tiptap/pm': 3.30.5
     dependencies:
-      '@floating-ui/dom': 1.4.5
+      '@floating-ui/dom': 1.8.0
       '@tiptap/core': 3.30.5(@tiptap/pm@3.30.5)
       '@tiptap/pm': 3.30.5
     dev: false
@@ -12263,7 +12269,7 @@ packages:
     dependencies:
       '@tiptap/core': 3.30.5(@tiptap/pm@3.30.5)
       '@tiptap/pm': 3.30.5
-      '@tiptap/suggestion': 3.30.5(@floating-ui/dom@1.4.5)(@tiptap/core@3.30.5)(@tiptap/pm@3.30.5)
+      '@tiptap/suggestion': 3.30.5(@floating-ui/dom@1.8.0)(@tiptap/core@3.30.5)(@tiptap/pm@3.30.5)
     dev: false
 
   /@tiptap/extension-ordered-list@3.30.5(@tiptap/extension-list@3.30.5):
@@ -12334,7 +12340,7 @@ packages:
       prosemirror-view: 1.42.3
     dev: false
 
-  /@tiptap/react@3.30.5(@floating-ui/dom@1.4.5)(@tiptap/core@3.30.5)(@tiptap/pm@3.30.5)(@types/react-dom@18.0.6)(@types/react@18.0.20)(react-dom@18.2.0)(react@18.2.0):
+  /@tiptap/react@3.30.5(@floating-ui/dom@1.8.0)(@tiptap/core@3.30.5)(@tiptap/pm@3.30.5)(@types/react-dom@18.0.6)(@types/react@18.0.20)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-QtHdOmYTCMRkCf5dmLtIqFq0e/yxavkQ6ZXbtytoftWEKJf3MjBTlX4nVAgpvrLAjPmCTxiehEXXxD1AJm/Syw==}
     peerDependencies:
       '@tiptap/core': 3.30.5
@@ -12355,7 +12361,7 @@ packages:
       use-sync-external-store: 1.6.0(react@18.2.0)
     optionalDependencies:
       '@tiptap/extension-bubble-menu': 3.30.5(@tiptap/core@3.30.5)(@tiptap/pm@3.30.5)
-      '@tiptap/extension-floating-menu': 3.30.5(@floating-ui/dom@1.4.5)(@tiptap/core@3.30.5)(@tiptap/pm@3.30.5)
+      '@tiptap/extension-floating-menu': 3.30.5(@floating-ui/dom@1.8.0)(@tiptap/core@3.30.5)(@tiptap/pm@3.30.5)
     transitivePeerDependencies:
       - '@floating-ui/dom'
     dev: false
@@ -12389,14 +12395,14 @@ packages:
       '@tiptap/pm': 3.30.5
     dev: false
 
-  /@tiptap/suggestion@3.30.5(@floating-ui/dom@1.4.5)(@tiptap/core@3.30.5)(@tiptap/pm@3.30.5):
+  /@tiptap/suggestion@3.30.5(@floating-ui/dom@1.8.0)(@tiptap/core@3.30.5)(@tiptap/pm@3.30.5):
     resolution: {integrity: sha512-kXlsY2GyXlVpYKp6uSedvvfACC4Phd0I8/Gp1/7ts8fYLlkVfGco6kgqOKHxT6HcUF1pGshxkDh9lfRCakkQEA==}
     peerDependencies:
       '@floating-ui/dom': ^1.0.0
       '@tiptap/core': 3.30.5
       '@tiptap/pm': 3.30.5
     dependencies:
-      '@floating-ui/dom': 1.4.5
+      '@floating-ui/dom': 1.8.0
       '@tiptap/core': 3.30.5(@tiptap/pm@3.30.5)
       '@tiptap/pm': 3.30.5
     dev: false
@@ -15992,6 +15998,12 @@ packages:
       static-extend: 0.1.2
     dev: true
 
+  /class-variance-authority@0.7.1:
+    resolution: {integrity: sha512-Ka+9Trutv7G8M6WT6SeiRWz792K5qEqIGEGzXKhAE6xOWAY6pPH8U+9IY3oCMv6kqTmLsv7Xh/2w2RigkePMsg==}
+    dependencies:
+      clsx: 2.1.1
+    dev: false
+
   /classnames@2.3.2:
     resolution: {integrity: sha512-CSbhY4cFEJRe6/GQzIk5qXZ4Jeg5pcsP7b5peFSDpffpe1cqjASH/n9UTjBwOp6XpMSTwQ8Za2K5V02ueA7Tmw==}
     dev: false
@@ -16157,6 +16169,11 @@ packages:
   /clsx@1.2.1:
     resolution: {integrity: sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==}
     engines: {node: '>=6'}
+
+  /clsx@2.1.1:
+    resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
+    engines: {node: '>=6'}
+    dev: false
 
   /clui@0.3.6:
     resolution: {integrity: sha512-Z4UbgZILlIAjkEkZiDOa2aoYjohKx7fa6DxIh6cE9A6WNWZ61iXfQc6CmdC9SKdS5nO0P0UyQ+WfoXfB65e3HQ==}
@@ -31250,7 +31267,7 @@ packages:
     dependencies:
       mdast-squeeze-paragraphs: 4.0.0
 
-  /remirror@2.0.9(@remirror/pm@2.0.0)(@types/node@18.11.9)(prettier@2.8.4)(prosemirror-model@1.18.1)(prosemirror-state@1.4.1)(prosemirror-view@1.28.2):
+  /remirror@2.0.9(@remirror/pm@2.0.0)(@types/node@18.11.9)(prettier@2.8.4)(prosemirror-model@1.25.11)(prosemirror-state@1.4.4)(prosemirror-view@1.42.3):
     resolution: {integrity: sha512-Vr4M9ZyPbkxR3ddhhmV0T/rgIzMhbygxHFANfLuvzaRf0iOeBWJSNkoipd1xU/496MPmkwKUqVy9EsoSEwQXdg==}
     peerDependencies:
       '@remirror/pm': ^2.0.0
@@ -31318,7 +31335,7 @@ packages:
       '@remirror/extension-trailing-node': 2.0.5(@remirror/pm@2.0.0)(@types/node@18.11.9)
       '@remirror/extension-underline': 2.0.5(@remirror/pm@2.0.0)(@types/node@18.11.9)
       '@remirror/extension-whitespace': 2.0.5(@remirror/pm@2.0.0)(@types/node@18.11.9)
-      '@remirror/extension-yjs': 3.0.5(@remirror/pm@2.0.0)(@types/node@18.11.9)(prosemirror-model@1.18.1)(prosemirror-state@1.4.1)(prosemirror-view@1.28.2)(yjs@13.5.41)
+      '@remirror/extension-yjs': 3.0.5(@remirror/pm@2.0.0)(@types/node@18.11.9)(prosemirror-model@1.25.11)(prosemirror-state@1.4.4)(prosemirror-view@1.42.3)(yjs@13.5.41)
       '@remirror/icons': 2.0.0
       '@remirror/pm': 2.0.0
       '@remirror/preset-core': 2.0.6(@remirror/pm@2.0.0)(@types/node@18.11.9)
@@ -33548,6 +33565,10 @@ packages:
       - supports-color
       - thrift
       - winston
+    dev: false
+
+  /tailwind-merge@3.6.0:
+    resolution: {integrity: sha512-uxL7qAVQriqRQPAyK3pj66VqskWqoZ37PW94jwOTwNfq/z9oyu1V+eqrZqtR2+fCiXdYOZe/Modt8GtvqNzu+w==}
     dev: false
 
   /tailwindcss@3.4.19:
@@ -36380,7 +36401,7 @@ packages:
     resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}
     engines: {node: '>=0.4'}
 
-  /y-prosemirror@1.1.3(prosemirror-model@1.18.1)(prosemirror-state@1.4.1)(prosemirror-view@1.28.2)(y-protocols@1.0.5)(yjs@13.5.41):
+  /y-prosemirror@1.1.3(prosemirror-model@1.25.11)(prosemirror-state@1.4.4)(prosemirror-view@1.42.3)(y-protocols@1.0.5)(yjs@13.5.41):
     resolution: {integrity: sha512-FZW/mm8SxHy/iO4RG40LAIrzzoh6qDNQBdrK20JJSh7Rq41CifVhsydMbara44gGJkGRC5s4CQtJAZUqzVM4rw==}
     peerDependencies:
       prosemirror-model: ^1.7.1
@@ -36390,9 +36411,9 @@ packages:
       yjs: ^13.5.38
     dependencies:
       lib0: 0.2.52
-      prosemirror-model: 1.18.1
-      prosemirror-state: 1.4.1
-      prosemirror-view: 1.28.2
+      prosemirror-model: 1.25.11
+      prosemirror-state: 1.4.4
+      prosemirror-view: 1.42.3
       y-protocols: 1.0.5
       yjs: 13.5.41
     dev: false
