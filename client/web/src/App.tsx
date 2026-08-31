@@ -23,6 +23,7 @@ import { Helmet } from 'react-helmet';
 import { useRecordMeasure } from './utils/measure-helper';
 import { getPopupContainer, preventDefault } from './utils/dom-helper';
 import { LoadingSpinner } from './components/LoadingSpinner';
+import { TcTooltipProvider } from './components/ui/tooltip';
 import { pluginRootRoute } from './plugin/common';
 import { PortalHost as FallbackPortalHost } from './components/Portal';
 import isElectron from 'is-electron';
@@ -112,7 +113,7 @@ const AppContainer: React.FC<PropsWithChildren> = React.memo((props) => {
       )}
       onContextMenu={preventDefault}
     >
-      {props.children}
+      <TcTooltipProvider>{props.children}</TcTooltipProvider>
     </div>
   );
 });

@@ -14,9 +14,11 @@ import {
   getCachedUserInfo,
   isValidStr,
   t,
+  useAlphaMode,
   useEvent,
   useSharedEventHandler,
 } from 'tailchat-shared';
+import { TiptapChatInput } from './tiptap/TiptapChatInput';
 import type {
   GroupPanelSlowMode,
   SendMessagePayloadMeta,
@@ -58,6 +60,7 @@ export const ChatInputBox: React.FC<ChatInputBoxProps> = React.memo((props) => {
   const [message, setMessage] = useState('');
   const [mentions, setMentions] = useState<string[]>([]);
   const { disabled } = useChatInputMentionsContext();
+  const { isAlphaMode } = useAlphaMode();
   const { runPasteHandlers, pasteHandlerContainer } = usePasteHandler();
   const {
     status: slowModeStatus,
@@ -200,16 +203,30 @@ export const ChatInputBox: React.FC<ChatInputBoxProps> = React.memo((props) => {
         <div className="bg-white dark:bg-gray-600 flex rounded-md items-center relative">
           {/* This w-0 is magic to ensure show mention and long text */}
           <div className="flex-1 w-0">
-            <ChatInputBoxInput
-              inputRef={inputRef}
-              value={message}
-              onChange={(message, mentions) => {
-                setMessage(message);
-                setMentions(mentions);
-              }}
-              onKeyDown={handleKeyDown}
-              onPaste={handlePaste}
-            />
+            {/* alpha 模式下启用 tiptap 富文本输入框 (facelift) */}
+            {isAlphaMode ? (
+              <TiptapChatInput
+                inputRef={inputRef}
+                value={message}
+                onChange={(message, mentions) => {
+                  setMessage(message);
+                  setMentions(mentions);
+                }}
+                onKeyDown={handleKeyDown}
+                onPaste={handlePaste}
+              />
+            ) : (
+              <ChatInputBoxInput
+                inputRef={inputRef}
+                value={message}
+                onChange={(message, mentions) => {
+                  setMessage(message);
+                  setMentions(mentions);
+                }}
+                onKeyDown={handleKeyDown}
+                onPaste={handlePaste}
+              />
+            )}
           </div>
 
           {pasteHandlerContainer}

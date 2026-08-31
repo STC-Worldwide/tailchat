@@ -25,6 +25,7 @@ import { stopPropagation } from '@/utils/dom-helper';
 import { AutoFolder, Avatar, Icon } from 'tailchat-design';
 import { MessageAckContainer } from './MessageAckContainer';
 import { UserPopover } from '@/components/popover/UserPopover';
+import { TcTooltip } from '@/components/ui/tooltip';
 import _isEmpty from 'lodash/isEmpty';
 import type { LocalChatMessage } from 'tailchat-shared/model/message';
 import './Item.less';
@@ -53,10 +54,14 @@ const MessageQuote: React.FC<{ payload: ChatMessage }> = React.memo(
 );
 MessageQuote.displayName = 'MessageQuote';
 
-const MessageActionIcon: React.FC<{ icon: string }> = (props) => (
-  <div className="px-0.5 w-6 h-6 flex justify-center items-center opacity-60 hover:opacity-100">
-    <Icon icon={props.icon} />
-  </div>
+const MessageActionIcon: React.FC<{ icon: string; label: string }> = (
+  props
+) => (
+  <TcTooltip label={props.label}>
+    <div className="px-0.5 w-6 h-6 flex justify-center items-center opacity-60 hover:opacity-100">
+      <Icon icon={props.icon} />
+    </div>
+  </TcTooltip>
 );
 
 /**
@@ -208,7 +213,10 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
               onOpenChange={setIsActionBtnActive}
             >
               <div>
-                <MessageActionIcon icon="mdi:emoticon-happy-outline" />
+                <MessageActionIcon
+                  icon="mdi:emoticon-happy-outline"
+                  label={t('添加反应')}
+                />
               </div>
             </TcPopover>
 
@@ -219,7 +227,10 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
               onOpenChange={setIsActionBtnActive}
             >
               <div>
-                <MessageActionIcon icon="mdi:dots-horizontal" />
+                <MessageActionIcon
+                  icon="mdi:dots-horizontal"
+                  label={t('更多')}
+                />
               </div>
             </Dropdown>
           </div>
