@@ -8,8 +8,8 @@
     "isolatedModules": true,
     "module": "CommonJS",
     "moduleResolution": "node",
+    "skipLibCheck": true,
     "strict": true,
-    "importsNotUsedAsValues": "error",
   },
   "include": ["./src/*"]
 }
