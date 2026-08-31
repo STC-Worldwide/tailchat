@@ -44,7 +44,7 @@ const MessageQuote: React.FC<{ payload: ChatMessage }> = React.memo(
     }
 
     return (
-      <div className="chat-message-item_quote border-l-4 border-black/20 pl-2 opacity-80">
+      <div className="chat-message-item_quote border-l-2 border-black/20 dark:border-white/25 pl-2 text-muted">
         {t('回复')} <UserName userId={String(quote.author)} />:{' '}
         <span>{getMessageRender(quote.content)}</span>
       </div>
@@ -87,10 +87,12 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
     return (
       <div
         className={clsx(
-          'chat-message-item flex px-2 mobile:px-0 group relative select-text text-sm',
+          'chat-message-item flex px-2 mobile:px-0 group relative select-text text-sm py-0.5',
+          // 分组首条消息与上一组拉开间距
+          showAvatar && 'mt-2.5',
           {
-            'bg-black/10 ': isActionBtnActive,
-            'hover:bg-black/5 ': !isActionBtnActive,
+            'bg-black/10 dark:bg-white/10': isActionBtnActive,
+            'hover:bg-black/5 dark:hover:bg-white/5': !isActionBtnActive,
           }
         )}
         data-message-id={payload._id}
@@ -115,7 +117,7 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
               />
             </Popover>
           ) : (
-            <div className="hidden group-hover:block opacity-40">
+            <div className="hidden group-hover:block text-xs text-muted leading-6">
               {formatShortTime(payload.createdAt)}
             </div>
           )}
@@ -138,7 +140,8 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
                 <div className="font-bold">
                   {userInfo.nickname || <span>&nbsp;</span>}
                 </div>
-                <div className="hidden group-hover:block opacity-40 ml-1 text-sm">
+                {/* 分组首条的时间常显, 不再只在 hover 时出现 */}
+                <div className="text-xs text-muted ml-2">
                   {formatShortTime(payload.createdAt)}
                 </div>
               </div>
@@ -189,7 +192,7 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
         {!disableOperate && (
           <div
             className={clsx(
-              'rounded absolute right-2 cursor-pointer -top-3 shadow-sm flex',
+              'rounded-md border border-subtle overflow-hidden absolute right-2 cursor-pointer -top-3 shadow-sm flex',
               {
                 'opacity-0 group-hover:opacity-100 bg-white/80 hover:bg-white dark:bg-black/80 dark:hover:bg-black':
                   !isActionBtnActive,
@@ -234,7 +237,7 @@ const SystemMessage: React.FC<ChatMessageItemProps> = React.memo(
   ({ payload }) => {
     return (
       <div className="text-center">
-        <div className="bg-black/20 rounded inline-block py-0.5 px-2 my-1 mx-2 text-sm">
+        <div className="bg-black/10 dark:bg-white/10 text-muted rounded inline-block py-0.5 px-2 my-1 mx-2 text-sm">
           {payload.content}
         </div>
       </div>
