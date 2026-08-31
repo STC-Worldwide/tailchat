@@ -10,7 +10,7 @@ RUN ulimit -n 10240
 
 # Install dependencies
 RUN npm install -g pnpm@8.15.8
-RUN npm install -g tailchat-cli@latest
+RUN npm install -g tailchat-cli@1.5.14
 
 # Add mc for minio
 RUN wget https://dl.min.io/client/mc/release/linux-amd64/mc -O /usr/local/bin/mc
