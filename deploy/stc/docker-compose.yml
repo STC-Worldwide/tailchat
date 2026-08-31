@@ -88,10 +88,13 @@ services:
     command: pnpm start:admin
 
   mongo:
-    image: mongo:4
+    # 4 -> 7 done 2026-08-31 by dump/restore into a fresh volume (mongo 7
+    # cannot open 4.x data files in place). `data` holds the final mongo:4
+    # state as rollback — see README-STC "MongoDB 4 -> 7 migration".
+    image: mongo:7
     restart: on-failure
     volumes:
-      - data:/data/db
+      - data7:/data/db
     networks:
       - internal
 
@@ -154,7 +157,8 @@ networks:
     name: tailchat-internal
 
 volumes:
-  data:
+  data: # pre-migration mongo:4 data, kept as rollback
+  data7:
   storage:
   caddy_data:
   caddy_config:

@@ -51,6 +51,23 @@ MinIO volume into `/root/backups/tailchat/`, keeping 14 days.
 Restore: stop the stack, `mongorestore` the dump into the `mongo` container, untar the
 MinIO volume back into `tailchat_storage`, start the stack.
 
+## MongoDB 4 -> 7 migration (2026-08-31)
+
+mongo:7 cannot open 4.x data files in place, so the migration was dump/restore into a
+fresh volume rather than an image swap:
+
+1. `docker compose stop service-core service-openapi service-all-plugins tailchat-admin`
+   (stop writes; mongo/redis/minio/caddy stay up)
+2. `docker compose exec -T mongo mongodump --archive --gzip --db tailchat > /root/backups/tailchat/pre-mongo7.archive.gz`
+3. Copy the mongo:7 compose (volume `data7`) to `/opt/tailchat/`, then
+   `docker compose up -d mongo` — recreates mongo on 7 with an empty volume
+4. `docker compose exec -T mongo mongorestore --archive --gzip < /root/backups/tailchat/pre-mongo7.archive.gz`
+5. `docker compose up -d`, then smoke-test `/health`
+
+The old `tailchat_data` volume holds the final mongo:4 state untouched. Rollback =
+restore the pre-migration compose (mongo:4 + `data`) and `up -d`. Remove the volume
+only after the mongo:7 stack has soaked.
+
 ## Ports exposed publicly
 
 Only Caddy's 80/443 (+443/udp for HTTP/3). Docker-published ports bypass the host's

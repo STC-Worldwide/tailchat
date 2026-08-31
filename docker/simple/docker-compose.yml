@@ -28,7 +28,7 @@ services:
 
   # Database
   mongo:
-    image: mongo:4
+    image: mongo:7
     restart: on-failure
     volumes:
       - data:/data/db
