@@ -14,7 +14,7 @@ import {
 } from 'tailchat-shared';
 import { useRenderPluginMessageInterpreter } from './useRenderPluginMessageInterpreter';
 import { getMessageRender, pluginMessageExtraParsers } from '@/plugin/common';
-import { Divider, Dropdown, Popover } from 'antd';
+import { Divider, Popover } from 'antd';
 import { UserName } from '@/components/UserName';
 import clsx from 'clsx';
 import { useChatMessageItemAction } from './useChatMessageItemAction';
@@ -26,7 +26,11 @@ import { AutoFolder, Avatar, Icon } from 'tailchat-design';
 import { MessageAckContainer } from './MessageAckContainer';
 import { UserPopover } from '@/components/popover/UserPopover';
 import { TcTooltip } from '@/components/ui/tooltip';
-import { TcDropdown, type TcDropdownMenu } from '@/components/ui/dropdown';
+import {
+  TcDropdown,
+  TcContextMenu,
+  type TcDropdownMenu,
+} from '@/components/ui/dropdown';
 import _isEmpty from 'lodash/isEmpty';
 import type { LocalChatMessage } from 'tailchat-shared/model/message';
 import './Item.less';
@@ -131,10 +135,8 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
         </div>
 
         {/* 主体 */}
-        <Dropdown
-          menu={moreActions}
-          placement="bottomLeft"
-          trigger={['contextMenu']}
+        <TcContextMenu
+          menu={moreActions as unknown as TcDropdownMenu}
           disabled={settings['disableMessageContextMenu']}
           onOpenChange={setIsActionBtnActive}
         >
@@ -193,7 +195,7 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
             {/* 消息反应 */}
             {reactions}
           </div>
-        </Dropdown>
+        </TcContextMenu>
 
         {/* 操作 */}
         {!disableOperate && (
