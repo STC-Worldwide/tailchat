@@ -56,9 +56,7 @@ export const ChatDropArea: React.FC = React.memo(() => {
   return (
     <div
       ref={ref}
-      className={
-        'absolute inset-0 bg-white bg-opacity-50 dark:bg-black dark:bg-opacity-50 p-4'
-      }
+      className={'absolute inset-0 bg-white/50 dark:bg-black/50 p-4'}
     >
       <div className="h-full w-full border-dashed border-8 flex flex-col justify-center items-center">
         <div>

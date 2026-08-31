@@ -27,7 +27,7 @@ export const FileCard: React.FC<{
             <span className="ml-1">{t('文件')}</span>
           </div>
 
-          <div className="text-sm text-black text-opacity-60 dark:text-white dark:text-opacity-60">
+          <div className="text-sm text-black/60 dark:text-white/60 ">
             {payload.label}
           </div>
         </div>

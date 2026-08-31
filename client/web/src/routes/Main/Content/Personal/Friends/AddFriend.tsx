@@ -44,7 +44,7 @@ const SearchFriendResult: React.FC<{
     <div>
       <Divider />
 
-      <div className="rounded-md border border-black border-opacity-30 px-4 py-3 bg-black bg-opacity-10 flex justify-between items-center mobile:flex-col">
+      <div className="rounded-md border border-black/30 px-4 py-3 bg-black/10 flex justify-between items-center mobile:flex-col">
         <div className="mobile:w-full mobile:mb-1">
           <Avatar
             className="mb-3"
@@ -54,7 +54,7 @@ const SearchFriendResult: React.FC<{
           />
           <div className="text-lg">
             {result.nickname}
-            <span className="text-opacity-60 text-sm text-white">
+            <span className=" text-sm text-white/60">
               #{result.discriminator}
             </span>
           </div>
@@ -82,7 +82,7 @@ const SelfIdentify: React.FC = React.memo(() => {
     <div>
       <Divider />
 
-      <div className="rounded-md border border-black border-opacity-30 px-4 py-3 bg-black bg-opacity-10 text-center">
+      <div className="rounded-md border border-black/30 px-4 py-3 bg-black/10 text-center">
         <div>{t('您的个人唯一标识')}</div>
         <Typography.Title level={4} copyable={true} className="select-text">
           {uniqueName}
@@ -119,7 +119,7 @@ export const AddFriend: React.FC = React.memo(() => {
         </Trans>
       </div>
 
-      <div className="px-4 py-2 my-3 flex border border-black border-opacity-30 rounded items-center bg-black bg-opacity-10 mobile:flex-col">
+      <div className="px-4 py-2 my-3 flex border border-black/30 rounded items-center bg-black/10 mobile:flex-col">
         <input
           className="bg-transparent flex-1 text-base leading-9 outline-none mobile:w-full mobile:mb-1"
           placeholder={t('用户昵称#0000')}

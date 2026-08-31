@@ -25,11 +25,13 @@ export const GroupPanelItem: React.FC<{
     <Link className="block" to={to}>
       <div
         className={clsx(
-          'w-full hover:bg-black hover:bg-opacity-20 dark:hover:bg-white dark:hover:bg-opacity-20 cursor-pointer text-gray-900 dark:text-white rounded px-1 h-8 flex items-center text-base group',
+          'w-full hover:bg-black/20 dark:hover:bg-white/20 cursor-pointer rounded px-1 h-8 flex items-center text-base group',
           {
-            'bg-black bg-opacity-20 dark:bg-white dark:bg-opacity-20': isActive,
+            'bg-black/20 dark:bg-white/20 ': isActive,
           },
-          dimmed && 'text-opacity-40 dark:text-opacity-40'
+          dimmed
+            ? 'text-gray-900/40 dark:text-white/40'
+            : 'text-gray-900 dark:text-white'
         )}
       >
         <div className={clsx('flex items-center justify-center px-1 mr-1')}>
@@ -38,8 +40,10 @@ export const GroupPanelItem: React.FC<{
 
         <Typography.Text
           className={clsx(
-            'flex-1 text-gray-900 dark:text-white',
-            dimmed && 'text-opacity-40 dark:text-opacity-40'
+            'flex-1',
+            dimmed
+              ? 'text-gray-900/40 dark:text-white/40'
+              : 'text-gray-900 dark:text-white'
           )}
           ellipsis={true}
         >

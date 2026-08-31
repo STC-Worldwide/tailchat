@@ -5,7 +5,7 @@ export const CardWrapper: React.FC<React.PropsWithChildren> = React.memo(
     return (
       <div className="w-3/4">
         <div
-          className="max-w-full border border-black border-opacity-20 rounded-md p-2 bg-black bg-opacity-5 dark:bg-black dark:bg-opacity-10 inline-flex overflow-hidden"
+          className="max-w-full border border-black/20 rounded-md p-2 bg-black/5 dark:bg-black/10 inline-flex overflow-hidden"
           style={{ minWidth: 240 }}
         >
           {props.children}

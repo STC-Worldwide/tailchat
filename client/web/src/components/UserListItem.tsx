@@ -18,7 +18,7 @@ export const UserListItem: React.FC<UserListItemProps> = React.memo((props) => {
   const userName = userInfo.nickname;
 
   return (
-    <div className="flex items-center h-14 px-2.5 rounded group bg-black bg-opacity-0 hover:bg-opacity-20 dark:bg-white dark:bg-opacity-0 dark:hover:bg-opacity-20">
+    <div className="flex items-center h-14 px-2.5 rounded group bg-black/0 hover:bg-black/20 dark:bg-white/0 dark:hover:bg-white/20">
       <Skeleton
         loading={_isEmpty(userInfo)}
         avatar={true}

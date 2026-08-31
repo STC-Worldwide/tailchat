@@ -35,9 +35,9 @@ const SidebarViewMenuItemTitle: React.FC<
 > = (props) => (
   <div
     className={clsx(
-      'rounded-sm px-1.5 py-2.5 mb-1 text-gray-700 dark:text-gray-300 cursor-pointer  hover:bg-black hover:bg-opacity-10 hover:text-gray-800 dark:hover:text-gray-200',
+      'rounded-sm px-1.5 py-2.5 mb-1 text-gray-700 dark:text-gray-300 cursor-pointer hover:bg-black/10 hover:text-gray-800 dark:hover:text-gray-200',
       {
-        'bg-black bg-opacity-10 text-gray-900 dark:text-white': props.active,
+        'bg-black/10 text-gray-900 dark:text-white': props.active,
         'text-red-500': props.isDanger,
       }
     )}
@@ -148,7 +148,7 @@ export const SidebarView: React.FC<SidebarViewProps> = React.memo((props) => {
     <SidebarViewContext.Provider value={{ content, setContent }}>
       <div className="flex w-full h-full mobile:flex-col mobile:overflow-auto">
         <div
-          className="bg-black bg-opacity-10 flex flex-col justify-start items-end py-20 px-2.5 mobile:items-start mobile:py-10 text-sm"
+          className="bg-black/10 flex flex-col justify-start items-end py-20 px-2.5 mobile:items-start mobile:py-10 text-sm"
           style={{ flex: '1 0 218px' }}
         >
           {menu.map((item, i) => (

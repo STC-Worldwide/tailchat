@@ -31,7 +31,7 @@ const ReactionItem: React.FC<{
   const usernames = useUsernames(reaction.users);
 
   return (
-    <div className="py-0.5 px-1 bg-black bg-opacity-20 hover:bg-opacity-40 rounded cursor-pointer">
+    <div className="py-0.5 px-1 bg-black/20 hover:bg-black/40 rounded cursor-pointer">
       <Tooltip title={usernames.join(', ')}>
         <div className="flex" onClick={onClick}>
           <Emoji emoji={reaction.name} />

@@ -37,7 +37,7 @@ const QuickSwitcher: React.FC = React.memo(() => {
     >
       <Command
         label={t('快速搜索、跳转')}
-        className="self-start mt-[20vh] w-[560px] max-w-[90vw] bg-raised text-body rounded-lg shadow-elevationHigh overflow-hidden"
+        className="self-start mt-[20vh] w-[560px] max-w-[90vw] bg-raised text-body rounded-lg shadow-elevationHigh border border-subtle overflow-hidden"
         onClick={stopPropagation}
       >
         <Command.Input

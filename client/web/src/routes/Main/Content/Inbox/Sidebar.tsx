@@ -184,9 +184,9 @@ const InboxSidebarItem: React.FC<{
     <Link to={props.to}>
       <div
         className={clsx(
-          'p-2 overflow-auto cursor-pointer hover:bg-black hover:bg-opacity-10 dark:hover:bg-white dark:hover:bg-opacity-10 border-r-4 rounded',
+          'p-2 overflow-auto cursor-pointer hover:bg-black/10 dark:hover:bg-white/10 border-r-4 rounded',
           {
-            'bg-black bg-opacity-10 dark:bg-white dark:bg-opacity-10': isActive,
+            'bg-black/10 dark:bg-white/10 ': isActive,
           },
           props.readed ? 'border-transparent' : 'border-green-500'
         )}
@@ -194,10 +194,10 @@ const InboxSidebarItem: React.FC<{
         <div className="text-lg overflow-ellipsis overflow-hidden text-gray-700 dark:text-white">
           {props.title || <span>&nbsp;</span>}
         </div>
-        <div className="break-all text-opacity-80 text-black dark:text-opacity-80 dark:text-white text-sm p-1 border-l-2 border-gray-500 border-opacity-50">
+        <div className="break-all text-black/80 dark:text-white/80 text-sm p-1 border-l-2 border-gray-500/50">
           {props.desc}
         </div>
-        <div className="text-xs text-opacity-50 text-black dark:text-opacity-50 dark:text-white">
+        <div className="text-xs text-black/50 dark:text-white/50">
           {t('来自')}: {props.source}
         </div>
       </div>

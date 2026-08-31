@@ -14,7 +14,7 @@ const LogoLink: React.FC<{
 
   return (
     <a
-      className="p-2.5 hover:bg-black hover:bg-opacity-20 rounded"
+      className="p-2.5 hover:bg-black/20 rounded"
       href={src}
       target="_blank"
       rel="noreferrer"
@@ -29,7 +29,7 @@ export const SettingsAbout: React.FC = React.memo(() => {
   return (
     <div className="select-text">
       <img
-        className="float-right select-none bg-black rounded-2xl bg-opacity-40 p-2"
+        className="float-right select-none bg-black/40 rounded-2xl p-2"
         width={128}
         height={128}
         src={logoUrl}
@@ -55,7 +55,7 @@ export const SettingsAbout: React.FC = React.memo(() => {
         {t('当前版本')}: {version}
       </Paragraph>
 
-      <div className="text-8xl flex flex-wrap space-x-4 bg-black p-4 rounded-md bg-opacity-20">
+      <div className="text-8xl flex flex-wrap space-x-4 bg-black/20 p-4 rounded-md ">
         <LogoLink
           src="https://github.com/msgbyte/tailchat"
           icon="logos:github-octocat"

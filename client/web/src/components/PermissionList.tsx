@@ -122,7 +122,7 @@ interface PermissionItemProps {
 
 const PermissionItem: React.FC<PermissionItemProps> = React.memo((props) => {
   return (
-    <div className="mx-2 py-3 border-b border-white border-opacity-20">
+    <div className="mx-2 py-3 border-b border-white/20 ">
       <Row>
         <Col flex={1} className="font-bold">
           {props.title}

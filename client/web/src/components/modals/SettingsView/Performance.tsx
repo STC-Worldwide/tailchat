@@ -15,7 +15,7 @@ export const SettingsPerformance: React.FC = React.memo(() => {
     <div>
       <div className="mb-4">
         <div>Vitals:</div>
-        <div className="rounded bg-black bg-opacity-10 p-2">
+        <div className="rounded bg-black/10 p-2">
           {Object.entries(vitals).map(([n, t]) => (
             <div key={n}>
               {n}: {t}ms
@@ -26,7 +26,7 @@ export const SettingsPerformance: React.FC = React.memo(() => {
 
       <div className="mb-4">
         <div>Record:</div>
-        <div className="rounded bg-black bg-opacity-10 p-2">
+        <div className="rounded bg-black/10 p-2">
           {Object.entries(record).map(([n, t]) => (
             <div key={n}>
               {n}: {t}ms
@@ -37,7 +37,7 @@ export const SettingsPerformance: React.FC = React.memo(() => {
 
       <div>
         <div>TimeUsage:</div>
-        <div className="rounded bg-black bg-opacity-10 p-2">
+        <div className="rounded bg-black/10 p-2">
           {Object.entries(timeUsage).map(([n, t]) => (
             <div key={n}>
               {n}: {t}ms
