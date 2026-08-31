@@ -1,0 +1,43 @@
+name: "Server CI"
+
+# The server had no PR-time build check — client CI is path-filtered to
+# client/**, and the Docker image only builds after merge. This typechecks
+# the SDK + server workspaces on the VPS runner (fast persistent store)
+# before a server change can land.
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "server/**"
+      - "pnpm-lock.yaml"
+      - "package.json"
+  pull_request:
+    branches:
+      - master
+    paths:
+      - "server/**"
+      - "pnpm-lock.yaml"
+      - "package.json"
+  workflow_dispatch:
+
+jobs:
+  typecheck:
+    # never run fork PRs on the self-hosted runner
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, stc-vps]
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: Use Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+      - uses: pnpm/action-setup@v4
+      - name: install
+        run: pnpm install --frozen-lockfile
+      - name: build sdk
+        run: pnpm --filter tailchat-server-sdk build
+      - name: typecheck server
+        run: cd server && NODE_OPTIONS=--max-old-space-size=8192 npx tsc --noEmit
