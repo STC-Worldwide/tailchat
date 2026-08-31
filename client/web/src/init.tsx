@@ -12,12 +12,10 @@ import {
   t,
   fetchGlobalClientConfig,
   isDevelopment,
-  isProduction,
   setErrorHook,
   showToasts,
   parseUrlStr,
   onLanguageLoaded,
-  version,
   setNotification,
 } from 'tailchat-shared';
 import { getPopupContainer } from './utils/dom-helper';
@@ -139,16 +137,7 @@ setErrorHook((err) => {
 /**
  * 获取前端配置
  */
-fetchGlobalClientConfig()
-  .then((config) => {
-    if (isProduction && !config.disableTelemetry) {
-      // 发送遥测信息
-      fetch(
-        `https://tianji.moonrailgun.com/telemetry/clnzoxcy10001vy2ohi4obbi0/cltpqundt1r4hoi4gk72uj3un.gif?name=tailchat&url=${window.location.origin}&v=${version}`
-      ).catch(() => {});
-    }
-  })
-  .catch((e) => {
-    showErrorToasts(t('全局配置加载失败'));
-    console.error('全局配置加载失败', e);
-  });
+fetchGlobalClientConfig().catch((e) => {
+  showErrorToasts(t('全局配置加载失败'));
+  console.error('全局配置加载失败', e);
+});

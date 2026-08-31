@@ -1,7 +1,8 @@
 # STC Worldwide production deployment — chat.<domain> on netcup-vps-01
 # Adapted from /docker-compose.yml + /docker/admin.yml upstream.
 # Differences from upstream:
-#   - pinned published image instead of local build
+#   - pinned STC-built image from GHCR (built by .github/workflows/docker-publish.yml
+#     on version tags; the GHCR package must be public or the VPS needs a pull token)
 #   - Caddy terminates public TLS (80/443); traefik stays internal (loopback debug bind only)
 #   - MinIO root credentials come from .env (symlink to docker-compose.env), not hard-coded
 #   - legacy admin only; admin-next postdates the 1.11.12 image and is not in it
@@ -12,7 +13,7 @@
 
 services:
   service-core:
-    image: moonrailgun/tailchat:1.11.12
+    image: ghcr.io/stc-worldwide/tailchat:1.12.0
     restart: unless-stopped
     env_file: docker-compose.env
     environment:
@@ -39,7 +40,7 @@ services:
       - internal
 
   service-openapi:
-    image: moonrailgun/tailchat:1.11.12
+    image: ghcr.io/stc-worldwide/tailchat:1.12.0
     restart: unless-stopped
     env_file: docker-compose.env
     environment:
@@ -58,7 +59,7 @@ services:
       - internal
 
   service-all-plugins:
-    image: moonrailgun/tailchat:1.11.12
+    image: ghcr.io/stc-worldwide/tailchat:1.12.0
     restart: unless-stopped
     env_file: docker-compose.env
     environment:
@@ -71,7 +72,7 @@ services:
       - internal
 
   tailchat-admin:
-    image: moonrailgun/tailchat:1.11.12
+    image: ghcr.io/stc-worldwide/tailchat:1.12.0
     restart: unless-stopped
     env_file: docker-compose.env
     depends_on:

@@ -8,6 +8,13 @@ on:
       - "client/web/**"
       - "client/shared/**"
       - "client/packages/design/**"
+  pull_request:
+    branches:
+      - master
+    paths:
+      - "client/web/**"
+      - "client/shared/**"
+      - "client/packages/design/**"
   workflow_dispatch:
 
 jobs:
@@ -18,9 +25,9 @@ jobs:
         node-version: [18.x]
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
       - name: Cache pnpm modules
@@ -30,7 +37,7 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-
-      - uses: pnpm/action-setup@v2.0.1
+      - uses: pnpm/action-setup@v4
         with:
           version: 8.15.8
           run_install: false
@@ -43,6 +50,4 @@ jobs:
         env:
           TZ: Asia/Shanghai
       - name: Check Build
-        run: cd client/web && pnpm build:ci
-        env:
-          PERFSEE_TOKEN: ${{ secrets.PERFSEE_TOKEN }}
+        run: cd client/web && pnpm build

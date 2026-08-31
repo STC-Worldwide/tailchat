@@ -111,3 +111,6 @@ dist
 
 # TernJS port file
 .tern-port
+
+# local env overlays (per-machine secrets)
+.env.local

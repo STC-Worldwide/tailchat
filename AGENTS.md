@@ -58,8 +58,8 @@ even when local development uses a single process.
 - `server/admin`: separate Vite/React frontend and Express admin service.
 - `packages/types`: published structures shared across package boundaries.
 - `client/desktop`: current Electron shell; it loads a Tailchat web deployment.
-- `client/mobile`: React Native WebView shell and native bridges.
-- `client/desktop-old`: legacy implementation; do not use it as the default target.
+  (The former `client/mobile` RN shell and `client/desktop-old` were removed
+  from this fork in 2026-08; mobile will be a native wrap of the web client.)
 - `apps`: non-core CLI, GitHub app, OAuth demo, and embeddable widget.
 - `website`: Docusaurus documentation and marketing site.
 
@@ -98,9 +98,8 @@ The root `pnpm dev` starts the server and web development processes. Local
 development also needs the configured MongoDB, Redis, and MinIO dependencies;
 the default web and gateway ports are 11011 and 11000.
 
-`client/desktop`, `client/mobile`, and `client/desktop-old` keep independent
-Yarn lockfiles. Run Yarn from the owning directory and do not rewrite those
-locks with pnpm.
+`client/desktop` keeps an independent Yarn lockfile. Run Yarn from the owning
+directory and do not rewrite that lock with pnpm.
 
 Dependency changes must update the owning manifest and matching lockfile. Avoid
 lockfile churn unrelated to the requested dependency change.
