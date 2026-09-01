@@ -1,10 +1,10 @@
 import React from 'react';
-import { Form } from 'antd';
 import type {
   FastifyFormFieldComponent,
   FastifyFormFieldProps,
 } from 'react-fastify-form';
 import { CustomField } from 'react-fastify-form';
+import { MetaFormField } from './Field';
 
 export const FastifyFormCustom: FastifyFormFieldComponent<{
   render: (props: FastifyFormFieldProps) => React.ReactNode;
@@ -12,9 +12,9 @@ export const FastifyFormCustom: FastifyFormFieldComponent<{
   const { label } = props;
 
   return (
-    <Form.Item label={label}>
+    <MetaFormField label={label}>
       <CustomField {...props} />
-    </Form.Item>
+    </MetaFormField>
   );
 });
 FastifyFormCustom.displayName = 'FastifyFormCustom';

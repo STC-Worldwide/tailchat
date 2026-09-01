@@ -5,12 +5,18 @@ on:
     branches:
       - master
     paths:
-      - "server/admin/**"
+      - "server/admin-next/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
   pull_request:
     branches:
       - master
     paths:
-      - "server/admin/**"
+      - "server/admin-next/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
   workflow_dispatch:
 
 jobs:

@@ -1,12 +1,21 @@
-import React, { useState, useContext, PropsWithChildren } from 'react';
+import React, {
+  useState,
+  useContext,
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useRef,
+} from 'react';
 import _get from 'lodash/get';
-import { DevContainer } from 'tailchat-shared';
-import clsx from 'clsx';
+import { DevContainer, t } from 'tailchat-shared';
+import { Button } from '@/components/ui/official/button';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 export interface SidebarViewMenuItemType {
   type: 'item';
   title: string;
   content: React.ReactNode;
+  icon?: React.ReactNode;
 
   /**
    * 是否是仅开发者可见
@@ -24,29 +33,45 @@ interface SidebarViewLinkType {
   title: string;
   onClick: () => void;
   isDanger?: boolean;
+  icon?: React.ReactNode;
 }
 
 const SidebarViewMenuItemTitle: React.FC<
   PropsWithChildren<{
     active?: boolean;
     isDanger?: boolean;
+    icon?: React.ReactNode;
     onClick: () => void;
   }>
-> = (props) => (
-  <div
-    className={clsx(
-      'rounded-sm px-1.5 py-2.5 mb-1 text-gray-700 dark:text-gray-300 cursor-pointer hover:bg-black/10 hover:text-gray-800 dark:hover:text-gray-200',
-      {
-        'bg-black/10 text-gray-900 dark:text-white': props.active,
-        'text-red-500': props.isDanger,
+> = (props) => {
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const isMobile = useIsMobile();
+
+  useEffect(() => {
+    if (props.active) {
+      buttonRef.current?.scrollIntoView?.({
+        block: 'nearest',
+        inline: 'nearest',
+      });
+    }
+  }, [isMobile, props.active]);
+
+  return (
+    <Button
+      ref={buttonRef}
+      type="button"
+      variant={
+        props.isDanger ? 'destructive' : props.active ? 'secondary' : 'ghost'
       }
-    )}
-    style={{ width: 192, lineHeight: '20px' }}
-    onClick={props.onClick}
-  >
-    {props.children}
-  </div>
-);
+      className="h-9 w-48 justify-start max-md:w-auto max-md:shrink-0"
+      aria-current={props.active ? 'page' : undefined}
+      onClick={props.onClick}
+    >
+      {props.icon}
+      <span>{props.children}</span>
+    </Button>
+  );
+};
 
 interface SidebarViewContextProps {
   content: React.ReactNode;
@@ -81,16 +106,16 @@ const SidebarViewMenuItem: React.FC<SidebarViewMenuProps> = React.memo(
 
     if (menu.type === 'group') {
       return (
-        <div className="pb-2.5 mb-2.5 border-b last:border-0">
-          <div className="px-1.5 py-2.5 pt-0 text-xs font-bold uppercase">
+        <section className="mb-3 border-b border-border pb-3 last:mb-0 last:border-b-0 last:pb-0 max-md:mb-0 max-md:border-0 max-md:pb-0">
+          <h2 className="px-2 pb-2 text-xs font-medium text-muted-foreground max-md:sr-only">
             {menu.title}
-          </div>
-          <div>
+          </h2>
+          <div className="space-y-1 max-md:flex max-md:w-max max-md:flex-row max-md:space-y-0 max-md:space-x-1">
             {menu.children.map((sub, i) => (
               <SidebarViewMenuItem key={i} menu={sub} />
             ))}
           </div>
-        </div>
+        </section>
       );
     } else if (menu.type === 'item') {
       if (menu.hidden === true) {
@@ -100,6 +125,7 @@ const SidebarViewMenuItem: React.FC<SidebarViewMenuProps> = React.memo(
       const component = (
         <SidebarViewMenuItemTitle
           active={content === menu.content}
+          icon={menu.icon}
           onClick={() => setContent(menu.content)}
         >
           {menu.title}
@@ -116,6 +142,7 @@ const SidebarViewMenuItem: React.FC<SidebarViewMenuProps> = React.memo(
         <div>
           <SidebarViewMenuItemTitle
             isDanger={menu.isDanger}
+            icon={menu.icon}
             onClick={menu.onClick}
           >
             {menu.title}
@@ -132,6 +159,9 @@ SidebarViewMenuItem.displayName = 'SidebarViewMenuItem';
 interface SidebarViewProps {
   menu: SidebarViewMenuType[];
 
+  /** Accessible label for the section navigation. */
+  navigationLabel?: string;
+
   /**
    * 默认内容路径
    * @default "0.children.0.content"
@@ -139,29 +169,44 @@ interface SidebarViewProps {
   defaultContentPath: string;
 }
 export const SidebarView: React.FC<SidebarViewProps> = React.memo((props) => {
-  const { menu, defaultContentPath = '0.children.0.content' } = props;
+  const {
+    menu,
+    navigationLabel = t('系统设置'),
+    defaultContentPath = '0.children.0.content',
+  } = props;
   const [content, setContent] = useState<React.ReactNode>(
     _get(menu, defaultContentPath, null)
   );
+  const contentRef = useRef<HTMLElement | null>(null);
+  const handleChangeContent = useCallback((nextContent: React.ReactNode) => {
+    if (contentRef.current) {
+      contentRef.current.scrollTop = 0;
+    }
+    setContent(nextContent);
+  }, []);
 
   return (
-    <SidebarViewContext.Provider value={{ content, setContent }}>
-      <div className="flex w-full h-full mobile:flex-col mobile:overflow-auto">
-        <div
-          className="bg-black/10 flex flex-col justify-start items-end py-20 px-2.5 mobile:items-start mobile:py-10 text-sm"
-          style={{ flex: '1 0 218px' }}
-        >
-          {menu.map((item, i) => (
-            <SidebarViewMenuItem key={i} menu={item} />
-          ))}
-        </div>
+    <SidebarViewContext.Provider
+      value={{ content, setContent: handleChangeContent }}
+    >
+      <div className="flex h-full w-full overflow-hidden max-md:flex-col">
+        <aside className="flex w-60 shrink-0 flex-col items-end overflow-y-auto overflow-x-hidden border-r border-border bg-sidebar px-3 py-14 text-sm max-md:w-full max-md:items-start max-md:border-r-0 max-md:border-b max-md:py-3 max-md:pr-14 max-md:pl-4">
+          <nav
+            aria-label={navigationLabel}
+            className="w-48 max-md:w-full max-md:overflow-x-auto"
+          >
+            {menu.map((item, i) => (
+              <SidebarViewMenuItem key={i} menu={item} />
+            ))}
+          </nav>
+        </aside>
 
-        <div
-          className="pt-24 pb-20 px-10 mobile:pt-10 mobile:px-2 desktop:overflow-auto"
-          style={{ flex: '1 1 800px' }}
+        <main
+          ref={contentRef}
+          className="min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden px-10 pt-14 pb-16 max-md:px-5 max-md:pt-6 max-md:pb-10"
         >
           {content}
-        </div>
+        </main>
       </div>
     </SidebarViewContext.Provider>
   );

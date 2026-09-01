@@ -1,4 +1,5 @@
 import React from 'react';
+import { Separator } from './official/separator';
 import { cn } from '@/lib/utils';
 
 /**
@@ -13,16 +14,18 @@ export interface TcSeparatorProps {
 export const TcSeparator: React.FC<TcSeparatorProps> = React.memo(
   ({ className, children }) => {
     if (!children) {
-      return <hr className={cn('border-subtle', className)} />;
+      return <Separator className={className} />;
     }
 
     return (
       <div className={cn('flex items-center gap-3', className)}>
-        <hr className="flex-1 border-subtle" />
-        <span className="text-muted text-sm whitespace-nowrap">{children}</span>
-        <hr className="flex-1 border-subtle" />
+        <Separator className="flex-1" />
+        <span className="text-muted-foreground text-sm whitespace-nowrap">{children}</span>
+        <Separator className="flex-1" />
       </div>
     );
   }
 );
 TcSeparator.displayName = 'TcSeparator';
+
+export { Separator };

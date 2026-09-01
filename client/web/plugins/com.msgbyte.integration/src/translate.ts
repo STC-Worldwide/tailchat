@@ -13,6 +13,19 @@ export const Translate = {
     'zh-CN': '目前仅支持通过应用ID手动添加',
     'en-US': 'Currently only supports manual addition via app ID',
   }),
+  findApplication: localTrans({
+    'zh-CN': '查找应用',
+    'en-US': 'Find an application',
+  }),
+  findApplicationHint: localTrans({
+    'zh-CN': '输入开放平台应用 ID，查看应用信息并添加可用的机器人。',
+    'en-US':
+      'Enter an OpenAPI application ID to review it and add an available bot.',
+  }),
+  noApplicationDescription: localTrans({
+    'zh-CN': '暂无应用描述',
+    'en-US': 'No application description',
+  }),
   appId: localTrans({
     'zh-CN': '应用ID',
     'en-US': 'Application ID',

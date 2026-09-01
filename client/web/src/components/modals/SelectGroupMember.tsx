@@ -1,9 +1,10 @@
-import { Button } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { t, useAsyncFn, useGroupMemberIds } from 'tailchat-shared';
 import { ModalWrapper } from '../Modal';
 import { UserPicker } from '../UserPicker/UserPicker';
 import _without from 'lodash/without';
+import { Button } from '@/components/ui/official/button';
+import { LoaderCircleIcon } from 'lucide-react';
 
 interface SelectGroupMemberProps {
   /**
@@ -48,7 +49,13 @@ export const SelectGroupMember: React.FC<SelectGroupMemberProps> = React.memo(
         />
 
         <div className="text-right">
-          <Button type="primary" loading={loading} onClick={handleConfirm}>
+          <Button
+            type="button"
+            disabled={loading}
+            aria-busy={loading}
+            onClick={handleConfirm}
+          >
+            {loading && <LoaderCircleIcon className="animate-spin" />}
             {t('确认')}
           </Button>
         </div>

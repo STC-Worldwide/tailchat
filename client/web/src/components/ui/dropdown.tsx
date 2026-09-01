@@ -1,15 +1,35 @@
 import React from 'react';
-import { Menu } from '@base-ui-components/react/menu';
-import { ContextMenu } from '@base-ui-components/react/context-menu';
-import { cn } from '@/lib/utils';
 import { useAppPortalContainer } from '@/hooks/useAppPortalContainer';
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
+  ContextMenuTrigger,
+} from '@/components/ui/official/context-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from '@/components/ui/official/dropdown-menu';
 
 export interface TcMenuItem {
   key: React.Key;
   label?: React.ReactNode;
   icon?: React.ReactNode;
+  type?: 'divider';
+  className?: string;
   danger?: boolean;
   disabled?: boolean;
+  children?: (TcMenuItem | false | null)[];
   onClick?: (...args: any[]) => void;
 }
 
@@ -39,32 +59,103 @@ export interface TcDropdownMenu {
   items?: (TcMenuItem | false | null)[];
 }
 
-function renderMenuItems(menu: TcDropdownMenu) {
-  const items = (menu.items ?? []).filter(Boolean) as TcMenuItem[];
-
-  return items.map((item) => (
-    <Menu.Item
-      key={item.key}
-      disabled={item.disabled}
-      onClick={() => {
-        item.onClick?.();
-        menu.onClick?.();
-      }}
-      className={cn(
-        'flex items-center gap-2 px-3 py-1.5 text-sm cursor-pointer select-none',
-        'data-[highlighted]:bg-primary/15',
-        'data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed',
-        item.danger && 'text-danger'
-      )}
-    >
-      {item.icon}
-      {item.label}
-    </Menu.Item>
-  ));
+function getMenuItems(menu: TcDropdownMenu) {
+  return (menu.items ?? []).filter(Boolean) as TcMenuItem[];
 }
 
-const popupClassName =
-  'rounded-lg bg-raised text-body border border-subtle shadow-elevationMedium py-1 min-w-[160px]';
+function renderDropdownItems(
+  menu: TcDropdownMenu,
+  portalContainer: HTMLElement | null
+): React.ReactNode {
+  return getMenuItems(menu).map((item) => {
+    if (item.type === 'divider') {
+      return <DropdownMenuSeparator key={item.key} />;
+    }
+
+    if (item.children && item.children.filter(Boolean).length > 0) {
+      return (
+        <DropdownMenuSub key={item.key}>
+          <DropdownMenuSubTrigger
+            disabled={item.disabled}
+            className={item.className}
+          >
+            {item.icon}
+            <span className="min-w-0 flex-1 text-left">{item.label}</span>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent portalContainer={portalContainer}>
+            {renderDropdownItems(
+              { items: item.children, onClick: menu.onClick },
+              portalContainer
+            )}
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+      );
+    }
+
+    return (
+      <DropdownMenuItem
+        key={item.key}
+        disabled={item.disabled}
+        variant={item.danger ? 'destructive' : 'default'}
+        className={item.className}
+        onClick={() => {
+          item.onClick?.();
+          menu.onClick?.();
+        }}
+      >
+        {item.icon}
+        {item.label}
+      </DropdownMenuItem>
+    );
+  });
+}
+
+function renderContextMenuItems(
+  menu: TcDropdownMenu,
+  portalContainer: HTMLElement | null
+): React.ReactNode {
+  return getMenuItems(menu).map((item) => {
+    if (item.type === 'divider') {
+      return <ContextMenuSeparator key={item.key} />;
+    }
+
+    if (item.children && item.children.filter(Boolean).length > 0) {
+      return (
+        <ContextMenuSub key={item.key}>
+          <ContextMenuSubTrigger
+            disabled={item.disabled}
+            className={item.className}
+          >
+            {item.icon}
+            <span className="min-w-0 flex-1 text-left">{item.label}</span>
+          </ContextMenuSubTrigger>
+          <ContextMenuSubContent portalContainer={portalContainer}>
+            {renderContextMenuItems(
+              { items: item.children, onClick: menu.onClick },
+              portalContainer
+            )}
+          </ContextMenuSubContent>
+        </ContextMenuSub>
+      );
+    }
+
+    return (
+      <ContextMenuItem
+        key={item.key}
+        disabled={item.disabled}
+        variant={item.danger ? 'destructive' : 'default'}
+        className={item.className}
+        onClick={() => {
+          item.onClick?.();
+          menu.onClick?.();
+        }}
+      >
+        {item.icon}
+        {item.label}
+      </ContextMenuItem>
+    );
+  });
+}
 
 export interface TcDropdownProps {
   menu: TcDropdownMenu;
@@ -73,31 +164,25 @@ export interface TcDropdownProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-/**
- * 基于 Base UI 的 token 化 Dropdown 菜单 (facelift ui/ 基础组件) — 替代 antd Dropdown
- * 目前仅支持扁平菜单项 (无子菜单), 覆盖当前 antd MenuProps 消费方的实际用法
- */
+/** Compatibility adapter backed by the official Shadcn Dropdown Menu. */
 export const TcDropdown: React.FC<TcDropdownProps> = React.memo(
   ({ menu, children, placement = 'bottomStart', onOpenChange }) => {
     const portalContainer = useAppPortalContainer();
     const { side, align } = placementMap[placement];
 
     return (
-      <Menu.Root onOpenChange={onOpenChange}>
-        <Menu.Trigger render={children} />
-        <Menu.Portal container={portalContainer}>
-          <Menu.Positioner
-            side={side}
-            align={align}
-            sideOffset={6}
-            className="z-50"
-          >
-            <Menu.Popup className={popupClassName}>
-              {renderMenuItems(menu)}
-            </Menu.Popup>
-          </Menu.Positioner>
-        </Menu.Portal>
-      </Menu.Root>
+      <DropdownMenu onOpenChange={onOpenChange}>
+        <DropdownMenuTrigger render={children} />
+        <DropdownMenuContent
+          portalContainer={portalContainer}
+          side={side}
+          align={align}
+          sideOffset={6}
+          className="min-w-40"
+        >
+          {renderDropdownItems(menu, portalContainer)}
+        </DropdownMenuContent>
+      </DropdownMenu>
     );
   }
 );
@@ -112,15 +197,7 @@ export interface TcContextMenuProps {
   className?: string;
 }
 
-/**
- * 基于 Base UI ContextMenu 的 token 化右键菜单 (facelift ui/ 基础组件) — 替代
- * antd Dropdown trigger={['contextMenu']}。ContextMenuTrigger 自带光标定位,
- * 不需要手动算 anchor。
- *
- * Base UI 1.0.0-rc.0 的 ContextMenuTrigger.handleContextMenu 不读取
- * Root 的 disabled 状态 (只影响其他交互路径), 传 disabled 无法真正阻止右键菜单弹出。
- * disabled 时直接跳过 ContextMenu 包裹, 原样渲染子节点。
- */
+/** Compatibility adapter backed by the official Shadcn Context Menu. */
 export const TcContextMenu: React.FC<TcContextMenuProps> = React.memo(
   ({ menu, children, disabled, onOpenChange, className }) => {
     const portalContainer = useAppPortalContainer();
@@ -130,16 +207,15 @@ export const TcContextMenu: React.FC<TcContextMenuProps> = React.memo(
     }
 
     return (
-      <ContextMenu.Root disabled={disabled} onOpenChange={onOpenChange}>
-        <ContextMenu.Trigger className={className} render={children} />
-        <ContextMenu.Portal container={portalContainer}>
-          <ContextMenu.Positioner className="z-50">
-            <ContextMenu.Popup className={popupClassName}>
-              {renderMenuItems(menu)}
-            </ContextMenu.Popup>
-          </ContextMenu.Positioner>
-        </ContextMenu.Portal>
-      </ContextMenu.Root>
+      <ContextMenu disabled={disabled} onOpenChange={onOpenChange}>
+        <ContextMenuTrigger className={className} render={children} />
+        <ContextMenuContent
+          portalContainer={portalContainer}
+          className="min-w-40"
+        >
+          {renderContextMenuItems(menu, portalContainer)}
+        </ContextMenuContent>
+      </ContextMenu>
     );
   }
 );

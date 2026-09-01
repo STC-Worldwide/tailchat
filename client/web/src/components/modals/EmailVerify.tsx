@@ -16,9 +16,9 @@ import {
   WebMetaForm,
 } from 'tailchat-design';
 import { ModalWrapper } from '../Modal';
-import { Button, Input } from 'antd';
 import _compact from 'lodash/compact';
 import { Problem } from '../Problem';
+import { Button } from '@/components/ui/official/button';
 
 interface Values {
   emailOTP: string;
@@ -82,11 +82,11 @@ export const EmailVerify: React.FC<{
       {!sended ? (
         <>
           <Button
-            className="mb-2"
-            type="primary"
-            block={true}
-            size="large"
-            loading={loading}
+            type="button"
+            className="mb-2 w-full"
+            size="lg"
+            disabled={loading}
+            aria-busy={loading}
             onClick={handleSendEmail}
           >
             {t('向 {{email}} 发送认证邮件', {
@@ -94,9 +94,10 @@ export const EmailVerify: React.FC<{
             })}
           </Button>
           <Button
-            type="text"
-            block={true}
-            size="large"
+            type="button"
+            variant="ghost"
+            className="w-full"
+            size="lg"
             onClick={() => setSended(true)}
           >
             {t('已发送认证邮件')}

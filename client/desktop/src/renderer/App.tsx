@@ -1,83 +1,150 @@
 import icon from '../../assets/icon.svg';
 import { ServerItem } from './ServerItem';
-import React from 'react';
+import React, { useState } from 'react';
+import {
+  ExternalLinkIcon,
+  LogOutIcon,
+  MessageCircleMoreIcon,
+  Trash2Icon,
+} from 'lucide-react';
 import { defaultServerList, useServerStore } from './store/server';
 import { AddServerItem } from './AddServerItem';
-import { Dropdown, Modal } from 'antd';
+import { Button } from './components/ui/button';
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from './components/ui/context-menu';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from './components/ui/dialog';
 import './App.css';
 
 const Hello: React.FC = React.memo(() => {
   const { serverList, removeServer } = useServerStore();
+  const [pendingRemoval, setPendingRemoval] = useState<{
+    name?: string;
+    url: string;
+  } | null>(null);
+  const servers = [...defaultServerList, ...serverList];
 
   return (
-    <div>
-      <div className="header">
-        <h1>Select your server...</h1>
-      </div>
-      <div className="server-list">
-        {[...defaultServerList, ...serverList].map((serverInfo, i) => {
+    <main className="launcher-shell">
+      <header className="launcher-header">
+        <div className="launcher-brand">
+          <span className="launcher-brand-mark" aria-hidden="true">
+            <MessageCircleMoreIcon className="size-4" />
+          </span>
+          Tailchat Desktop
+        </div>
+        <h1 className="launcher-title">Choose a server</h1>
+        <p className="launcher-description">
+          Select a Tailchat deployment to open, or connect another server.
+        </p>
+      </header>
+
+      <section className="server-list" aria-label="Available servers">
+        {servers.map((serverInfo, index) => {
+          const isDefault = index < defaultServerList.length;
           return (
-            <Dropdown
-              key={i}
-              trigger={['contextMenu']}
-              menu={{
-                items: [
-                  {
-                    key: 'remove',
-                    label: 'Delete Server',
-                    disabled: i < defaultServerList.length, // is default server
-                    onClick: () => {
-                      Modal.confirm({
-                        title: 'Do you Want to delete this server?',
-                        onOk() {
-                          removeServer(serverInfo.url);
-                        },
-                      });
-                    },
-                  },
-                ],
-              }}
-            >
-              <div>
+            <ContextMenu key={serverInfo.url}>
+              <ContextMenuTrigger className="block w-full">
                 <ServerItem
                   icon={serverInfo.icon ?? icon}
                   version={serverInfo.version}
+                  status={isDefault ? 'Default' : undefined}
                   onClick={() => {
-                    window.electron.ipcRenderer.sendMessage('selectServer', {
+                    window.electron?.ipcRenderer.sendMessage('selectServer', {
                       url: serverInfo.url,
                     });
                   }}
                 >
                   {serverInfo.name}
                 </ServerItem>
-              </div>
-            </Dropdown>
+              </ContextMenuTrigger>
+              <ContextMenuContent>
+                <ContextMenuItem
+                  variant="destructive"
+                  disabled={isDefault}
+                  onClick={() => setPendingRemoval(serverInfo)}
+                >
+                  <Trash2Icon />
+                  Delete server
+                </ContextMenuItem>
+              </ContextMenuContent>
+            </ContextMenu>
           );
         })}
 
         <AddServerItem />
-      </div>
+      </section>
 
-      <div className="actions">
-        <button
+      <footer className="launcher-actions">
+        <Button
           type="button"
+          variant="outline"
           onClick={() => {
             window.open('https://tailchat.msgbyte.com/');
           }}
         >
+          <ExternalLinkIcon />
           Website
-        </button>
+        </Button>
 
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={() => {
-            window.electron.ipcRenderer.sendMessage('close');
+            window.electron?.ipcRenderer.sendMessage('close');
           }}
         >
+          <LogOutIcon />
           Exit
-        </button>
-      </div>
-    </div>
+        </Button>
+      </footer>
+
+      <Dialog
+        open={Boolean(pendingRemoval)}
+        onOpenChange={(open) => {
+          if (!open) setPendingRemoval(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete this server?</DialogTitle>
+            <DialogDescription>
+              {pendingRemoval?.name ?? 'This server'} will be removed from this
+              device. You can add it again later.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setPendingRemoval(null)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={() => {
+                if (pendingRemoval) removeServer(pendingRemoval.url);
+                setPendingRemoval(null);
+              }}
+            >
+              Delete server
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </main>
   );
 });
 Hello.displayName = 'Hello';

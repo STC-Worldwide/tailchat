@@ -1,6 +1,6 @@
 import { setUserJWT } from '@/utils/jwt-helper';
 import { setGlobalUserLoginInfo } from '@/utils/user-helper';
-import React, { useMemo, useState } from 'react';
+import React, { useId, useMemo, useState } from 'react';
 import {
   claimTemporaryUser,
   model,
@@ -20,8 +20,9 @@ import {
   useFastifyFormContext,
 } from 'tailchat-design';
 import { ModalWrapper } from '../Modal';
-import { Button, Input } from 'antd';
 import _compact from 'lodash/compact';
+import { Button } from '@/components/ui/official/button';
+import { Input } from '@/components/ui/official/input';
 
 interface Values {
   email: string;
@@ -30,7 +31,7 @@ interface Values {
   [key: string]: unknown;
 }
 
-const getFields = (): MetaFormFieldMeta[] =>
+export const getClaimTemporaryUserFields = (): MetaFormFieldMeta[] =>
   _compact([
     { type: 'text', name: 'email', label: t('邮箱') },
     getGlobalConfig().emailVerification && {
@@ -41,6 +42,9 @@ const getFields = (): MetaFormFieldMeta[] =>
         const context = useFastifyFormContext<Values>();
         const email = context?.values?.['email'];
         const [sended, setSended] = useState(false);
+        const fallbackId = useId().replace(/:/g, '');
+        const controlId = props.controlId ?? `claim-email-otp-${fallbackId}`;
+        const errorId = props.errorId ?? `${controlId}-error`;
 
         const [{ loading }, handleVerifyEmail] = useAsyncRequest(async () => {
           if (!email) {
@@ -52,22 +56,26 @@ const getFields = (): MetaFormFieldMeta[] =>
         }, [email]);
 
         return (
-          <Input.Group compact style={{ display: 'flex' }}>
+          <div className="flex">
             <Input
-              size="large"
+              id={controlId}
               name={props.name}
-              value={props.value}
+              value={props.value ?? ''}
               placeholder={t('6位校验码')}
+              className="min-w-0 flex-1 rounded-r-none"
+              aria-invalid={Boolean(props.error)}
+              aria-describedby={props.error ? errorId : undefined}
               onChange={(e) => props.onChange(e.target.value)}
+              onBlur={props.onBlur}
             />
 
             {!sended && (
               <Button
-                size="large"
-                type="primary"
-                htmlType="button"
+                type="button"
+                size="lg"
                 disabled={loading}
-                loading={loading}
+                aria-busy={loading}
+                className="rounded-l-none"
                 onClick={(e) => {
                   e.preventDefault();
                   handleVerifyEmail();
@@ -76,7 +84,7 @@ const getFields = (): MetaFormFieldMeta[] =>
                 {t('发送校验码')}
               </Button>
             )}
-          </Input.Group>
+          </div>
         );
       },
     },
@@ -109,7 +117,7 @@ export const ClaimTemporaryUser: React.FC<ClaimTemporaryUserProps> = React.memo(
   (props) => {
     const userId = props.userId;
     const dispatch = useAppDispatch();
-    const fields = useMemo(() => getFields(), []);
+    const fields = useMemo(() => getClaimTemporaryUserFields(), []);
 
     const [{}, handleClaim] = useAsyncRequest(
       async (values: Values) => {

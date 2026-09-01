@@ -1,5 +1,4 @@
 import React from 'react';
-import { getPopupContainer } from '@capital/common';
 import { Image } from '@capital/component';
 import type { TagProps } from '../bbcode/type';
 
@@ -51,9 +50,7 @@ export const ImgTag: React.FC<TagProps> = React.memo((props) => {
           ...imageStyle,
           ...parseImageAttr(node.attrs as any),
         }}
-        preview={{
-          getContainer: getPopupContainer,
-        }}
+        preview={true}
         src={url}
       />
     </div>

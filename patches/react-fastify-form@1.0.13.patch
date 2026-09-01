@@ -1,0 +1,22 @@
+diff --git a/lib/index.js b/lib/index.js
+index b255090221d4b9de6e01378a82245b0b044ed25f..fa73fbc54e80a6bb16ec0e4fa36ac27c63e9fa01 100644
+--- a/lib/index.js
++++ b/lib/index.js
+@@ -101,7 +101,7 @@ var _FastifyForm = react_1.default.memo(function (props) {
+         validationSchema: props.schema,
+         validateOnBlur: false,
+         validateOnMount: false,
+-        validateOnChange: false,
++        validateOnChange: true,
+         onSubmit: function (values) { return __awaiter(void 0, void 0, void 0, function () {
+             var _a;
+             return __generator(this, function (_b) {
+@@ -146,7 +146,7 @@ var _FastifyForm = react_1.default.memo(function (props) {
+                     var field = _a.field, meta = _a.meta;
+                     return (react_1.default.createElement(Component, __assign({ key: fieldName + i + 'component' }, fieldMeta, { value: field.value, error: meta.error, onChange: function (val) {
+                             var _a;
+-                            setFieldValue(fieldName, val, false);
++                            setFieldValue(fieldName, val, true);
+                             handleValuesChange(__assign(__assign({}, formik.values), (_a = {}, _a[fieldName] = val, _a)));
+                         }, onBlur: function (e) {
+                             field.onBlur(e);

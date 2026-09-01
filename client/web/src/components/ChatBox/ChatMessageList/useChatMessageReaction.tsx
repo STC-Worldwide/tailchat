@@ -1,6 +1,5 @@
 import { EmojiPanel } from '@/components/Emoji';
 import { useTcPopoverContext } from '@/components/TcPopover';
-import type { RenderFunction } from 'antd/lib/_util/getRenderPropValue';
 import React, { useMemo } from 'react';
 import {
   addReaction,
@@ -8,13 +7,14 @@ import {
   useAsyncRequest,
   useUpdateRef,
 } from 'tailchat-shared';
+type PopoverRenderFunction = () => React.ReactNode;
 
 /**
  * 消息的反应信息操作
  */
 export function useChatMessageReactionAction(
   payload: ChatMessage
-): RenderFunction {
+): PopoverRenderFunction {
   const payloadRef = useUpdateRef(payload);
   const Component = useMemo(
     () =>
@@ -27,7 +27,7 @@ export function useChatMessageReactionAction(
         }, []);
 
         return <EmojiPanel onSelect={handleSelect} />;
-      }) as RenderFunction,
+      }) as PopoverRenderFunction,
     []
   );
 

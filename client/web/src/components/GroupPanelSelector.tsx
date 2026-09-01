@@ -1,9 +1,13 @@
 import React, { useMemo } from 'react';
-import { Select } from 'antd';
 import { GroupPanelType, t, useGroupPanels } from 'tailchat-shared';
 import { useGroupIdContext } from '@/context/GroupIdContext';
-
-const { Option } = Select;
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/official/select';
 
 interface GroupPanelSelectorProps {
   className?: string;
@@ -28,20 +32,31 @@ export const GroupPanelSelector: React.FC<GroupPanelSelectorProps> = React.memo(
       () => panels.filter((panel) => panel.type === panelType),
       [panels, panelType]
     );
+    const options = filteredPanels.map((panel) => ({
+      value: panel.id,
+      label: panel.name,
+    }));
 
     return (
       <Select
-        className={props.className}
-        style={props.style}
-        placeholder={t('请选择面板')}
         value={props.value}
-        onChange={props.onChange}
+        onValueChange={(value) => value !== null && props.onChange(value)}
+        items={options}
       >
-        {filteredPanels.map((p) => (
-          <Option key={p.id} value={p.id}>
-            {p.name}
-          </Option>
-        ))}
+        <SelectTrigger
+          aria-label={t('选择面板')}
+          className={props.className}
+          style={props.style}
+        >
+          <SelectValue placeholder={t('请选择面板')} />
+        </SelectTrigger>
+        <SelectContent>
+          {options.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
       </Select>
     );
   }

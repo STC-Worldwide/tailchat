@@ -7,21 +7,19 @@ import {
   Routes,
 } from 'react-router-dom';
 import {
-  getLanguage,
   parseUrlStr,
   sharedEvent,
+  isDevelopment,
   TcProvider,
-  useAsync,
   useColorScheme,
   useGlobalConfigStore,
   useLanguage,
 } from 'tailchat-shared';
 import clsx from 'clsx';
 import { Loadable } from './components/Loadable';
-import { ConfigProvider as AntdProvider } from 'antd';
 import { Helmet } from 'react-helmet';
 import { useRecordMeasure } from './utils/measure-helper';
-import { getPopupContainer, preventDefault } from './utils/dom-helper';
+import { preventDefault } from './utils/dom-helper';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { TcTooltipProvider } from './components/ui/tooltip';
 import { useMessageDensity } from './hooks/useMessageDensity';
@@ -32,9 +30,8 @@ import { AppRouterApi } from './components/AppRouterApi';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import enUS from 'antd/es/locale/en_US';
-import type { Locale } from 'antd/es/locale-provider';
 import { useInjectTianjiScript } from './hooks/useInjectTianjiScript';
+import { FeedbackHost } from './components/ui/feedback';
 
 const AppRouter: any = isElectron() ? HashRouter : BrowserRouter;
 
@@ -62,35 +59,16 @@ const InviteRoute = Loadable(
     )
 );
 
-export const TcAntdProvider: React.FC<PropsWithChildren> = React.memo(
-  (props) => {
-    const { value: locale } = useAsync(async (): Promise<Locale> => {
-      const language = getLanguage();
-
-      if (language === 'zh-CN') {
-        return import('antd/es/locale/zh_CN').then((m) => m.default);
-      }
-
-      return enUS;
-    }, []);
-
-    return (
-      <AntdProvider getPopupContainer={getPopupContainer} locale={locale}>
-        {props.children}
-      </AntdProvider>
-    );
-  }
+const PluginControlsPreview = Loadable(
+  () => import('./plugin/component/PluginControlsPreview')
 );
-TcAntdProvider.displayName = 'TcAntdProvider';
 
 const AppProvider: React.FC<PropsWithChildren> = React.memo((props) => {
   return (
     <Suspense fallback={<LoadingSpinner />}>
       <AppRouter>
         <TcProvider>
-          <DndProvider backend={HTML5Backend}>
-            <TcAntdProvider>{props.children}</TcAntdProvider>
-          </DndProvider>
+          <DndProvider backend={HTML5Backend}>{props.children}</DndProvider>
         </TcProvider>
       </AppRouter>
     </Suspense>
@@ -116,7 +94,10 @@ const AppContainer: React.FC<PropsWithChildren> = React.memo((props) => {
       )}
       onContextMenu={preventDefault}
     >
-      <TcTooltipProvider>{props.children}</TcTooltipProvider>
+      <TcTooltipProvider>
+        {props.children}
+        <FeedbackHost />
+      </TcTooltipProvider>
     </div>
   );
 });
@@ -175,6 +156,12 @@ export const App: React.FC = React.memo(() => {
             <Route path="/main/*" element={<MainRoute />} />
             <Route path="/panel/*" element={<PanelRoute />} />
             <Route path="/invite/:inviteCode" element={<InviteRoute />} />
+            {isDevelopment && (
+              <Route
+                path="/dev/plugin-controls"
+                element={<PluginControlsPreview />}
+              />
+            )}
             <Route
               path="/plugin/*"
               element={

@@ -2,10 +2,10 @@ import React, { useMemo } from 'react';
 import {
   FastifyForm,
   regField,
+  FastifyFormFieldComponent,
   FastifyFormContainerComponent,
   regFormContainer,
 } from 'react-fastify-form';
-import { Form, Button } from 'antd';
 
 import { FastifyFormText } from './types/Text';
 import { FastifyFormTextArea } from './types/TextArea';
@@ -21,15 +21,39 @@ regField('select', FastifyFormSelect);
 regField('checkbox', FastifyFormCheckbox);
 regField('custom', FastifyFormCustom);
 
-let webFastifyFormConfig = {
+const webFastifyFormConfig = {
   submitLabel: 'Submit',
 };
 
-export function setWebFastifyFormConfig(config: typeof webFastifyFormConfig) {
-  webFastifyFormConfig = {
-    ...webFastifyFormConfig,
-    ...config,
-  };
+export interface WebFastifyFormConfig {
+  submitLabel?: string;
+  fields?: Record<string, FastifyFormFieldComponent<any>>;
+  container?: FastifyFormContainerComponent;
+}
+
+export function setWebFastifyFormConfig(config: WebFastifyFormConfig) {
+  if (typeof config.submitLabel === 'string') {
+    webFastifyFormConfig.submitLabel = config.submitLabel;
+  }
+
+  Object.entries(config.fields ?? {}).forEach(([type, component]) => {
+    regField(type, component);
+  });
+
+  if (config.container) {
+    const ConfiguredContainer: FastifyFormContainerComponent = (props) => {
+      const Container = config.container as FastifyFormContainerComponent;
+
+      return (
+        <Container
+          {...props}
+          submitLabel={props.submitLabel ?? webFastifyFormConfig.submitLabel}
+        />
+      );
+    };
+    ConfiguredContainer.displayName = 'ConfiguredWebFastifyFormContainer';
+    regFormContainer(ConfiguredContainer);
+  }
 }
 
 const WebFastifyFormContainer: FastifyFormContainerComponent = React.memo(
@@ -39,25 +63,14 @@ const WebFastifyFormContainer: FastifyFormContainerComponent = React.memo(
 
     const submitButtonRender = useMemo(() => {
       return (
-        <Form.Item
-          wrapperCol={
-            layout === 'vertical'
-              ? { xs: 24 }
-              : { sm: 24, md: { span: 16, offset: 8 } }
-          }
+        <button
+          type="submit"
+          disabled={props.loading || props.canSubmit === false}
+          aria-busy={props.loading}
+          className="inline-flex min-h-10 w-full items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/80 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50"
         >
-          <Button
-            loading={props.loading}
-            type="primary"
-            size="large"
-            htmlType="button"
-            style={{ width: '100%' }}
-            onClick={() => props.handleSubmit()}
-            disabled={props.canSubmit === false}
-          >
-            {props.submitLabel ?? webFastifyFormConfig.submitLabel}
-          </Button>
-        </Form.Item>
+          {props.submitLabel ?? webFastifyFormConfig.submitLabel}
+        </button>
       );
     }, [
       props.loading,
@@ -68,15 +81,17 @@ const WebFastifyFormContainer: FastifyFormContainerComponent = React.memo(
     ]);
 
     return (
-      <Form
-        layout={layout}
-        labelCol={layout === 'vertical' ? { xs: 24 } : { sm: 24, md: 8 }}
-        wrapperCol={layout === 'vertical' ? { xs: 24 } : { sm: 24, md: 16 }}
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          props.handleSubmit();
+        }}
+        className="space-y-4"
       >
         {props.children}
         {suffixElement}
         {submitButtonRender}
-      </Form>
+      </form>
     );
   }
 );

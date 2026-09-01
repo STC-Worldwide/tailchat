@@ -72,13 +72,22 @@ export const MentionSuggestionList = forwardRef<
   }
 
   return (
-    <div className="w-72 max-h-60 overflow-y-auto rounded-md bg-raised text-body border border-subtle shadow-elevationHigh p-1">
+    <div
+      role="listbox"
+      className="max-h-60 w-72 overflow-y-auto rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-lg"
+    >
       {props.items.map((item, index) => (
-        <div
+        <button
+          type="button"
+          role="option"
+          aria-selected={index === selectedIndex}
           key={item.id}
-          className={clsx('rounded cursor-pointer', {
-            'bg-primary/15': index === selectedIndex,
-          })}
+          className={clsx(
+            'block w-full rounded-md border-0 bg-transparent text-left outline-none transition-colors',
+            {
+              'bg-accent text-accent-foreground': index === selectedIndex,
+            }
+          )}
           onMouseEnter={() => setSelectedIndex(index)}
           onClick={() => selectItem(index)}
         >
@@ -88,9 +97,9 @@ export const MentionSuggestionList = forwardRef<
               hideDiscriminator={props.hideDiscriminator}
             />
           ) : (
-            <MentionCommandItem icon="mdi:pound" label={item.display} />
+            <MentionCommandItem label={item.display} />
           )}
-        </div>
+        </button>
       ))}
     </div>
   );

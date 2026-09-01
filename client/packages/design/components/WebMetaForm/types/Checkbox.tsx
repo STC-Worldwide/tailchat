@@ -1,26 +1,24 @@
 import React from 'react';
-import { Form, Checkbox } from 'antd';
 import type { FastifyFormFieldComponent } from 'react-fastify-form';
-import { getValidateStatus } from '../utils';
+import { MetaFormField } from './Field';
 
 export const FastifyFormCheckbox: FastifyFormFieldComponent = React.memo(
   (props) => {
     const { name, label, value, onChange, error } = props;
 
     return (
-      <Form.Item
-        label={label}
-        validateStatus={getValidateStatus(error)}
-        help={error}
-      >
-        <Checkbox
-          name={name}
-          checked={Boolean(value)}
-          onChange={(e) => onChange(e.target.checked)}
-        >
+      <MetaFormField label={undefined} error={error}>
+        <label className="inline-flex items-center gap-2 text-sm font-medium text-foreground">
+          <input
+            type="checkbox"
+            name={name}
+            checked={Boolean(value)}
+            className="size-4 rounded border-control-border accent-primary"
+            onChange={(e) => onChange(e.target.checked)}
+          />
           {label}
-        </Checkbox>
-      </Form.Item>
+        </label>
+      </MetaFormField>
     );
   }
 );

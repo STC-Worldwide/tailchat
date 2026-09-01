@@ -1,5 +1,4 @@
 import { Highlight } from '@/components/Highlight';
-import { Button, Divider, Typography } from 'antd';
 import {
   addFriendRequest,
   searchUserWithUniqueName,
@@ -12,9 +11,30 @@ import {
   UserBaseInfo,
 } from 'tailchat-shared';
 import React, { useCallback, useState } from 'react';
-import _isNil from 'lodash/isNil';
-import { Avatar } from 'tailchat-design';
-import { NoData } from '@/components/NoData';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/components/ui/official/avatar';
+import { Badge } from '@/components/ui/official/badge';
+import { Button } from '@/components/ui/official/button';
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/official/empty';
+import { Input } from '@/components/ui/official/input';
+import { Separator } from '@/components/ui/official/separator';
+import copy from 'copy-to-clipboard';
+import {
+  CopyIcon,
+  LoaderCircleIcon,
+  SearchIcon,
+  UserPlusIcon,
+  UserRoundXIcon,
+} from 'lucide-react';
 
 const SearchFriendResult: React.FC<{
   result: UserBaseInfo | undefined | null;
@@ -35,37 +55,52 @@ const SearchFriendResult: React.FC<{
   }
 
   if (result === null) {
-    return <NoData />;
+    return (
+      <Empty className="min-h-52 border-0">
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <UserRoundXIcon />
+          </EmptyMedia>
+          <EmptyTitle>{t('没有找到该用户')}</EmptyTitle>
+          <EmptyDescription>{t('用户昵称#0000')}</EmptyDescription>
+        </EmptyHeader>
+      </Empty>
+    );
   }
 
   const hasSent = hasSentUserId === result._id;
 
   return (
     <div>
-      <Divider />
+      <Separator className="my-5" />
 
-      <div className="rounded-md border border-black/30 px-4 py-3 bg-black/10 flex justify-between items-center mobile:flex-col">
-        <div className="mobile:w-full mobile:mb-1">
-          <Avatar
-            className="mb-3"
-            size={60}
-            name={result.nickname}
-            src={result.avatar}
-          />
-          <div className="text-lg">
-            {result.nickname}
-            <span className=" text-sm text-white/60">
+      <div className="flex items-center justify-between gap-4 rounded-xl border bg-card p-4 max-sm:flex-col max-sm:items-stretch">
+        <div className="flex min-w-0 items-center gap-3">
+          <Avatar className="size-14" size="lg">
+            <AvatarImage
+              src={result.avatar ?? undefined}
+              alt={result.nickname}
+            />
+            <AvatarFallback>
+              {result.nickname?.slice(0, 1).toUpperCase() || '?'}
+            </AvatarFallback>
+          </Avatar>
+          <div className="min-w-0">
+            <div className="truncate text-base font-semibold">
+              {result.nickname}
+            </div>
+            <Badge variant="secondary" className="mt-1 tabular-nums">
               #{result.discriminator}
-            </span>
+            </Badge>
           </div>
         </div>
 
         <Button
-          type="primary"
-          className="bg-green-600 border-0 mobile:w-full"
+          className="h-11 max-sm:w-full md:h-8"
           disabled={hasSent}
           onClick={() => handleAddFriend(result._id)}
         >
+          <UserPlusIcon data-icon="inline-start" />
           {hasSent ? t('已申请') : t('申请好友')}
         </Button>
       </div>
@@ -80,13 +115,27 @@ const SelfIdentify: React.FC = React.memo(() => {
 
   return (
     <div>
-      <Divider />
+      <Separator className="my-5" />
 
-      <div className="rounded-md border border-black/30 px-4 py-3 bg-black/10 text-center">
-        <div>{t('您的个人唯一标识')}</div>
-        <Typography.Title level={4} copyable={true} className="select-text">
-          {uniqueName}
-        </Typography.Title>
+      <div className="rounded-xl bg-muted/50 p-4 text-center">
+        <div className="text-sm text-muted-foreground">
+          {t('您的个人唯一标识')}
+        </div>
+        <div className="mt-2 flex flex-wrap items-center justify-center gap-2">
+          <code className="select-text text-base font-semibold tabular-nums text-foreground">
+            {uniqueName}
+          </code>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            aria-label={t('复制')}
+            onClick={() => copy(uniqueName)}
+          >
+            <CopyIcon data-icon="inline-start" />
+            {t('复制')}
+          </Button>
+        </div>
       </div>
     </div>
   );
@@ -98,7 +147,7 @@ export const AddFriend: React.FC = React.memo(() => {
   const [{ loading, value }, searchUser] = useAsyncFn(async () => {
     // 搜索用户
     try {
-      const data = await searchUserWithUniqueName(uniqueName);
+      const data = await searchUserWithUniqueName(uniqueName.trim());
 
       if (data === null) {
         showToasts(t('没有找到该用户'), 'warning');
@@ -111,33 +160,57 @@ export const AddFriend: React.FC = React.memo(() => {
   }, [uniqueName]);
 
   return (
-    <div className="px-8 py-2">
-      <div className="text-lg my-2">{t('添加好友')}</div>
-      <div className="my-1">
-        <Trans>
-          您可以使用完整的 <Highlight>用户昵称#标识</Highlight> 来添加好友
-        </Trans>
-      </div>
+    <div className="h-full overflow-y-auto">
+      <div className="mx-auto w-full max-w-2xl p-4 md:p-6">
+        <h2 className="text-lg font-semibold">{t('添加好友')}</h2>
+        <div className="mt-1 text-sm text-muted-foreground">
+          <Trans>
+            您可以使用完整的 <Highlight>用户昵称#标识</Highlight> 来添加好友
+          </Trans>
+        </div>
 
-      <div className="px-4 py-2 my-3 flex border border-black/30 rounded items-center bg-black/10 mobile:flex-col">
-        <input
-          className="bg-transparent flex-1 text-base leading-9 outline-none mobile:w-full mobile:mb-1"
-          placeholder={t('用户昵称#0000')}
-          onChange={(e) => setUniqueName(e.target.value)}
-        />
-
-        <Button
-          type="primary"
-          className="bg-indigo-600 disabled:opacity-80 border-none mobile:w-full"
-          disabled={uniqueName === ''}
-          loading={loading}
-          onClick={searchUser}
+        <form
+          className="mt-5 flex gap-2 max-sm:flex-col"
+          onSubmit={(event) => {
+            event.preventDefault();
+            void searchUser();
+          }}
         >
-          {t('查找好友')}
-        </Button>
-      </div>
+          <div className="relative min-w-0 flex-1">
+            <SearchIcon
+              aria-hidden="true"
+              className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+            />
+            <Input
+              className="h-11 pl-9 md:h-9"
+              placeholder={t('用户昵称#0000')}
+              aria-label={t('用户昵称#0000')}
+              value={uniqueName}
+              onChange={(e) => setUniqueName(e.target.value)}
+            />
+          </div>
 
-      {_isNil(value) ? <SelfIdentify /> : <SearchFriendResult result={value} />}
+          <Button
+            type="submit"
+            className="h-11 max-sm:w-full md:h-9"
+            disabled={uniqueName.trim() === '' || loading}
+            aria-busy={loading}
+          >
+            {loading ? (
+              <LoaderCircleIcon className="animate-spin" />
+            ) : (
+              <SearchIcon data-icon="inline-start" />
+            )}
+            {t('查找好友')}
+          </Button>
+        </form>
+
+        {value === undefined ? (
+          <SelfIdentify />
+        ) : (
+          <SearchFriendResult result={value} />
+        )}
+      </div>
     </div>
   );
 });

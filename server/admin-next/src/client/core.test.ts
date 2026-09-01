@@ -11,8 +11,10 @@ import {
 } from './core';
 import { translations } from './i18n';
 
-test('normalizes admin-next routes', () => {
+test('normalizes canonical and compatibility admin routes', () => {
+  assert.equal(normalizeRoute('/admin/users/'), 'users');
   assert.equal(normalizeRoute('/admin-next/users/'), 'users');
+  assert.equal(normalizeRoute('/admin/not-real'), 'dashboard');
   assert.equal(normalizeRoute('/admin-next/not-real'), 'dashboard');
 });
 

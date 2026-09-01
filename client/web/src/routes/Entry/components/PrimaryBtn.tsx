@@ -1,25 +1,24 @@
-import { Spinner } from '@/components/Spinner';
-import clsx from 'clsx';
 import React, { ButtonHTMLAttributes } from 'react';
-import _omit from 'lodash/omit';
+import { Button } from '@/components/ui/official/button';
+import { LoaderCircleIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export const PrimaryBtn: React.FC<
   ButtonHTMLAttributes<HTMLButtonElement> & {
     loading?: boolean;
   }
-> = React.memo((props) => {
+> = React.memo(({ loading = false, disabled, className, children, ...props }) => {
   return (
-    <button
-      disabled={props.loading}
-      {..._omit(props, ['loading'])}
-      className={clsx(
-        'w-full py-2 px-4 mb-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50',
-        props.className
-      )}
+    <Button
+      type={props.type ?? 'button'}
+      disabled={loading || disabled}
+      aria-busy={loading}
+      className={cn('h-10 w-full', className)}
+      {...props}
     >
-      {props.loading && <Spinner />}
-      {props.children}
-    </button>
+      {loading && <LoaderCircleIcon className="animate-spin" />}
+      {children}
+    </Button>
   );
 });
 PrimaryBtn.displayName = 'PrimaryBtn';

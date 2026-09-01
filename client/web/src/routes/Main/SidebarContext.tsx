@@ -20,12 +20,12 @@ SidebarContext.displayName = 'SidebarContext';
 
 export const SidebarContextProvider: React.FC<PropsWithChildren> = React.memo(
   (props) => {
-    const [showSidebar, setShowSidebar] = useState(true);
+    const [showSidebar, setShowSidebar] = useState(false);
 
     // 切换
     const switchSidebar = useCallback(() => {
-      setShowSidebar(!showSidebar);
-    }, [showSidebar]);
+      setShowSidebar((current) => !current);
+    }, []);
 
     return (
       <SidebarContext.Provider

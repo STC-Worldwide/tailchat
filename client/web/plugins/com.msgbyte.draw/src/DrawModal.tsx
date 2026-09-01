@@ -46,7 +46,7 @@ const DrawModal: React.FC<{
       <Button
         block={true}
         type="primary"
-        disabled={loading}
+        loading={loading}
         onClick={handleSend}
       >
         {Translate.send}

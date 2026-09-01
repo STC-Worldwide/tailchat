@@ -8,7 +8,10 @@ export const MentionTag: React.FC<TagProps> = React.memo((props) => {
   const userId = node.attrs.at;
 
   return (
-    <span className="plugin-bbcode-mention-tag" data-userid={userId}>
+    <span
+      className="inline-flex rounded-sm bg-primary/20 px-1 text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+      data-userid={userId}
+    >
       @{<UserName userId={userId} fallbackName={fallbackName} />}
     </span>
   );

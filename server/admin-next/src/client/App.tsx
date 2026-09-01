@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Input } from '@arco-design/web-react';
+import { AlertCircle } from 'lucide-react';
 import { useAuth } from './auth';
 import { AppShell, Button } from './components';
 import { normalizeRoute, type RouteId } from './core';
@@ -7,6 +7,8 @@ import { Icon } from './icons';
 import { useI18n } from './i18n';
 import { DashboardPage, specialPages } from './pages';
 import { ResourcePage } from './resources';
+import { Alert, AlertDescription } from './components/ui/alert';
+import { Input } from './components/ui/input';
 
 const resourceRoutes = new Set<RouteId>([
   'users',
@@ -33,7 +35,7 @@ export default function App() {
   }, [route]);
   if (!session) return <LoginPage />;
   const navigate = (next: RouteId) => {
-    window.history.pushState({}, '', `/admin-next/${next}`);
+    window.history.pushState({}, '', `/admin/${next}`);
     setRoute(next);
   };
   let page: React.ReactNode;
@@ -78,8 +80,6 @@ function LoginPage() {
   };
   return (
     <div className="login-page">
-      <div className="login-glow login-glow-one" />
-      <div className="login-glow login-glow-two" />
       <Button
         className="language-switch"
         variant="ghost"
@@ -90,11 +90,10 @@ function LoginPage() {
       </Button>
       <main className="login-panel">
         <div className="login-brand">
-          <img src="/admin-next/tailchat-logo.svg" alt="Tailchat" />
+          <img src="/admin/tailchat-logo.svg" alt="Tailchat" />
           <span>{t('app.edition')}</span>
         </div>
         <div className="login-heading">
-          <span className="eyebrow">{t('app.console')}</span>
           <h1>{t('auth.signIn')}</h1>
           <p>{t('auth.subtitle')}</p>
         </div>
@@ -105,20 +104,26 @@ function LoginPage() {
               autoFocus
               autoComplete="username"
               value={username}
-              onChange={setUsername}
+              onChange={(event) => setUsername(event.target.value)}
               required
             />
           </label>
           <label>
             <span>{t('auth.password')}</span>
-            <Input.Password
+            <Input
+              type="password"
               autoComplete="current-password"
               value={password}
-              onChange={setPassword}
+              onChange={(event) => setPassword(event.target.value)}
               required
             />
           </label>
-          {error && <Alert type="error" content={error} />}
+          {error && (
+            <Alert variant="destructive">
+              <AlertCircle />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
           <Button type="submit" variant="primary" disabled={loading}>
             {loading ? t('auth.signingIn') : t('auth.signIn')}
             <Icon name="chevron" />

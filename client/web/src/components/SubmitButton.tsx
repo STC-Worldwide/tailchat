@@ -1,7 +1,9 @@
-import { Button, ButtonProps } from 'antd';
 import React, { useState } from 'react';
+import { Button } from '@/components/ui/official/button';
+import { LoaderCircleIcon } from 'lucide-react';
 
-interface SubmitButtonProps extends ButtonProps {
+interface SubmitButtonProps
+  extends Omit<React.ComponentProps<typeof Button>, 'onClick'> {
   onClick: (event: React.MouseEvent) => void | Promise<void>;
 }
 
@@ -11,18 +13,32 @@ interface SubmitButtonProps extends ButtonProps {
  */
 export const SubmitButton: React.FC<SubmitButtonProps> = React.memo((props) => {
   const [loading, setLoading] = useState(false);
+  const {
+    children,
+    disabled,
+    onClick,
+    type = 'button',
+    ...buttonProps
+  } = props;
+
   return (
     <Button
-      loading={loading}
-      {...props}
+      {...buttonProps}
+      type={type}
+      disabled={loading || disabled}
+      aria-busy={loading}
       onClick={async (e) => {
-        if (props.onClick) {
-          setLoading(true);
-          await props.onClick(e);
+        setLoading(true);
+        try {
+          await onClick(e);
+        } finally {
           setLoading(false);
         }
       }}
-    />
+    >
+      {loading && <LoaderCircleIcon className="animate-spin" />}
+      {children}
+    </Button>
   );
 });
 SubmitButton.displayName = 'SubmitButton';

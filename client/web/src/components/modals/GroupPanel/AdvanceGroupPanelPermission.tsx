@@ -1,6 +1,4 @@
 import { PermissionList } from '@/components/PermissionList';
-import { Button } from 'antd';
-import clsx from 'clsx';
 import React, { PropsWithChildren, useMemo, useState } from 'react';
 import {
   ALL_PERMISSION,
@@ -12,6 +10,7 @@ import {
   useLazyValue,
 } from 'tailchat-shared';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { Button } from '@/components/ui/official/button';
 
 interface AdvanceGroupPanelPermissionProps {
   height?: number;
@@ -75,8 +74,8 @@ export const AdvanceGroupPanelPermission: React.FC<AdvanceGroupPanelPermissionPr
     }
 
     return (
-      <div className="flex" style={{ width: 540 }}>
-        <div>
+      <div className="grid min-w-0 gap-4 sm:grid-cols-[140px_minmax(0,1fr)]">
+        <div className="flex gap-1 overflow-x-auto pb-1 sm:flex-col sm:overflow-visible sm:pb-0">
           <RoleItem
             active={selectedRoleId === ALL_PERMISSION}
             onClick={() => setSelectedRoleId(ALL_PERMISSION)}
@@ -93,9 +92,19 @@ export const AdvanceGroupPanelPermission: React.FC<AdvanceGroupPanelPermissionPr
             </RoleItem>
           ))}
         </div>
-        <div className="flex-1 overflow-auto" style={{ height: props.height }}>
-          <div className="text-right">
-            <Button onClick={handleSyncWithGroup}>{t('重置为默认权限')}</Button>
+        <div
+          className="min-w-0 space-y-3 overflow-auto"
+          style={{ height: props.height }}
+        >
+          <div className="flex justify-end">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleSyncWithGroup}
+            >
+              {t('重置为默认权限')}
+            </Button>
           </div>
           <PermissionList
             panelType={
@@ -119,17 +128,16 @@ const RoleItem: React.FC<
   }>
 > = React.memo((props) => {
   return (
-    <div
-      className={clsx(
-        'px-2 py-1 rounded cursor-pointer mb-1 hover:bg-black/20 ',
-        {
-          'bg-black/20 ': props.active,
-        }
-      )}
+    <Button
+      type="button"
+      size="sm"
+      variant={props.active ? 'secondary' : 'ghost'}
+      className="shrink-0 justify-start sm:w-full"
+      aria-pressed={props.active}
       onClick={props.onClick}
     >
       {props.children}
-    </div>
+    </Button>
   );
 });
 RoleItem.displayName = 'RoleItem';

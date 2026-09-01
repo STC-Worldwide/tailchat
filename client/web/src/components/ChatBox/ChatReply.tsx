@@ -3,7 +3,8 @@ import { t, useChatBoxContext, useSharedEventHandler } from 'tailchat-shared';
 import _isNil from 'lodash/isNil';
 import { getMessageRender } from '@/plugin/common';
 import { UserName } from '../UserName';
-import { Icon } from 'tailchat-design';
+import { Button } from '@/components/ui/official/button';
+import { ReplyIcon, XIcon } from 'lucide-react';
 
 export const ChatReply: React.FC = React.memo(() => {
   const { replyMsg, setReplyMsg, clearReplyMsg } = useChatBoxContext();
@@ -21,21 +22,30 @@ export const ChatReply: React.FC = React.memo(() => {
   }
 
   return (
-    <div className="relative">
-      <div className="absolute bottom-0 left-0 right-0 py-1 px-4">
-        <div className="rounded bg-white dark:bg-gray-800 p-2 max-h-44 overflow-auto shadow-sm relative">
-          <span className="align-top">
-            {t('回复')}{' '}
-            {replyMsg.author && <UserName userId={replyMsg.author} />}:{' '}
-          </span>
-
-          <span>{getMessageRender(replyMsg.content)}</span>
-
-          <Icon
-            className="absolute right-1 top-0.5 text-lg cursor-pointer opacity-60 hover:opacity-80"
-            icon="mdi:close-circle-outline"
+    <div className="relative z-10 h-0">
+      <div className="absolute inset-x-4 bottom-1">
+        <div className="relative flex max-h-44 items-start gap-2 overflow-auto rounded-lg border border-border bg-popover p-2.5 pr-10 text-sm text-popover-foreground shadow-md">
+          <ReplyIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+          <div className="min-w-0">
+            <span className="font-medium">
+              {t('回复')}{' '}
+              {replyMsg.author && <UserName userId={replyMsg.author} />}:{' '}
+            </span>
+            <span className="text-muted-foreground">
+              {getMessageRender(replyMsg.content)}
+            </span>
+          </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-xs"
+            className="absolute top-1.5 right-1.5"
+            aria-label={t('取消回复')}
+            title={t('取消回复')}
             onClick={clearReplyMsg}
-          />
+          >
+            <XIcon />
+          </Button>
         </div>
       </div>
     </div>

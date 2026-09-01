@@ -4,34 +4,7 @@ import {
   Markdown,
   MarkdownEditor,
 } from '@capital/component';
-import styled from 'styled-components';
 import { Translate } from '../translate';
-
-const MainContent = styled.div`
-  padding: 10px;
-`;
-
-const EditModalContent = styled.div`
-  padding: 10px;
-  width: 80vw;
-  height: 80vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-
-  .main {
-    flex: 1;
-    overflow: hidden;
-
-    > div {
-      height: 100%;
-
-      > .bytemd {
-        height: 100%;
-      }
-    }
-  }
-`;
 
 const MarkdownEditorRender: React.FC<{ dataMap: Record<string, string> }> =
   React.memo((props) => {
@@ -57,20 +30,22 @@ const MarkdownPanel: React.FC = React.memo(() => {
       names={['markdown']}
       render={(dataMap: Record<string, string>) => {
         return (
-          <MainContent>
+          <div className="p-4">
             <Markdown raw={dataMap['markdown'] ?? ''} allowIframe={true} />
-          </MainContent>
+          </div>
         );
       }}
       renderEdit={(dataMap: Record<string, string>) => {
         return (
-          <EditModalContent>
-            <div>{Translate.editTip}</div>
+          <div className="flex h-[80vh] w-[min(80vw,1200px)] flex-col gap-2 overflow-hidden p-3 max-md:h-[calc(100dvh-1rem)] max-md:w-[calc(100vw-1rem)] max-md:p-2">
+            <p className="pr-10 text-[13px] leading-5 text-muted-foreground">
+              {Translate.editTip}
+            </p>
 
-            <div className="main">
+            <div className="min-h-0 flex-1 overflow-hidden [&_.tailchat-markdown-editor]:h-full [&>div]:h-full">
               <MarkdownEditorRender dataMap={dataMap} />
             </div>
-          </EditModalContent>
+          </div>
         );
       }}
     />

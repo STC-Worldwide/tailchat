@@ -1,17 +1,24 @@
 import _isNil from 'lodash/isNil';
 import { GroupPanelType, GroupPanel as GroupPanelInfo } from 'tailchat-shared';
-import type { DataNode } from 'antd/lib/tree';
 import _cloneDeep from 'lodash/cloneDeep';
+
+export interface GroupPanelTreeNode {
+  key: string;
+  title: string;
+  isLeaf: boolean;
+  children?: GroupPanelTreeNode[];
+  dragOverGapTop?: boolean;
+}
 
 /**
  * 将一维的面板列表构筑成立体的数组
  */
 export function buildTreeDataWithGroupPanel(
   groupPanels: GroupPanelInfo[]
-): DataNode[] {
+): GroupPanelTreeNode[] {
   return groupPanels
     .filter((panel) => _isNil(panel.parentId))
-    .map<DataNode>((section) => ({
+    .map<GroupPanelTreeNode>((section) => ({
       key: section.id,
       title: section.name,
       isLeaf: section.type !== GroupPanelType.GROUP,
@@ -19,7 +26,7 @@ export function buildTreeDataWithGroupPanel(
         section.type === GroupPanelType.GROUP
           ? groupPanels
               .filter((panel) => panel.parentId === section.id)
-              .map<DataNode>((panel) => ({
+              .map<GroupPanelTreeNode>((panel) => ({
                 key: panel.id,
                 title: panel.name,
                 isLeaf: true,

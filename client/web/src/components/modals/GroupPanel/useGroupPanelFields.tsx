@@ -1,12 +1,6 @@
-import { UserSelector } from '@/components/UserSelector';
 import React from 'react';
 import { useMemo } from 'react';
-import {
-  GroupPanelType,
-  isDevelopment,
-  t,
-  useGroupMemberIds,
-} from 'tailchat-shared';
+import { GroupPanelType, t } from 'tailchat-shared';
 import {
   createMetaFormSchema,
   MetaFormFieldMeta,

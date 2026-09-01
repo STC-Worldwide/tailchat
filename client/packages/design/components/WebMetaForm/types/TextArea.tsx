@@ -1,7 +1,6 @@
 import React from 'react';
-import { Input, Form } from 'antd';
 import type { FastifyFormFieldComponent } from 'react-fastify-form';
-import { getValidateStatus } from '../utils';
+import { MetaFormField } from './Field';
 
 export const FastifyFormTextArea: FastifyFormFieldComponent = React.memo(
   (props) => {
@@ -17,12 +16,9 @@ export const FastifyFormTextArea: FastifyFormFieldComponent = React.memo(
     } = props;
 
     return (
-      <Form.Item
-        label={label}
-        validateStatus={getValidateStatus(error)}
-        help={error}
-      >
-        <Input.TextArea
+      <MetaFormField label={label} error={error}>
+        <textarea
+          className="min-h-24 w-full resize-y rounded-lg border border-control-border bg-transparent px-2.5 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
           name={name}
           rows={4}
           maxLength={maxLength}
@@ -31,7 +27,7 @@ export const FastifyFormTextArea: FastifyFormFieldComponent = React.memo(
           onChange={(e) => onChange(e.target.value)}
           onBlur={onBlur}
         />
-      </Form.Item>
+      </MetaFormField>
     );
   }
 );

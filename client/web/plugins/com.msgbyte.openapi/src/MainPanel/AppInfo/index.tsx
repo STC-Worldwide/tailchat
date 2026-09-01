@@ -3,18 +3,6 @@ import { Icon, SidebarView } from '@capital/component';
 import { Loadable, useEvent } from '@capital/common';
 import { useOpenAppInfo } from '../context';
 import { Translate } from '../../translate';
-import styled from 'styled-components';
-import './index.less';
-
-const MenuTitle = styled.div`
-  display: flex;
-
-  .iconify {
-    margin-right: 4px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-`;
 
 // const Summary = Loadable(() => import('./Summary'));
 const Profile = Loadable(() => import('./Profile'));
@@ -33,12 +21,14 @@ const AppInfo: React.FC = React.memo(() => {
     () => [
       {
         type: 'group',
-        title: (
-          <MenuTitle>
-            <Icon icon="mdi:arrow-left" onClick={handleBack} /> {appName}
-          </MenuTitle>
-        ),
+        title: appName,
         children: [
+          {
+            type: 'link',
+            title: Translate.backToApplications,
+            icon: <Icon icon="mdi:arrow-left" />,
+            onClick: handleBack,
+          },
           // {
           //   type: 'item',
           //   title: '总览',
@@ -69,12 +59,16 @@ const AppInfo: React.FC = React.memo(() => {
         ],
       },
     ],
-    []
+    [appName, handleBack]
   );
 
   return (
-    <div className="plugin-openapi-app-info">
-      <SidebarView menu={menu} defaultContentPath="0.children.0.content" />
+    <div className="h-full min-h-0">
+      <SidebarView
+        menu={menu}
+        navigationLabel={Translate.openapi}
+        defaultContentPath="0.children.1.content"
+      />
     </div>
   );
 });

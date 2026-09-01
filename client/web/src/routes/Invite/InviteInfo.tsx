@@ -2,7 +2,6 @@ import { Avatar } from 'tailchat-design';
 import { InviteCodeExpiredAt } from '@/components/InviteCodeExpiredAt';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { UserNamePure } from '@/components/UserName';
-import { Divider } from 'antd';
 import React from 'react';
 import {
   getCachedGroupInviteInfo,
@@ -13,6 +12,7 @@ import {
   useAsync,
 } from 'tailchat-shared';
 import { JoinBtn } from './JoinBtn';
+import { TcSeparator } from '@/components/ui/separator';
 
 interface Props {
   inviteCode: string;
@@ -80,7 +80,7 @@ export const InviteInfo: React.FC<Props> = React.memo((props) => {
         )}
       </div>
 
-      <Divider />
+      <TcSeparator className="my-4" />
 
       <JoinBtn inviteCode={inviteCode} expired={inviteInfo.expired} />
     </>

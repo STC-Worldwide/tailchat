@@ -1,5 +1,7 @@
 import React from 'react';
-import { Icon } from 'tailchat-design';
+import { ChevronsDownIcon } from 'lucide-react';
+import { t } from 'tailchat-shared';
+import { Button } from '@/components/ui/official/button';
 
 interface Props {
   onClick: () => void;
@@ -10,12 +12,17 @@ interface Props {
  */
 export const ScrollToBottom: React.FC<Props> = React.memo((props) => {
   return (
-    <div
-      className="absolute right-10 bottom-18 px-3 py-2 rounded-full bg-white/50 dark:bg-black/50 shadow cursor-pointer z-10 w-11 h-11 flex justify-center items-center text-2xl hover:bg-white/80 dark:hover:bg-black/80"
+    <Button
+      type="button"
+      variant="secondary"
+      size="icon"
+      aria-label={t('滚动到底部')}
+      title={t('滚动到底部')}
+      className="absolute right-5 bottom-20 z-10 size-10 rounded-full border border-border bg-background/95 text-foreground shadow-md backdrop-blur-sm"
       onClick={props.onClick}
     >
-      <Icon icon="mdi:chevron-double-down" />
-    </div>
+      <ChevronsDownIcon />
+    </Button>
   );
 });
 ScrollToBottom.displayName = 'ScrollToBottom';

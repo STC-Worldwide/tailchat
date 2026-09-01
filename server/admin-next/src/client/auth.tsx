@@ -5,8 +5,15 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import { api, AUTH_STORAGE_KEY, UNAUTHORIZED_EVENT } from './api';
-import { readAuth, type AuthSession } from './core';
+import {
+  api,
+  AUTH_STORAGE_KEY,
+  clearStoredAuth,
+  LEGACY_AUTH_STORAGE_KEY,
+  readStoredAuth,
+  UNAUTHORIZED_EVENT,
+} from './api';
+import { type AuthSession } from './core';
 
 interface AuthValue {
   session: AuthSession | null;
@@ -17,12 +24,10 @@ interface AuthValue {
 const AuthContext = createContext<AuthValue | null>(null);
 
 export function AuthProvider({ children }: React.PropsWithChildren) {
-  const [session, setSession] = useState<AuthSession | null>(() =>
-    readAuth(window.localStorage.getItem(AUTH_STORAGE_KEY))
-  );
+  const [session, setSession] = useState<AuthSession | null>(readStoredAuth);
 
   const logout = () => {
-    window.localStorage.removeItem(AUTH_STORAGE_KEY);
+    clearStoredAuth();
     setSession(null);
   };
 
@@ -50,6 +55,7 @@ export function AuthProvider({ children }: React.PropsWithChildren) {
           body: JSON.stringify({ username, password }),
         });
         window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(next));
+        window.localStorage.removeItem(LEGACY_AUTH_STORAGE_KEY);
         setSession(next);
       },
       logout,

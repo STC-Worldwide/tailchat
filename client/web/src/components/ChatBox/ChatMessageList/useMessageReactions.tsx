@@ -8,11 +8,12 @@ import {
 } from 'tailchat-shared';
 import _groupBy from 'lodash/groupBy';
 import _uniqBy from 'lodash/uniqBy';
-import _take from 'lodash/take';
 import { useCallback, useMemo } from 'react';
 import { Emoji } from '@/components/Emoji';
 import React from 'react';
-import { Tooltip } from 'antd';
+import { TcTooltip } from '@/components/ui/tooltip';
+import { Button } from '@/components/ui/official/button';
+import { cn } from '@/lib/utils';
 
 interface GroupedReaction {
   name: string;
@@ -25,29 +26,34 @@ interface GroupedReaction {
  */
 const ReactionItem: React.FC<{
   reaction: GroupedReaction;
+  active: boolean;
   onClick: () => void;
 }> = React.memo((props) => {
-  const { reaction, onClick } = props;
+  const { reaction, active, onClick } = props;
   const usernames = useUsernames(reaction.users);
 
   return (
-    <div className="py-0.5 px-1 bg-black/20 hover:bg-black/40 rounded cursor-pointer">
-      <Tooltip title={usernames.join(', ')}>
-        <div className="flex" onClick={onClick}>
+    <TcTooltip label={usernames.join(', ')}>
+      <Button
+        type="button"
+        variant={active ? 'secondary' : 'outline'}
+        size="sm"
+        aria-label={`${reaction.name}: ${usernames.join(', ')}`}
+        aria-pressed={active}
+        className={cn(
+          'h-7 rounded-lg border-border bg-background/70 px-2 text-xs font-normal shadow-none hover:bg-accent mobile:h-11 mobile:min-w-11',
+          active && 'border-primary/40 bg-primary/10 text-foreground'
+        )}
+        onClick={onClick}
+      >
+        <div className="flex items-center [&_.emoji-mart-emoji]:flex [&_.emoji-mart-emoji]:items-center">
           <Emoji emoji={reaction.name} />
-
-          <div className="ml-1 text-xs">
-            {usernames.length < 3 ? (
-              <span>{_take(usernames, 2).join(',')}</span>
-            ) : (
-              <span>
-                {_take(usernames, 2).join(', ')}, ...+{usernames.length - 2}
-              </span>
-            )}
-          </div>
+          <span className="ml-1 tabular-nums text-muted-foreground">
+            {reaction.length}
+          </span>
         </div>
-      </Tooltip>
-    </div>
+      </Button>
+    </TcTooltip>
   );
 });
 ReactionItem.displayName = 'ReactionItem';
@@ -89,11 +95,12 @@ export function useMessageReactions(payload: ChatMessage) {
   );
 
   return (
-    <div className="flex chat-message-reactions space-x-1 py-0.5">
+    <div className="chat-message-reactions flex flex-wrap gap-1 py-1">
       {groupedReactions.map((reaction) => (
         <ReactionItem
           key={reaction.name}
           reaction={reaction}
+          active={reaction.users.includes(userId ?? '')}
           onClick={() => handleClick(reaction)}
         />
       ))}

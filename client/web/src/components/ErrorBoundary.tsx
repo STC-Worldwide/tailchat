@@ -1,7 +1,7 @@
-import { Button } from 'antd';
 import React, { PropsWithChildren } from 'react';
 import { t } from 'tailchat-shared';
 import { Problem } from './Problem';
+import { Button } from '@/components/ui/official/button';
 
 interface ErrorBoundaryProps {
   message?: React.ReactNode;
@@ -51,7 +51,12 @@ export class ErrorBoundary extends React.Component<
             <>
               <h3>{t('页面出现了一些问题')}</h3>
               <p title={errorDescription ?? ''}>{errorMessage}</p>
-              <Button size="small" onClick={this.reset}>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={this.reset}
+              >
                 {t('重试')}
               </Button>
             </>

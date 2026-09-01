@@ -1,10 +1,8 @@
 import React, { useEffect } from 'react';
-import { Select, Form } from 'antd';
 import _get from 'lodash/get';
 import _isNil from 'lodash/isNil';
 import type { FastifyFormFieldComponent } from 'react-fastify-form';
-
-const Option = Select.Option;
+import { MetaFormField } from './Field';
 
 interface FastifyFormSelectOptionsItem {
   label: string;
@@ -24,20 +22,20 @@ export const FastifyFormSelect: FastifyFormFieldComponent<{
   }, []);
 
   return (
-    <Form.Item label={label}>
-      <Select
-        size="large"
+    <MetaFormField label={label}>
+      <select
+        className="h-8 w-full rounded-lg border border-control-border bg-transparent px-2.5 py-1 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
         value={value}
-        onChange={(value) => onChange(value)}
+        onChange={(event) => onChange(event.target.value)}
         onBlur={onBlur}
       >
         {options.map((option, i) => (
-          <Option key={`${option.value}${i}`} value={option.value}>
+          <option key={`${option.value}${i}`} value={option.value}>
             {option.label}
-          </Option>
+          </option>
         ))}
-      </Select>
-    </Form.Item>
+      </select>
+    </MetaFormField>
   );
 });
 FastifyFormSelect.displayName = 'FastifyFormSelect';

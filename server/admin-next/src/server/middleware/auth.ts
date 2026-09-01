@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import md5 from 'md5';
+import { isAdminTokenPlatform } from '../runtime';
 
 export const adminAuth = {
   username: process.env.ADMIN_USER,
@@ -26,7 +27,7 @@ export function auth() {
         res.status(401).end('payload type error');
         return;
       }
-      if (payload.platform !== 'admin-next') {
+      if (!isAdminTokenPlatform(payload.platform)) {
         res.status(401).end('Payload invalid');
         return;
       }

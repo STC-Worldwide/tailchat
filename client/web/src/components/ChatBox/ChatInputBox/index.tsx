@@ -2,19 +2,17 @@ import {
   getMessageTextDecorators,
   pluginChatInputButtons,
 } from '@/plugin/common';
-import { Tooltip } from 'antd';
+import { TcTooltip } from '@/components/ui/tooltip';
 import { isEnterHotkey } from '@/utils/hot-key';
 import React, { useRef, useState } from 'react';
 import { ChatInputAddon } from './Addon';
 import { ClipboardHelper } from './clipboard-helper';
 import { ChatInputActionContext, useChatInputMentionsContext } from './context';
 import { uploadMessageImage } from './utils';
-import { ChatInputBoxInput } from './input';
 import {
   getCachedUserInfo,
   isValidStr,
   t,
-  useAlphaMode,
   useEvent,
   useSharedEventHandler,
 } from 'tailchat-shared';
@@ -26,9 +24,10 @@ import type {
 import { ChatInputEmotion } from './Emotion';
 import _uniq from 'lodash/uniq';
 import { ChatDropArea } from './ChatDropArea';
-import { Icon } from 'tailchat-design';
 import { usePasteHandler } from './usePasteHandler';
 import { useSlowModeStatus } from './useSlowModeStatus';
+import { Button } from '@/components/ui/official/button';
+import { HourglassIcon, SendIcon } from 'lucide-react';
 
 interface ChatInputBoxProps {
   converseId: string;
@@ -60,7 +59,6 @@ export const ChatInputBox: React.FC<ChatInputBoxProps> = React.memo((props) => {
   const [message, setMessage] = useState('');
   const [mentions, setMentions] = useState<string[]>([]);
   const { disabled } = useChatInputMentionsContext();
-  const { isAlphaMode } = useAlphaMode();
   const { runPasteHandlers, pasteHandlerContainer } = usePasteHandler();
   const {
     status: slowModeStatus,
@@ -176,7 +174,7 @@ export const ChatInputBox: React.FC<ChatInputBoxProps> = React.memo((props) => {
     >
       <div className="px-4 py-2">
         {slowModeStatus.enabled && !slowModeStatus.bypassed && (
-          <Tooltip title={slowModeBlocked ? slowModeCountdownText : undefined}>
+          <TcTooltip label={slowModeBlocked ? slowModeCountdownText : undefined}>
             <span
               className={`mb-1.5 inline-flex items-center gap-1.5 text-xs ${
                 slowModeBlocked
@@ -186,7 +184,7 @@ export const ChatInputBox: React.FC<ChatInputBoxProps> = React.memo((props) => {
               aria-label={slowModeBlocked ? slowModeCountdownText : undefined}
               tabIndex={slowModeBlocked ? 0 : undefined}
             >
-              <Icon icon="mdi:timer-sand" className="flex-shrink-0 text-sm" />
+              <HourglassIcon className="size-3.5 flex-shrink-0" />
               {slowModeBlocked
                 ? t('正在限速中')
                 : t(
@@ -198,41 +196,31 @@ export const ChatInputBox: React.FC<ChatInputBoxProps> = React.memo((props) => {
                     }
                   )}
             </span>
-          </Tooltip>
+          </TcTooltip>
         )}
-        <div className="bg-white dark:bg-gray-600 flex rounded-md items-center relative">
+        <div
+          className={`relative flex items-end rounded-xl border bg-background px-1 py-1 shadow-sm transition-[border-color,box-shadow] focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/30 ${
+            sendBlocked ? 'border-border bg-muted/40' : 'border-input'
+          }`}
+        >
           {/* This w-0 is magic to ensure show mention and long text */}
           <div className="flex-1 w-0">
-            {/* alpha 模式下启用 tiptap 富文本输入框 (facelift) */}
-            {isAlphaMode ? (
-              <TiptapChatInput
-                inputRef={inputRef}
-                value={message}
-                onChange={(message, mentions) => {
-                  setMessage(message);
-                  setMentions(mentions);
-                }}
-                onKeyDown={handleKeyDown}
-                onPaste={handlePaste}
-              />
-            ) : (
-              <ChatInputBoxInput
-                inputRef={inputRef}
-                value={message}
-                onChange={(message, mentions) => {
-                  setMessage(message);
-                  setMentions(mentions);
-                }}
-                onKeyDown={handleKeyDown}
-                onPaste={handlePaste}
-              />
-            )}
+            <TiptapChatInput
+              inputRef={inputRef}
+              value={message}
+              onChange={(message, mentions) => {
+                setMessage(message);
+                setMentions(mentions);
+              }}
+              onKeyDown={handleKeyDown}
+              onPaste={handlePaste}
+            />
           </div>
 
           {pasteHandlerContainer}
 
           {!disabled && (
-            <div className="px-2 flex space-x-1">
+            <div className="flex shrink-0 items-center gap-0.5 pb-0.5 pr-0.5">
               {!slowModeBlocked &&
                 pluginChatInputButtons.map((item, i) =>
                   React.cloneElement(item.render(), {
@@ -243,20 +231,27 @@ export const ChatInputBox: React.FC<ChatInputBoxProps> = React.memo((props) => {
               <ChatInputEmotion />
 
               {message ? (
-                <Icon
-                  icon="mdi:send-circle-outline"
-                  className={`text-2xl ${
-                    slowModeBlocked
-                      ? 'cursor-not-allowed text-gray-400'
-                      : 'cursor-pointer'
-                  }`}
-                  onClick={slowModeBlocked ? undefined : handleSendMsg}
-                />
+                <Button
+                  type="button"
+                  size="icon"
+                  aria-label={t('发送')}
+                  disabled={slowModeBlocked}
+                  className="size-8"
+                  onClick={handleSendMsg}
+                >
+                  <SendIcon />
+                </Button>
               ) : slowModeBlocked ? (
-                <Icon
-                  icon="mdi:timer-sand"
-                  className="text-2xl text-gray-400"
-                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  aria-label={slowModeCountdownText}
+                  disabled
+                  className="size-8"
+                >
+                  <HourglassIcon />
+                </Button>
               ) : (
                 <ChatInputAddon />
               )}

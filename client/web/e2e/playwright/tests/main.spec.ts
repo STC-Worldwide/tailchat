@@ -109,10 +109,7 @@ test.describe('Main Process', () => {
       await page.locator('input[name="name"]').fill('Test');
       // Click button:has-text("提 交")
       await page.locator('button:has-text("提 交")').click();
-      // Click .ant-tree-treenode.ant-tree-treenode-switcher-open
-      await page
-        .locator('.ant-tree-treenode.ant-tree-treenode-switcher-open')
-        .click();
+      await expect(page.getByRole('treeitem', { name: /Test/ })).toBeVisible();
       // Click [data-testid="full-modal-close"] svg[role="img"]
       await page
         .locator('[data-testid="full-modal-close"] svg[role="img"]')

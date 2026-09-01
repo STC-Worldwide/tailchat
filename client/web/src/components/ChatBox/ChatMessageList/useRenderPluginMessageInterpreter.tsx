@@ -1,9 +1,10 @@
 import { messageInterpreter } from '@/plugin/common';
-import { Icon } from 'tailchat-design';
-import { Popover } from 'antd';
 import React from 'react';
 import { useMemo } from 'react';
 import { t } from 'tailchat-shared';
+import { TcPopover } from '@/components/TcPopover';
+import { Button } from '@/components/ui/official/button';
+import { CircleHelpIcon } from 'lucide-react';
 
 export function useRenderPluginMessageInterpreter(message: string) {
   const availableInterpreter = useMemo(
@@ -22,12 +23,13 @@ export function useRenderPluginMessageInterpreter(message: string) {
   }
 
   return (
-    <span className="align-middle hidden group-hover:inline-block">
-      <Popover
+    <span className="ml-1 inline-flex align-middle">
+      <TcPopover
+        nativeButton={true}
         placement="topLeft"
-        title={t('消息解释')}
         content={
           <div className="max-w-lg">
+            <div className="mb-2 font-semibold">{t('消息解释')}</div>
             {availableInterpreter.map((ai, i) => (
               <p key={i + (ai.name ?? '')}>
                 {ai.name && (
@@ -40,13 +42,18 @@ export function useRenderPluginMessageInterpreter(message: string) {
             ))}
           </div>
         }
-        trigger="click"
       >
-        <Icon
-          className="cursor-pointer text-base"
-          icon="mdi:file-question-outline"
-        />
-      </Popover>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-xs"
+          className="align-middle text-muted-foreground"
+          aria-label={t('消息解释')}
+          title={t('消息解释')}
+        >
+          <CircleHelpIcon />
+        </Button>
+      </TcPopover>
     </span>
   );
 }

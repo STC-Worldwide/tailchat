@@ -1,39 +1,53 @@
-import { Popover } from 'antd';
-import clsx from 'clsx';
-import React, { useState } from 'react';
-import { Icon } from 'tailchat-design';
-import './BaseChatInputButton.less';
+import React from 'react';
+import { Icon as IconifyIcon } from '@iconify/react';
+import { TcPopover, useTcPopoverContext } from '@/components/TcPopover';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/official/button';
 
 interface BaseChatInputButtonProps {
   overlayClassName?: string;
-  icon: string;
+  icon?: string;
+  iconNode?: React.ReactNode;
+  ariaLabel?: string;
   popoverContent: (ctx: { hidePopover: () => void }) => React.ReactElement;
 }
+
+const BaseChatInputButtonContent: React.FC<{
+  popoverContent: BaseChatInputButtonProps['popoverContent'];
+}> = ({ popoverContent }) => {
+  const { closePopover } = useTcPopoverContext();
+
+  return popoverContent({ hidePopover: closePopover });
+};
+
 export const BaseChatInputButton: React.FC<BaseChatInputButtonProps> =
   React.memo((props) => {
-    const [visible, setVisible] = useState(false);
-
     return (
-      <Popover
-        open={visible}
-        onOpenChange={setVisible}
-        content={() =>
-          props.popoverContent({
-            hidePopover: () => {
-              setVisible(false);
-            },
-          })
+      <TcPopover
+        nativeButton={true}
+        content={
+          <BaseChatInputButtonContent popoverContent={props.popoverContent} />
         }
-        overlayClassName={clsx(
-          'chat-message-input_action-popover',
+        overlayClassName={cn(
+          'chat-message-input_action-popover p-0',
           props.overlayClassName
         )}
-        showArrow={false}
         placement="topRight"
-        trigger={['click']}
       >
-        <Icon className="text-2xl cursor-pointer" icon={props.icon} />
-      </Popover>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          aria-label={props.ariaLabel ?? props.icon}
+          title={props.ariaLabel}
+          className="size-8 text-muted-foreground hover:text-foreground"
+        >
+          {props.iconNode ??
+            (props.icon ? (
+              <IconifyIcon className="text-xl" icon={props.icon} />
+            ) : null)}
+        </Button>
+      </TcPopover>
     );
   });
 BaseChatInputButton.displayName = 'BaseChatInputButton';

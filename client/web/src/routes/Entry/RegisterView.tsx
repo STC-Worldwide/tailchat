@@ -5,13 +5,12 @@ import {
   showSuccessToasts,
   t,
   useAsyncFn,
-  useAsyncRequest,
   getGlobalConfig,
+  localTrans,
   useWatch,
 } from 'tailchat-shared';
 import React, { useState } from 'react';
 import { string } from 'yup';
-import { Icon } from 'tailchat-design';
 import { useNavigate } from 'react-router';
 import { setUserJWT } from '../../utils/jwt-helper';
 import { setGlobalUserLoginInfo } from '../../utils/user-helper';
@@ -21,6 +20,9 @@ import { EntryInput } from './components/Input';
 import { SecondaryBtn } from './components/SecondaryBtn';
 import { PrimaryBtn } from './components/PrimaryBtn';
 import { TipIcon } from '@/components/TipIcon';
+import { EntryError, EntryField, EntryView } from './components/Form';
+import { Button } from '@/components/ui/official/button';
+import { ArrowLeftIcon, PencilIcon, PencilOffIcon } from 'lucide-react';
 
 /**
  * 注册视图
@@ -65,12 +67,20 @@ export const RegisterView: React.FC = React.memo(() => {
     }
   }, [email, nickname, password, emailOTP, navRedirect]);
 
-  const [{ loading: sendEmailLoading }, handleSendEmail] =
-    useAsyncRequest(async () => {
+  const [
+    { loading: sendEmailLoading, error: sendEmailError },
+    handleSendEmail,
+  ] = useAsyncFn(async () => {
+      await string()
+        .email(t('邮箱格式不正确'))
+        .required(t('邮箱不能为空'))
+        .max(40, t('邮箱最长限制40个字符'))
+        .validate(email);
+
       await model.user.verifyEmail(email);
       showSuccessToasts(t('发送成功, 请检查你的邮箱。'));
       setSendedEmail(true);
-    }, [email]);
+  }, [email]);
 
   useWatch([email, customNickname], () => {
     if (!customNickname) {
@@ -79,93 +89,142 @@ export const RegisterView: React.FC = React.memo(() => {
   });
 
   const navToView = useNavToView();
+  const emailVerification = getGlobalConfig().emailVerification;
 
   return (
-    <div className="w-96 text-white">
-      <div className="mb-4 text-2xl">{t('注册账号')}</div>
-
-      <div>
-        <div className="mb-4">
-          <div className="mb-2">{t('邮箱')}</div>
+    <EntryView
+      title={t('注册账号')}
+      description={localTrans({
+        'zh-CN': '创建账号并加入这个 Tailchat 服务器。',
+        'en-US': 'Create an account for this Tailchat server.',
+      })}
+    >
+      <form
+        className="space-y-5"
+        onSubmit={(event) => {
+          event.preventDefault();
+          handleRegister();
+        }}
+      >
+        <EntryField id="reg-email" label={t('邮箱')}>
           <EntryInput
+            id="reg-email"
             name="reg-email"
             placeholder="name@example.com"
-            type="text"
+            type="email"
+            autoComplete="email"
+            autoCapitalize="none"
+            disabled={sendedEmail}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-        </div>
+        </EntryField>
 
-        {getGlobalConfig().emailVerification && (
-          <>
-            {!sendedEmail && (
-              <PrimaryBtn loading={sendEmailLoading} onClick={handleSendEmail}>
-                {t('向邮箱发送校验码')}
-              </PrimaryBtn>
-            )}
-
-            <div className="mb-4">
-              <div className="mb-2">{t('邮箱校验码')}</div>
-              <EntryInput
-                name="reg-email-otp"
-                type="text"
-                placeholder="6位校验码"
-                value={emailOTP}
-                onChange={(e) => setEmailOTP(e.target.value)}
-              />
-            </div>
-          </>
+        {emailVerification && !sendedEmail && (
+          <div className="rounded-xl border border-border/70 bg-muted/40 p-3">
+            <p className="mb-3 text-sm leading-5 text-muted-foreground">
+              {localTrans({
+                'zh-CN': '先发送校验码，再完成账号资料。',
+                'en-US': 'Send a verification code before completing your account.',
+              })}
+            </p>
+            <PrimaryBtn
+              type="button"
+              loading={sendEmailLoading}
+              onClick={handleSendEmail}
+            >
+              {t('向邮箱发送校验码')}
+            </PrimaryBtn>
+          </div>
         )}
 
-        <div className="mb-4 relative">
-          <div className="mb-2 flex items-center">
-            <span className="mr-1">{t('昵称')}</span>
-            <TipIcon content={t('后续在用户设置中可以随时修改')} />
+        {emailVerification && sendedEmail && (
+          <EntryField id="reg-email-otp" label={t('邮箱校验码')}>
+            <EntryInput
+              id="reg-email-otp"
+              name="reg-email-otp"
+              type="text"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              maxLength={6}
+              placeholder={t('6位校验码')}
+              value={emailOTP}
+              onChange={(e) => setEmailOTP(e.target.value)}
+            />
+          </EntryField>
+        )}
+
+        <EntryField
+          id="reg-nickname"
+          label={t('昵称')}
+          hint={<TipIcon content={t('后续在用户设置中可以随时修改')} />}
+        >
+          <div className="relative">
+            <EntryInput
+              id="reg-nickname"
+              name="reg-nickname"
+              type="text"
+              autoComplete="nickname"
+              disabled={!customNickname}
+              className="pr-11"
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              aria-pressed={customNickname}
+              aria-label={
+                customNickname
+                  ? localTrans({
+                      'zh-CN': '使用邮箱生成昵称',
+                      'en-US': 'Use nickname generated from email',
+                    })
+                  : localTrans({
+                      'zh-CN': '自定义昵称',
+                      'en-US': 'Customize nickname',
+                    })
+              }
+              className="absolute right-1.5 top-1.5"
+              onClick={() => setCustomNickname((current) => !current)}
+            >
+              {customNickname ? <PencilOffIcon /> : <PencilIcon />}
+            </Button>
           </div>
-          <EntryInput
-            name="reg-nickname"
-            type="text"
-            disabled={!customNickname}
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
-          />
+        </EntryField>
 
-          <Icon
-            className="absolute bottom-1 right-1 w-8 h-8 p-2 rounded cursor-pointer bg-black/20 z-10"
-            icon={customNickname ? 'mdi:pencil-off' : 'mdi:pencil'}
-            onClick={() =>
-              setCustomNickname((customNickname) => !customNickname)
-            }
-          />
-        </div>
-
-        <div className="mb-4">
-          <div className="mb-2">{t('密码')}</div>
+        <EntryField id="reg-password" label={t('密码')}>
           <EntryInput
+            id="reg-password"
             name="reg-password"
             type="password"
-            placeholder="******"
+            placeholder="••••••••"
+            autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-        </div>
+        </EntryField>
 
-        {error && <p className="text-red-500 text-sm mb-4">{error.message}</p>}
+        <EntryError error={error ?? sendEmailError} />
 
-        <PrimaryBtn loading={loading} onClick={handleRegister}>
+        <PrimaryBtn
+          type="submit"
+          loading={loading}
+          disabled={emailVerification && !sendedEmail}
+        >
           {t('注册账号')}
         </PrimaryBtn>
 
         <SecondaryBtn
-          className="text-left"
-          disabled={loading}
+          disabled={loading || sendEmailLoading}
           onClick={() => navToView('/entry/login')}
         >
-          <Icon icon="mdi:arrow-left" className="mr-1 inline" />
+          <ArrowLeftIcon />
           {t('返回登录')}
         </SecondaryBtn>
-      </div>
-    </div>
+      </form>
+    </EntryView>
   );
 });
 RegisterView.displayName = 'RegisterView';

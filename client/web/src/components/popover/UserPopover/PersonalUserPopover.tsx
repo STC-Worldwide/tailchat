@@ -1,10 +1,10 @@
 import { UserName } from '@/components/UserName';
 import { fetchImagePrimaryColor } from '@/utils/image-helper';
-import { Space, Tag } from 'antd';
 import React, { useEffect } from 'react';
 import { t, UserBaseInfo } from 'tailchat-shared';
 import { UserProfileContainer } from '../../UserProfileContainer';
 import { usePluginUserExtraInfo } from './usePluginUserExtraInfo';
+import { TcTag } from '@/components/ui/tag';
 
 export const PersonalUserPopover: React.FC<{
   userInfo: UserBaseInfo;
@@ -31,17 +31,17 @@ export const PersonalUserPopover: React.FC<{
           <span className="opacity-60 ml-1">#{userInfo.discriminator}</span>
         </div>
 
-        <Space size={4} wrap={true} className="py-1">
+        <div className="flex flex-wrap gap-1 py-1">
           {userInfo.type === 'openapiBot' && (
-            <Tag color="orange">{t('开放平台机器人')}</Tag>
+            <TcTag variant="warning">{t('开放平台机器人')}</TcTag>
           )}
 
           {userInfo.type === 'pluginBot' && (
-            <Tag color="orange">{t('插件机器人')}</Tag>
+            <TcTag variant="warning">{t('插件机器人')}</TcTag>
           )}
 
-          {userInfo.temporary && <Tag color="processing">{t('游客')}</Tag>}
-        </Space>
+          {userInfo.temporary && <TcTag variant="default">{t('游客')}</TcTag>}
+        </div>
 
         <div className="pt-2">{pluginUserExtraInfoEl}</div>
       </UserProfileContainer>

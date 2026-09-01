@@ -6,9 +6,7 @@ import {
 import { openModal } from '@/components/Modal';
 import { closeModal, pluginUserExtraInfo } from '@/plugin/common';
 import { setUserJWT } from '@/utils/jwt-helper';
-import { Button, Divider, message, Tag, Typography } from 'antd';
 import React, { useCallback } from 'react';
-import { Avatar } from 'tailchat-design';
 import {
   model,
   modifyUserField,
@@ -25,6 +23,20 @@ import {
 import { EmailVerify } from '../EmailVerify';
 import { ModifyPassword } from '../ModifyPassword';
 import { isBuiltinEmail } from '@/utils/user-helper';
+import { Button } from '@/components/ui/official/button';
+import { Badge } from '@/components/ui/official/badge';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/components/ui/official/avatar';
+import {
+  SettingsFieldGroup,
+  SettingsPage,
+  SettingsRow,
+  SettingsSection,
+} from './Layout';
+import { KeyRoundIcon, LogOutIcon } from 'lucide-react';
 
 export const SettingsAccount: React.FC = React.memo(() => {
   const userInfo = useUserInfo();
@@ -90,111 +102,156 @@ export const SettingsAccount: React.FC = React.memo(() => {
   }
 
   return (
-    <div>
-      <div className="flex flex-wrap">
-        <div className="w-1/3 mobile:w-full">
-          <AvatarUploader
-            circle={true}
-            usage="user"
-            onUploadSuccess={handleUserAvatarChange}
-          >
-            <Avatar size={128} src={userInfo.avatar} name={userInfo.nickname} />
-          </AvatarUploader>
-        </div>
-        <div className="w-2/3 mobile:w-full">
-          {isAlphaMode && (
-            <FullModalField title={t('用户ID')} content={userInfo._id} />
-          )}
-          <FullModalField
-            title={t('用户昵称')}
-            value={userInfo.nickname}
-            editable={true}
-            renderEditor={DefaultFullModalInputEditorRender}
-            onSave={handleUpdateNickName}
-          />
+    <SettingsPage
+      title={t('账户信息')}
+      description={t('管理你的个人资料、登录凭据和账户会话。')}
+    >
+      <SettingsSection
+        title={t('个人资料')}
+        description={t('这些信息会展示给与你协作的其他成员。')}
+      >
+        <div className="flex min-w-0 flex-col gap-8 sm:flex-row sm:items-start">
+          <div className="shrink-0">
+            <AvatarUploader
+              circle={true}
+              usage="user"
+              onUploadSuccess={handleUserAvatarChange}
+            >
+              <Avatar className="size-28">
+                <AvatarImage
+                  src={userInfo.avatar || undefined}
+                  alt={userInfo.nickname}
+                />
+                <AvatarFallback className="text-3xl font-semibold">
+                  {userInfo.nickname?.slice(0, 1).toUpperCase() ?? '?'}
+                </AvatarFallback>
+              </Avatar>
+            </AvatarUploader>
+            <p className="mt-2 max-w-28 text-center text-xs leading-5 text-muted-foreground">
+              {t('点击头像上传新图片')}
+            </p>
+          </div>
+          <div className="min-w-0 flex-1">
+            {isAlphaMode && (
+              <FullModalField title={t('用户ID')} content={userInfo._id} />
+            )}
+            <FullModalField
+              title={t('用户昵称')}
+              value={userInfo.nickname}
+              editable={true}
+              renderEditor={DefaultFullModalInputEditorRender}
+              onSave={handleUpdateNickName}
+            />
 
-          <FullModalField
-            title={t('邮箱')}
-            content={
-              <div>
-                <span className="mr-1">{userInfo.email}</span>
-                {isBuiltinEmail(userInfo.email) ? (
-                  <Tag color="default" className="select-none">
-                    {t('内置邮箱')}
-                  </Tag>
-                ) : userInfo.emailVerified ? (
-                  <Tag color="success" className="select-none">
-                    {t('已认证')}
-                  </Tag>
-                ) : (
-                  <Tag
-                    color="warning"
-                    className="cursor-pointer"
-                    onClick={() => {
-                      if (userInfo.temporary) {
-                        message.warning(
-                          t('临时用户无法认证邮箱, 请先认领账号')
+            <FullModalField
+              title={t('邮箱')}
+              content={
+                <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+                  <span className="min-w-0 break-all">{userInfo.email}</span>
+                  {isBuiltinEmail(userInfo.email) ? (
+                    <Badge variant="secondary" className="select-none">
+                      {t('内置邮箱')}
+                    </Badge>
+                  ) : userInfo.emailVerified ? (
+                    <Badge
+                      variant="secondary"
+                      className="select-none bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
+                    >
+                      {t('已认证')}
+                    </Badge>
+                  ) : (
+                    <Badge
+                      render={<button type="button" />}
+                      variant="secondary"
+                      className="cursor-pointer bg-amber-500/15 text-amber-700 hover:bg-amber-500/25 dark:text-amber-300"
+                      onClick={() => {
+                        if (userInfo.temporary) {
+                          showToasts(
+                            t('临时用户无法认证邮箱, 请先认领账号'),
+                            'warning'
+                          );
+                          return;
+                        }
+
+                        const key = openModal(
+                          <EmailVerify
+                            onSuccess={() => {
+                              closeModal(key);
+                            }}
+                          />
                         );
-                        return;
-                      }
+                      }}
+                    >
+                      {t('未认证')}
+                    </Badge>
+                  )}
+                </div>
+              }
+            />
 
-                      const key = openModal(
-                        <EmailVerify
-                          onSuccess={() => {
-                            closeModal(key);
-                          }}
-                        />
-                      );
-                    }}
-                  >
-                    {t('未认证')}
-                  </Tag>
-                )}
-              </div>
-            }
-          />
+            {pluginUserExtraInfo.map((item, i) => {
+              if (item.component && item.component.editor) {
+                const Component = item.component.editor;
+                return (
+                  <Component
+                    key={item.name + i}
+                    value={userExtra[item.name]}
+                    onSave={(val) => handleUpdateExtraInfo(item.name, val)}
+                  />
+                );
+              }
 
-          {pluginUserExtraInfo.map((item, i) => {
-            if (item.component && item.component.editor) {
-              const Component = item.component.editor;
               return (
-                <Component
+                <FullModalField
                   key={item.name + i}
-                  value={userExtra[item.name]}
+                  title={item.label}
+                  value={
+                    userExtra[item.name] ? String(userExtra[item.name]) : ''
+                  }
+                  editable={true}
+                  renderEditor={DefaultFullModalInputEditorRender}
                   onSave={(val) => handleUpdateExtraInfo(item.name, val)}
                 />
               );
-            }
-
-            return (
-              <FullModalField
-                key={item.name + i}
-                title={item.label}
-                value={userExtra[item.name] ? String(userExtra[item.name]) : ''}
-                editable={true}
-                renderEditor={DefaultFullModalInputEditorRender}
-                onSave={(val) => handleUpdateExtraInfo(item.name, val)}
-              />
-            );
-          })}
+            })}
+          </div>
         </div>
-      </div>
+      </SettingsSection>
 
-      <Divider />
+      <SettingsSection
+        title={t('安全')}
+        description={t('更新密码以保护你的账户。')}
+      >
+        <SettingsFieldGroup>
+          <SettingsRow
+            title={t('密码')}
+            description={t('使用强密码并定期更新。')}
+          >
+            <Button variant="outline" onClick={handleUpdatePassword}>
+              <KeyRoundIcon />
+              {t('修改密码')}
+            </Button>
+          </SettingsRow>
+        </SettingsFieldGroup>
+      </SettingsSection>
 
-      <Typography.Title level={4}>{t('密码')}</Typography.Title>
-      <Button type="primary" onClick={handleUpdatePassword}>
-        {t('修改密码')}
-      </Button>
-
-      <Divider />
-
-      <div>
-        <Button type="primary" danger={true} onClick={handleLogout}>
-          {t('退出登录')}
-        </Button>
-      </div>
-    </div>
+      <SettingsSection
+        title={t('账户会话')}
+        description={t('退出当前设备上的 Tailchat 会话。')}
+      >
+        <SettingsFieldGroup>
+          <SettingsRow
+            title={t('退出登录')}
+            description={t('你需要重新输入凭据才能再次访问此账户。')}
+          >
+            <Button variant="destructive" onClick={handleLogout}>
+              <LogOutIcon />
+              {t('退出登录')}
+            </Button>
+          </SettingsRow>
+        </SettingsFieldGroup>
+      </SettingsSection>
+    </SettingsPage>
   );
 });
 SettingsAccount.displayName = 'SettingsAccount';

@@ -4,7 +4,7 @@ export type Language = 'zh' | 'en';
 
 const commonZh: Record<string, string> = {
   'app.name': 'Tailchat 管理后台',
-  'app.edition': 'Admin Next',
+  'app.edition': '运营控制台',
   'app.console': '管理控制台',
   'app.footer': '由 MsgByte 构建',
   'common.loading': '正在加载',
@@ -35,6 +35,7 @@ const commonZh: Record<string, string> = {
   'common.no': '否',
   'common.copy': '复制',
   'common.copied': '已复制',
+  'common.clear': '清除',
   'common.open': '打开',
   'common.remove': '移除',
   'common.upload': '上传',
@@ -173,7 +174,7 @@ const commonZh: Record<string, string> = {
 
 const commonEn: Record<string, string> = {
   'app.name': 'Tailchat Admin',
-  'app.edition': 'Admin Next',
+  'app.edition': 'Operator Console',
   'app.console': 'Management Console',
   'app.footer': 'Built by MsgByte',
   'common.loading': 'Loading',
@@ -204,6 +205,7 @@ const commonEn: Record<string, string> = {
   'common.no': 'No',
   'common.copy': 'Copy',
   'common.copied': 'Copied',
+  'common.clear': 'Clear',
   'common.open': 'Open',
   'common.remove': 'Remove',
   'common.upload': 'Upload',
@@ -354,7 +356,8 @@ export const translations: Record<Language, Record<string, string>> = {
   en: commonEn,
 };
 
-const STORAGE_KEY = 'tailchat:admin-next:language';
+const STORAGE_KEY = 'tailchat:admin:language';
+const LEGACY_STORAGE_KEY = 'tailchat:admin-next:language';
 const I18nContext = createContext<{
   language: Language;
   setLanguage: (language: Language) => void;
@@ -362,9 +365,15 @@ const I18nContext = createContext<{
 } | null>(null);
 
 export function I18nProvider({ children }: React.PropsWithChildren) {
-  const [language, setLanguageState] = useState<Language>(() =>
-    window.localStorage.getItem(STORAGE_KEY) === 'en' ? 'en' : 'zh'
-  );
+  const [language, setLanguageState] = useState<Language>(() => {
+    const stored =
+      window.localStorage.getItem(STORAGE_KEY) ||
+      window.localStorage.getItem(LEGACY_STORAGE_KEY);
+    const next = stored === 'en' ? 'en' : 'zh';
+    window.localStorage.setItem(STORAGE_KEY, next);
+    window.localStorage.removeItem(LEGACY_STORAGE_KEY);
+    return next;
+  });
   const value = useMemo(
     () => ({
       language,

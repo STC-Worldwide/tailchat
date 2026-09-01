@@ -13,7 +13,7 @@
  *   3. Tailwind utilities via @theme below
  *
  * New code uses the single-name utilities (bg-navbar, bg-sidebar, bg-surface,
- * bg-raised, text-body, text-muted, border-subtle, *-primary) with no dark:
+ * bg-raised, text-body, text-muted-foreground, border-subtle, *-primary) with no dark:
  * prefix. The old paired utilities (bg-content-light dark:bg-content-dark …)
  * stay compiling as aliases of the same vars; nothing in the repo uses a
  * -dark utility outside a dark: variant, so both halves of every pair may
@@ -33,12 +33,40 @@
   --color-surface: var(--tc-surface-content);
   --color-raised: var(--tc-surface-raised);
   --color-body: var(--tc-text-body);
-  --color-muted: var(--tc-text-muted);
+  --color-muted-foreground: var(--tc-text-muted);
   --color-subtle: var(--tc-border-subtle);
   --color-primary: var(--tc-primary-color);
   --color-primary-hover: var(--tc-primary-hover-color);
   --color-danger: var(--tc-dangerous-color);
   --color-danger-hover: var(--tc-dangerous-hover-color);
+
+  /* Shadcn semantic aliases. Keep the existing Tailchat tokens as the source
+     of truth so the app's light/dark theme continues to switch at runtime. */
+  --color-background: var(--tc-surface-content);
+  --color-foreground: var(--tc-text-body);
+  --color-card: var(--tc-surface-raised);
+  --color-card-foreground: var(--tc-text-body);
+  --color-popover: var(--tc-surface-raised);
+  --color-popover-foreground: var(--tc-text-body);
+  --color-primary-foreground: #ffffff;
+  --color-secondary: var(--tc-surface-sidebar);
+  --color-secondary-foreground: var(--tc-text-body);
+  --color-muted: var(--tc-surface-sidebar);
+  --color-accent: var(--tc-surface-raised);
+  --color-accent-foreground: var(--tc-text-body);
+  --color-destructive: var(--tc-dangerous-color);
+  --color-destructive-foreground: #ffffff;
+  --color-border: var(--tc-border-subtle);
+  --color-input: var(--tc-border-subtle);
+  --color-control-border: var(--tc-control-border);
+  --color-control-track: var(--tc-control-track);
+  --color-ring: var(--tc-primary-color);
+  --color-sidebar: var(--tc-surface-navbar);
+  --color-sidebar-foreground: var(--tc-text-body);
+  --color-sidebar-border: var(--tc-border-subtle);
+  --color-sidebar-accent: var(--tc-surface-raised);
+  --color-sidebar-accent-foreground: var(--tc-text-body);
+  --color-sidebar-ring: var(--tc-primary-color);
 
   /* legacy aliases for the pre-facelift paired utilities */
   --color-navbar-light: var(--tc-surface-navbar);
@@ -52,6 +80,15 @@
 }
 
 @layer base {
+  html {
+    font-size: 16px;
+  }
+
+  body {
+    overflow: hidden;
+    font-size: inherit;
+  }
+
   :root {
     /* tier 1 — OKLCH slate primitives (cool hue, gentle chroma) */
     --tc-slate-50: oklch(98.4% 0.003 248);
@@ -76,6 +113,18 @@
        50% 亮度在全部三个表面 ≥4.5:1 (WCAG 1.4.3) */
     --tc-text-muted: oklch(50% 0.045 257);
     --tc-border-subtle: oklch(0% 0 0 / 8%);
+    /* Interactive control boundaries remain >=3:1 against light content and
+       raised surfaces. Decorative separators continue using border-subtle. */
+    --tc-control-border: oklch(62% 0.02 257);
+    --tc-control-track: var(--tc-control-border);
+    /* Theme-neutral Tailchat action defaults. Theme plugins can continue to
+       override these variables on #tailchat-app without depending on a
+       legacy component stylesheet. White foreground contrast is 5.05:1 for
+       primary and 6.94:1 for primary-hover. */
+    --tc-primary-color: #0b6fcc;
+    --tc-primary-hover-color: #095aa6;
+    --tc-dangerous-color: #d92d3a;
+    --tc-dangerous-hover-color: #b4232f;
 
     /* 消息密度 (舒适模式默认值; .density-compact 收紧)
        舒适值对齐实测的 Discord cozy: 组间距 ~16px, 正文 15px/22px */
@@ -116,6 +165,9 @@
        84%/.85 在三个表面 ≥5:1 (WCAG 1.4.3) 且仍明显弱于 body */
     --tc-text-muted: oklch(84% 0.016 256 / 0.85);
     --tc-border-subtle: oklch(100% 0 0 / 8%);
+    /* 3.33:1 against slate-700 raised surfaces; higher on slate-800 content. */
+    --tc-control-border: oklch(66% 0.02 257);
+    --tc-control-track: var(--tc-control-border);
   }
 
   body,
@@ -124,6 +176,61 @@
     font-family: -apple-system, BlinkMacSystemFont, Helvetica Neue, PingFang SC,
       Microsoft YaHei, Source Han Sans SC, Noto Sans CJK SC, WenQuanYi Micro Hei,
       sans-serif;
+  }
+
+  #tailchat-app {
+    color: var(--tc-text-body);
+    background-color: var(--tc-surface-content);
+    caret-color: var(--tc-primary-color);
+    --tc-background-image: url(../../assets/images/bg.webp);
+    --tc-content-background-image: none;
+    --tc-content-background-image-opacity: 0.2;
+    --tc-content-background-color: var(--tc-surface-content);
+  }
+
+  #tailchat-app ::selection {
+    color: var(--tc-text-body);
+    background-color: color-mix(
+      in oklch,
+      var(--tc-primary-color) 30%,
+      transparent
+    );
+  }
+
+  #tailchat-app code {
+    margin: 0 0.2em;
+    padding: 0.2em 0.4em 0.1em;
+    border: 1px solid var(--tc-border-subtle);
+    border-radius: 0.25rem;
+    background: color-mix(in oklch, var(--tc-text-body) 8%, transparent);
+    font-size: 85%;
+  }
+
+  #tailchat-app ::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+  }
+
+  #tailchat-app ::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
+
+  #tailchat-app ::-webkit-scrollbar-thumb {
+    border: 4px solid transparent;
+    border-radius: 8px;
+    background-color: color-mix(in oklch, var(--tc-text-body) 18%, transparent);
+    background-clip: padding-box;
+  }
+
+  #tailchat-app ::-webkit-scrollbar-thumb:hover {
+    background-color: color-mix(in oklch, var(--tc-text-body) 28%, transparent);
+  }
+
+  #tailchat-app ::-webkit-scrollbar-track {
+    border: 4px solid transparent;
+    border-radius: 8px;
+    background-color: color-mix(in oklch, var(--tc-text-body) 6%, transparent);
+    background-clip: padding-box;
   }
 
   h1 {
@@ -137,4 +244,37 @@
   h3 {
     @apply text-lg;
   }
+}
+
+@layer components {
+  #tailchat-app .tc-background {
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-image: var(--tc-background-image);
+  }
+
+  #tailchat-app .tc-content-background {
+    position: absolute;
+    inset: 0;
+    display: block;
+    pointer-events: none;
+    background-position: right bottom;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-image: var(--tc-content-background-image);
+    opacity: var(--tc-content-background-image-opacity);
+  }
+}
+
+/* Ant Design ships its heading color outside a cascade layer, which otherwise
+   wins over Tailwind's layered base and utility rules. Keep this compatibility
+   bridge unlayered until the public AntD plugin surface can be retired. */
+#tailchat-app h1,
+#tailchat-app h2,
+#tailchat-app h3,
+#tailchat-app h4,
+#tailchat-app h5,
+#tailchat-app h6 {
+  color: var(--tc-text-body);
 }

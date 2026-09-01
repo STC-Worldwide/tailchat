@@ -1,103 +1,89 @@
-import { Typography } from 'antd';
 import React from 'react';
 import { t, version } from 'tailchat-shared';
 import logoUrl from '@assets/images/logo.svg';
-import { Icon } from 'tailchat-design';
+import { Button } from '@/components/ui/official/button';
+import { Badge } from '@/components/ui/official/badge';
+import { SettingsPage, SettingsSection } from './Layout';
+import { CheckCircle2Icon, ExternalLinkIcon } from 'lucide-react';
 
-const { Paragraph, Text, Link } = Typography;
-
-const LogoLink: React.FC<{
-  src: string;
-  icon: React.ReactNode | string;
-}> = React.memo((props) => {
-  const { src, icon } = props;
-
-  return (
-    <a
-      className="p-2.5 hover:bg-black/20 rounded"
-      href={src}
-      target="_blank"
-      rel="noreferrer"
-    >
-      {typeof icon === 'string' ? <Icon icon={icon} /> : icon}
-    </a>
-  );
-});
-LogoLink.displayName = 'LogoLink';
+const projectLinks = [
+  ['GitHub', 'https://github.com/msgbyte/tailchat'],
+  ['Open Source', 'https://en.wikipedia.org/wiki/Open_source'],
+  ['Docker', 'https://www.docker.com/'],
+  ['MiniStar', 'https://ministar.moonrailgun.com/'],
+  ['Tushan', 'https://tushan.msgbyte.com/'],
+  ['React', 'https://react.dev/'],
+  ['Redux', 'https://redux.js.org/'],
+  ['TypeScript', 'https://www.typescriptlang.org/'],
+] as const;
 
 export const SettingsAbout: React.FC = React.memo(() => {
   return (
-    <div className="select-text">
-      <img
-        className="float-right select-none bg-black/40 rounded-2xl p-2"
-        width={128}
-        height={128}
-        src={logoUrl}
-      />
+    <SettingsPage
+      title={t('关于')}
+      description={t('Tailchat 的版本、项目能力和开源生态。')}
+    >
+      <SettingsSection title="Tailchat">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+          <img
+            className="size-20 shrink-0 select-none rounded-2xl bg-muted p-3"
+            width={80}
+            height={80}
+            src={logoUrl}
+            alt="Tailchat"
+          />
+          <div className="space-y-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-xl font-semibold text-foreground">
+                Tailchat
+              </h2>
+              <Badge variant="secondary">v{version}</Badge>
+            </div>
+            <p className="max-w-xl text-sm leading-6 text-muted-foreground">
+              {t('属于所有人的开源聊天工具')} ·{' '}
+              {t('完全独属于私人团队的沟通平台')}
+            </p>
+          </div>
+        </div>
+      </SettingsSection>
 
-      <Paragraph>
-        <Text className="font-bold">Tailchat</Text>
-        <Text>: {t('属于所有人的开源聊天工具')} </Text>
-      </Paragraph>
-      <Paragraph>{t('可供高度自定义的聊天工具')}</Paragraph>
-      <Paragraph>{t('完全独属于私人团队的沟通平台')}</Paragraph>
-
-      <Paragraph>
-        <div>{t('特性(亮点)')}:</div>
-        <ul className="list-disc list-inside">
-          <li>{t('基于面板的群组空间, 可高度自定义化')}</li>
-          <li>{t('基于微内核的前端插件支撑, 私人定制化')}</li>
-          <li>{t('分布式部署可供任意规模的使用需求')}</li>
+      <SettingsSection
+        title={t('特性(亮点)')}
+        description={t('Tailchat 的核心架构能力。')}
+      >
+        <ul className="space-y-3 text-sm">
+          {[
+            t('基于面板的群组空间, 可高度自定义化'),
+            t('基于微内核的前端插件支撑, 私人定制化'),
+            t('分布式部署可供任意规模的使用需求'),
+          ].map((feature) => (
+            <li key={feature} className="flex items-start gap-2.5">
+              <CheckCircle2Icon className="mt-0.5 size-4 shrink-0 text-primary" />
+              <span className="leading-6 text-foreground">{feature}</span>
+            </li>
+          ))}
         </ul>
-      </Paragraph>
+      </SettingsSection>
 
-      <Paragraph>
-        {t('当前版本')}: {version}
-      </Paragraph>
-
-      <div className="text-8xl flex flex-wrap space-x-4 bg-black/20 p-4 rounded-md ">
-        <LogoLink
-          src="https://github.com/msgbyte/tailchat"
-          icon="logos:github-octocat"
-        />
-        <LogoLink
-          src="https://en.wikipedia.org/wiki/Open_source"
-          icon="logos:opensource"
-        />
-        <LogoLink src="https://www.docker.com/" icon="logos:docker-icon" />
-        <LogoLink
-          src="https://ministar.moonrailgun.com/"
-          icon={
-            <img
-              className="w-24 h-24"
-              src="https://ministar.moonrailgun.com/img/logo.svg"
-            />
-          }
-        />
-        <LogoLink
-          src="https://tushan.msgbyte.com/"
-          icon={
-            <img
-              className="w-24 h-24"
-              src="https://tushan.msgbyte.com/img/logo.svg"
-            />
-          }
-        />
-        <LogoLink src="https://zh-hans.reactjs.org/" icon="logos:react" />
-        <LogoLink src="https://redux.js.org/" icon="logos:redux" />
-        <LogoLink
-          src="https://www.typescriptlang.org/"
-          icon="logos:typescript-icon"
-        />
-      </div>
-
-      <Paragraph className="mt-4">
-        {t('开源地址')}:{' '}
-        <Link href="https://github.com/msgbyte/tailchat" target="_blank">
-          https://github.com/msgbyte/tailchat
-        </Link>
-      </Paragraph>
-    </div>
+      <SettingsSection
+        title={t('开源生态')}
+        description={t('访问 Tailchat 使用和依赖的项目。')}
+      >
+        <div className="flex flex-wrap gap-2">
+          {projectLinks.map(([label, href]) => (
+            <Button
+              key={label}
+              variant="outline"
+              size="sm"
+              render={<a href={href} target="_blank" rel="noreferrer" />}
+            >
+              {label}
+              <ExternalLinkIcon />
+            </Button>
+          ))}
+        </div>
+      </SettingsSection>
+    </SettingsPage>
   );
 });
 SettingsAbout.displayName = 'SettingsAbout';

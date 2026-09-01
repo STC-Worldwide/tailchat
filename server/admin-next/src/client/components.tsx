@@ -5,17 +5,7 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import {
-  Alert,
-  Button as ArcoButton,
-  Card as ArcoCard,
-  Empty,
-  Input,
-  Message,
-  Modal as ArcoModal,
-  Spin,
-  type ButtonProps as ArcoButtonProps,
-} from '@arco-design/web-react';
+import { AlertCircle, CheckCircle2, LoaderCircle, SearchIcon } from 'lucide-react';
 import {
   Bar,
   BarChart as RechartsBarChart,
@@ -31,53 +21,68 @@ import {
 import { ROUTES, type RouteId } from './core';
 import { Icon, type IconName } from './icons';
 import { useI18n } from './i18n';
+import { Alert, AlertDescription } from './components/ui/alert';
+import { Button as ShadcnButton } from './components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from './components/ui/dialog';
+import { Input } from './components/ui/input';
 
-export function Button({
-  children,
-  icon,
-  variant = 'secondary',
-  className = '',
-  type = 'button',
-  ...props
-}: Omit<
-  ArcoButtonProps,
-  'className' | 'htmlType' | 'icon' | 'status' | 'type'
+type AppButtonProps = Omit<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  'className' | 'children' | 'type'
 > & {
   children?: React.ReactNode;
   className?: string;
   icon?: IconName;
   type?: 'button' | 'submit' | 'reset';
   variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
-}) {
-  return (
-    <ArcoButton
-      className={`button button-${variant} ${className}`}
-      htmlType={type}
-      icon={icon ? <Icon name={icon} /> : undefined}
-      status={variant === 'danger' ? 'danger' : undefined}
-      type={
-        variant === 'primary'
-          ? 'primary'
-          : variant === 'ghost'
-          ? 'text'
-          : 'secondary'
-      }
-      {...props}
-    >
-      {children}
-    </ArcoButton>
-  );
-}
+};
+
+export const Button = React.forwardRef<HTMLButtonElement, AppButtonProps>(
+  function Button(
+    {
+      children,
+      icon,
+      variant = 'secondary',
+      className = '',
+      type = 'button',
+      ...props
+    },
+    ref
+  ) {
+    return (
+      <ShadcnButton
+        ref={ref}
+        className={`button button-${variant} ${className}`}
+        type={type}
+        variant={
+          variant === 'primary'
+            ? 'default'
+            : variant === 'danger'
+            ? 'destructive'
+            : variant === 'ghost'
+            ? 'ghost'
+            : 'outline'
+        }
+        {...props}
+      >
+        {icon ? <Icon name={icon} /> : undefined}
+        {children}
+      </ShadcnButton>
+    );
+  }
+);
 
 export function Card({
   className = '',
   children,
 }: React.PropsWithChildren<{ className?: string }>) {
-  return (
-    <ArcoCard className={`card ${className}`} bodyStyle={{ padding: 0 }}>
-      {children}
-    </ArcoCard>
-  );
+  return <div className={`card ${className}`}>{children}</div>;
 }
 
 export function PageHeader({
@@ -103,8 +108,9 @@ export function PageHeader({
 export function LoadingState() {
   const { t } = useI18n();
   return (
-    <div className="state">
-      <Spin tip={t('common.loading')} />
+    <div className="state" role="status">
+      <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
+      <span>{t('common.loading')}</span>
     </div>
   );
 }
@@ -113,7 +119,8 @@ export function EmptyState({ message }: { message?: string }) {
   const { t } = useI18n();
   return (
     <div className="state state-empty">
-      <Empty description={message || t('common.empty')} />
+      <span className="empty-mark" aria-hidden="true" />
+      <p>{message || t('common.empty')}</p>
     </div>
   );
 }
@@ -128,12 +135,13 @@ export function ErrorState({
   const { t } = useI18n();
   return (
     <div className="state">
-      <Alert
-        className="state-error"
-        type="error"
-        content={message || t('common.loadError')}
-        action={retry && <Button onClick={retry}>{t('common.retry')}</Button>}
-      />
+      <Alert className="state-error" variant="destructive">
+        <AlertCircle />
+        <AlertDescription>
+          {message || t('common.loadError')}
+        </AlertDescription>
+        {retry && <Button onClick={retry}>{t('common.retry')}</Button>}
+      </Alert>
     </div>
   );
 }
@@ -151,17 +159,15 @@ export function Modal({
   wide?: boolean;
 }>) {
   return (
-    <ArcoModal
-      className={`modal ${wide ? 'modal-wide' : ''}`}
-      footer={footer || null}
-      onCancel={onClose}
-      title={title}
-      unmountOnExit
-      visible
-      wrapClassName="admin-modal"
-    >
-      {children}
-    </ArcoModal>
+    <Dialog open onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className={`modal ${wide ? 'modal-wide' : ''}`}>
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+        </DialogHeader>
+        <div className="modal-content">{children}</div>
+        {footer && <DialogFooter>{footer}</DialogFooter>}
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -171,14 +177,36 @@ const ToastContext = createContext<(message: string, type?: ToastType) => void>(
 );
 
 export function ToastProvider({ children }: React.PropsWithChildren) {
-  const [messageApi, contextHolder] = Message.useMessage({ duration: 3500 });
+  const [toasts, setToasts] = useState<
+    { id: number; message: string; type: ToastType }[]
+  >([]);
   const notify = (message: string, type: ToastType = 'success') => {
-    messageApi[type]?.(message);
+    const id = Date.now();
+    setToasts((current) => [...current, { id, message, type }]);
+    window.setTimeout(
+      () => setToasts((current) => current.filter((toast) => toast.id !== id)),
+      3500
+    );
   };
   return (
     <ToastContext.Provider value={notify}>
       {children}
-      {contextHolder}
+      <div className="toast-region" aria-live="polite">
+        {toasts.map((toast) => (
+          <div
+            className={`toast toast-${toast.type}`}
+            key={toast.id}
+            role={toast.type === 'error' ? 'alert' : 'status'}
+          >
+            {toast.type === 'success' ? (
+              <CheckCircle2 aria-hidden="true" />
+            ) : (
+              <AlertCircle aria-hidden="true" />
+            )}
+            <span>{toast.message}</span>
+          </div>
+        ))}
+      </div>
     </ToastContext.Provider>
   );
 }
@@ -268,7 +296,8 @@ export function AppShell({
   return (
     <div className="app-shell">
       {drawer && (
-        <ArcoButton
+        <button
+          type="button"
           className="drawer-backdrop"
           aria-label={t('common.close')}
           onClick={() => setDrawer(false)}
@@ -276,26 +305,34 @@ export function AppShell({
       )}
       <aside className={`sidebar ${drawer ? 'sidebar-open' : ''}`}>
         <div className="brand">
-          <img src="/admin-next/tailchat-logo.svg" alt="Tailchat" />
+          <img src="/admin/tailchat-logo.svg" alt="Tailchat" />
           <div>
             <strong>{t('app.name')}</strong>
             <span>{t('app.edition')}</span>
           </div>
+          <button
+            type="button"
+            className="icon-button drawer-close"
+            onClick={() => setDrawer(false)}
+            aria-label={t('common.close')}
+          >
+            <Icon name="close" />
+          </button>
         </div>
         <nav className="nav" aria-label={t('app.console')}>
           {sections.map((section) => (
             <div className="nav-section" key={section.label}>
               <span className="nav-label">{t(section.label)}</span>
               {section.routes.map((item) => (
-                <ArcoButton
-                  type="text"
+                <button
+                  type="button"
                   key={item.id}
                   className={route === item.id ? 'active' : ''}
                   onClick={() => go(item.id)}
                 >
                   <Icon name={item.icon} />
                   <span>{t(`route.${item.id}`)}</span>
-                </ArcoButton>
+                </button>
               ))}
             </div>
           ))}
@@ -304,63 +341,66 @@ export function AppShell({
       </aside>
       <div className="workspace">
         <header className="topbar">
-          <ArcoButton
-            type="text"
+          <button
+            type="button"
             className="icon-button mobile-only"
             onClick={() => setDrawer(true)}
             aria-label={t('shell.menu')}
-            icon={<Icon name="menu" />}
-          />
-          <ArcoButton
-            type="text"
+          >
+            <Icon name="menu" />
+          </button>
+          <button
+            type="button"
             className="command-trigger"
             onClick={() => setPalette(true)}
           >
             <Icon name="search" />
             <span>{t('shell.command')}</span>
             <kbd>⌘K</kbd>
-          </ArcoButton>
+          </button>
           <div className="topbar-spacer" />
-          <ArcoButton
-            type="text"
+          <button
+            type="button"
             className="topbar-control"
             onClick={() => setLanguage(language === 'zh' ? 'en' : 'zh')}
             aria-label={t('shell.language')}
           >
             <Icon name="language" />
             {language === 'zh' ? 'EN' : '中文'}
-          </ArcoButton>
+          </button>
           <span className="user-chip">
             {username.slice(0, 1).toUpperCase()}
           </span>
           <span className="username">{username}</span>
-          <ArcoButton
-            type="text"
+          <button
+            type="button"
             className="icon-button"
             onClick={logout}
             aria-label={t('auth.logout')}
             title={t('auth.logout')}
-            icon={<Icon name="logout" />}
-          />
+          >
+            <Icon name="logout" />
+          </button>
         </header>
         <main className="content">{children}</main>
       </div>
       {palette && (
         <Modal title={t('shell.command')} onClose={() => setPalette(false)}>
-          <Input
-            className="command-search"
-            autoFocus
-            prefix={<Icon name="search" />}
-            value={query}
-            onChange={setQuery}
-            placeholder={t('shell.commandPlaceholder')}
-          />
+          <div className="input-with-icon command-search">
+            <SearchIcon aria-hidden="true" />
+            <Input
+              autoFocus
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder={t('shell.commandPlaceholder')}
+            />
+          </div>
           <div className="command-results">
             {results.map((id) => (
-              <ArcoButton type="text" key={id} onClick={() => go(id)}>
+              <button type="button" key={id} onClick={() => go(id)}>
                 <span>{t(`route.${id}`)}</span>
                 <Icon name="chevron" />
-              </ArcoButton>
+              </button>
             ))}
             {!results.length && (
               <EmptyState message={t('common.noSearchResults')} />
@@ -425,6 +465,7 @@ export function LineChart({
           <Line
             type="monotone"
             dataKey="value"
+            isAnimationActive={false}
             stroke="#1890ff"
             strokeWidth={3}
             dot={{ r: 3, fill: '#12151d', stroke: '#73baff', strokeWidth: 2 }}
@@ -485,7 +526,13 @@ export function BarChart({
             itemStyle={{ color: '#73baff' }}
             formatter={(value: number) => format(Number(value))}
           />
-          <Bar dataKey="value" fill="#1890ff" radius={[0, 5, 5, 0]} barSize={8}>
+          <Bar
+            dataKey="value"
+            fill="#1890ff"
+            radius={[0, 5, 5, 0]}
+            barSize={8}
+            isAnimationActive={false}
+          >
             <LabelList
               dataKey="value"
               position="right"

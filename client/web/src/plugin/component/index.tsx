@@ -1,23 +1,21 @@
-import { Input } from 'antd';
-
+export { Menu, Table } from './modern-data';
+export { notification, Popconfirm } from './modern-feedback';
 export {
-  Button,
   Checkbox,
-  Input,
-  Divider,
-  Space,
-  Menu,
-  Table,
-  Switch,
-  Tooltip,
-  notification,
   Empty,
   Popover,
-  Tag,
   Skeleton,
-  Popconfirm,
-} from 'antd';
-export const TextArea = Input.TextArea;
+  Tag,
+  Tooltip,
+} from './modern-display';
+export {
+  Button,
+  Divider,
+  Input,
+  Space,
+  Switch,
+  TextArea,
+} from './modern-controls';
 export {
   Avatar,
   SensitiveText,

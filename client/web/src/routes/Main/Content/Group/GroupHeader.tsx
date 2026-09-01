@@ -1,5 +1,4 @@
 import React from 'react';
-import type { MenuProps } from 'antd';
 import _isNil from 'lodash/isNil';
 import _compact from 'lodash/compact';
 import {
@@ -8,7 +7,10 @@ import {
   useHasGroupPermission,
   useTranslation,
 } from 'tailchat-shared';
-import { SectionHeader } from '@/components/SectionHeader';
+import {
+  SectionHeader,
+  type SectionHeaderMenu,
+} from '@/components/SectionHeader';
 import { useGroupHeaderAction } from './useGroupHeaderAction';
 
 interface GroupHeaderProps {
@@ -30,7 +32,7 @@ export const GroupHeader: React.FC<GroupHeaderProps> = React.memo((props) => {
     return null;
   }
 
-  const menu: MenuProps = {
+  const menu: SectionHeaderMenu = {
     items: _compact([
       showGroupDetail && {
         key: '0',
@@ -48,7 +50,7 @@ export const GroupHeader: React.FC<GroupHeaderProps> = React.memo((props) => {
         danger: true,
         onClick: handleQuitGroup,
       },
-    ] as MenuProps['items']),
+    ]),
   };
 
   return (

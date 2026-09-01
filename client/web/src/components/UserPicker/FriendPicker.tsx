@@ -15,11 +15,21 @@ interface FriendPickerProps {
    */
   withSearch?: boolean;
 
+  emptyTitle?: string;
+  emptyDescription?: string;
+
   selectedIds: string[];
   onChange: (selectedIds: string[]) => void;
 }
 export const FriendPicker: React.FC<FriendPickerProps> = React.memo((props) => {
-  const { withoutUserIds = [], selectedIds, onChange } = props;
+  const {
+    withoutUserIds = [],
+    withSearch = true,
+    emptyTitle,
+    emptyDescription,
+    selectedIds,
+    onChange,
+  } = props;
   const friendIds = useAppSelector((state) =>
     state.user.friends
       .map((f) => f.id)
@@ -31,6 +41,9 @@ export const FriendPicker: React.FC<FriendPickerProps> = React.memo((props) => {
       selectedIds={selectedIds}
       onChange={onChange}
       allUserIds={friendIds}
+      withSearch={withSearch}
+      emptyTitle={emptyTitle}
+      emptyDescription={emptyDescription}
     />
   );
 });

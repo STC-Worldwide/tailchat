@@ -60,7 +60,7 @@ export const ModifyPassword: React.FC<ModifyPasswordProps> = React.memo(
     const [{}, handleModifyPassword] = useAsyncRequest(
       async (values: Values) => {
         if (values.newPassword !== values.newPasswordRepeat) {
-          showToasts(t('新旧密码不匹配'), 'warning');
+          showToasts(t('两次输入的新密码不一致'), 'warning');
           return;
         }
 

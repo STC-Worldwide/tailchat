@@ -11,6 +11,7 @@ interface GroupTextPanelItemProps {
   groupId: string;
   panel: GroupPanel;
   icon: React.ReactNode;
+  nested?: boolean;
 }
 
 /**
@@ -40,6 +41,7 @@ export const GroupAckPanelItem: React.FC<GroupTextPanelItemProps> = React.memo(
           status: isMuted ? 'default' : 'error',
         }}
         extraBadge={extraBadge}
+        nested={props.nested}
       />
     );
   }

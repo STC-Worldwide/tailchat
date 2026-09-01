@@ -3,9 +3,11 @@ import {
   FullModalField,
 } from '@/components/FullModal/Field';
 import { openReconfirmModal } from '@/components/Modal';
-import { Button } from 'antd';
 import React from 'react';
 import { model, t, useMemoizedFn } from 'tailchat-shared';
+import { Button } from '@/components/ui/official/button';
+import { Trash2Icon } from 'lucide-react';
+import { GroupDetailFieldGroup } from '../../Layout';
 
 interface RoleSummaryProps {
   currentRoleInfo: model.group.GroupRole;
@@ -26,16 +28,19 @@ export const RoleSummary: React.FC<RoleSummaryProps> = React.memo((props) => {
   });
 
   return (
-    <div className="px-2">
-      <FullModalField
-        title={t('身份组名称')}
-        value={props.currentRoleInfo.name}
-        editable={true}
-        renderEditor={DefaultFullModalInputEditorRender}
-        onSave={props.onChangeRoleName}
-      />
+    <div className="space-y-5 py-2">
+      <GroupDetailFieldGroup className="[&>[data-slot=field]]:mb-0 [&>[data-slot=field]]:px-4 [&>[data-slot=field]]:py-3.5">
+        <FullModalField
+          title={t('身份组名称')}
+          value={props.currentRoleInfo.name}
+          editable={true}
+          renderEditor={DefaultFullModalInputEditorRender}
+          onSave={props.onChangeRoleName}
+        />
+      </GroupDetailFieldGroup>
 
-      <Button type="primary" danger={true} onClick={handleDeleteRole}>
+      <Button variant="destructive" onClick={handleDeleteRole}>
+        <Trash2Icon />
         {t('删除身份组')}
       </Button>
     </div>

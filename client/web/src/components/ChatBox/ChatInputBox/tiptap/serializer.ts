@@ -5,7 +5,7 @@ import { getMessageTextDecorators } from '@/plugin/common';
  * tailchat 消息串 <-> tiptap 文档 的互转。
  *
  * 消息里的 mention 标记格式由插件决定(如 bbcode 插件注册
- * `[at=id]name[/at]`), 与 react-mentions 输入框一致: 从
+ * `[at=id]name[/at]`), 从
  * getMessageTextDecorators() 的模板派生序列化与解析。
  */
 

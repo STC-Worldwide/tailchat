@@ -14,6 +14,7 @@ export {
   WebMetaForm,
   setWebFastifyFormConfig as setWebMetaFormConfig,
 } from './WebMetaForm';
+export type { WebFastifyFormConfig } from './WebMetaForm';
 export {
   createFastifyFormSchema as createMetaFormSchema,
   fieldSchema as metaFormFieldSchema,
@@ -21,6 +22,9 @@ export {
   useFastifyFormContext,
 } from 'react-fastify-form';
 export type {
+  FastifyFormFieldComponent,
   FastifyFormFieldMeta as MetaFormFieldMeta,
   FastifyFormFieldProps,
+  FastifyFormContainerComponent,
+  FastifyFormContainerProps,
 } from 'react-fastify-form';

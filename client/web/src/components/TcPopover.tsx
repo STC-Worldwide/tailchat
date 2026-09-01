@@ -1,8 +1,11 @@
 import React, { useCallback, useContext, useMemo } from 'react';
-import { Popover } from '@base-ui-components/react/popover';
 import _noop from 'lodash/noop';
-import { cn } from '@/lib/utils';
 import { useAppPortalContainer } from '@/hooks/useAppPortalContainer';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/official/popover';
 
 const TcPopoverContext = React.createContext({ closePopover: _noop });
 
@@ -39,6 +42,8 @@ export interface TcPopoverProps {
   children: React.ReactElement;
   placement?: TcPopoverPlacement;
   onOpenChange?: (open: boolean) => void;
+  /** Whether the trigger is a native button element. */
+  nativeButton?: boolean;
   /** 对应旧 antd overlayClassName, 加在 popup 容器上 */
   overlayClassName?: string;
 }
@@ -53,6 +58,7 @@ export const TcPopover: React.FC<TcPopoverProps> = React.memo((props) => {
     children,
     placement = 'bottom',
     onOpenChange,
+    nativeButton = false,
     overlayClassName,
   } = props;
   const [visible, setVisible] = React.useState(false);
@@ -76,28 +82,20 @@ export const TcPopover: React.FC<TcPopoverProps> = React.memo((props) => {
 
   return (
     <TcPopoverContext.Provider value={handler}>
-      <Popover.Root open={visible} onOpenChange={handleOpenChange}>
-        <Popover.Trigger render={children} />
-        <Popover.Portal container={portalContainer}>
-          <Popover.Positioner
-            side={side}
-            align={align}
-            sideOffset={6}
-            className="z-50"
-          >
-            <Popover.Popup
-              className={cn(
-                'rounded-lg bg-raised text-body border border-subtle shadow-elevationMedium',
-                overlayClassName
-              )}
-            >
-              {typeof content === 'function'
-                ? React.createElement(content as React.ComponentType)
-                : content}
-            </Popover.Popup>
-          </Popover.Positioner>
-        </Popover.Portal>
-      </Popover.Root>
+      <Popover open={visible} onOpenChange={handleOpenChange}>
+        <PopoverTrigger nativeButton={nativeButton} render={children} />
+        <PopoverContent
+          side={side}
+          align={align}
+          sideOffset={6}
+          portalContainer={portalContainer}
+          className={overlayClassName}
+        >
+          {typeof content === 'function'
+            ? React.createElement(content as React.ComponentType)
+            : content}
+        </PopoverContent>
+      </Popover>
     </TcPopoverContext.Provider>
   );
 });

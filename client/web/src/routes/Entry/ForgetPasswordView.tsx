@@ -1,10 +1,10 @@
-import { Icon } from 'tailchat-design';
 import {
   forgetPassword,
+  localTrans,
   resetPassword,
   showToasts,
   t,
-  useAsyncRequest,
+  useAsyncFn,
 } from 'tailchat-shared';
 import React, { useState } from 'react';
 import { string } from 'yup';
@@ -12,6 +12,8 @@ import { useNavToView } from './utils';
 import { EntryInput } from './components/Input';
 import { SecondaryBtn } from './components/SecondaryBtn';
 import { PrimaryBtn } from './components/PrimaryBtn';
+import { EntryError, EntryField, EntryView } from './components/Form';
+import { ArrowLeftIcon } from 'lucide-react';
 
 /**
  * 登录视图
@@ -24,93 +26,126 @@ export const ForgetPasswordView: React.FC = React.memo(() => {
 
   const navToView = useNavToView();
 
-  const [{ loading: sendEmailLoading }, handleSendEmail] =
-    useAsyncRequest(async () => {
+  const [
+    { loading: sendEmailLoading, error: sendEmailError },
+    handleSendEmail,
+  ] = useAsyncFn(async () => {
+      await string()
+        .email(t('邮箱格式不正确'))
+        .required(t('邮箱不能为空'))
+        .validate(email);
+
       await forgetPassword(email);
       setSendedEmail(true);
-      showToasts(`已发送邮件到 ${email}`, 'success');
-    }, [email]);
+      showToasts(t('已发送邮件到 {{email}}', { email }), 'success');
+  }, [email]);
 
-  const [{ loading }, handleResetPassword] = useAsyncRequest(async () => {
-    await string()
-      .email(t('邮箱格式不正确'))
-      .required(t('邮箱不能为空'))
-      .validate(email);
+  const [{ loading, error }, handleResetPassword] = useAsyncFn(
+    async () => {
+      await string()
+        .email(t('邮箱格式不正确'))
+        .required(t('邮箱不能为空'))
+        .validate(email);
 
-    await string()
-      .min(6, t('密码不能低于6位'))
-      .required(t('密码不能为空'))
-      .validate(password);
+      await string()
+        .min(6, t('密码不能低于6位'))
+        .required(t('密码不能为空'))
+        .validate(password);
 
-    await string().length(6, t('OTP为6位数字')).validate(otp);
+      await string().length(6, t('OTP为6位数字')).validate(otp);
 
-    await resetPassword(email, password, otp);
+      await resetPassword(email, password, otp);
 
-    showToasts(t('密码重置成功，现在回到登录页'), 'success');
-    navToView('/entry/login');
-  }, [email, password, otp, navToView]);
+      showToasts(t('密码重置成功，现在回到登录页'), 'success');
+      navToView('/entry/login');
+    },
+    [email, password, otp, navToView]
+  );
 
   return (
-    <div className="w-96 text-white">
-      <div className="mb-4 text-2xl">{t('忘记密码')}</div>
-
-      <div>
-        <div className="mb-4">
-          <div className="mb-2">{t('邮箱')}</div>
+    <EntryView
+      title={t('忘记密码')}
+      description={localTrans({
+        'zh-CN': '我们会向你的邮箱发送一次性校验码。',
+        'en-US': 'We will send a one-time verification code to your email.',
+      })}
+    >
+      <form
+        className="space-y-5"
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (sendedEmail) {
+            handleResetPassword();
+          } else {
+            handleSendEmail();
+          }
+        }}
+      >
+        <EntryField id="forget-email" label={t('邮箱')}>
           <EntryInput
+            id="forget-email"
             name="forget-email"
             placeholder="name@example.com"
-            type="text"
+            type="email"
+            autoComplete="email"
+            autoCapitalize="none"
             disabled={sendedEmail}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-        </div>
+        </EntryField>
 
         {!sendedEmail && (
-          <PrimaryBtn loading={sendEmailLoading} onClick={handleSendEmail}>
+          <PrimaryBtn type="submit" loading={sendEmailLoading}>
             {t('向邮箱发送OTP')}
           </PrimaryBtn>
         )}
 
         {sendedEmail && (
           <>
-            <div className="mb-4">
-              <div className="mb-2">{t('OTP')}</div>
+            <EntryField id="forget-otp" label={t('OTP')}>
               <EntryInput
+                id="forget-otp"
                 name="forget-otp"
                 type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                maxLength={6}
+                placeholder={t('6位校验码')}
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
               />
-            </div>
+            </EntryField>
 
-            <div className="mb-4">
-              <div className="mb-2">{t('新密码')}</div>
+            <EntryField id="forget-password" label={t('新密码')}>
               <EntryInput
+                id="forget-password"
                 name="forget-password"
                 type="password"
-                placeholder="******"
+                placeholder="••••••••"
+                autoComplete="new-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-            </div>
+            </EntryField>
 
-            <PrimaryBtn loading={loading} onClick={handleResetPassword}>
+            <PrimaryBtn type="submit" loading={loading}>
               {t('重设密码')}
             </PrimaryBtn>
           </>
         )}
 
+        <EntryError error={error ?? sendEmailError} />
+
         <SecondaryBtn
-          disabled={loading}
+          disabled={loading || sendEmailLoading}
           onClick={() => navToView('/entry/login')}
         >
-          <Icon icon="mdi:arrow-left" className="mr-1 inline" />
+          <ArrowLeftIcon />
           {t('返回登录')}
         </SecondaryBtn>
-      </div>
-    </div>
+      </form>
+    </EntryView>
   );
 });
 ForgetPasswordView.displayName = 'ForgetPasswordView';

@@ -1,4 +1,3 @@
-import { Avatar, Icon } from 'tailchat-design';
 import { openModal } from '@/components/Modal';
 import { ModalCreateGroup } from '@/components/modals/CreateGroup';
 import React, { useMemo, useRef } from 'react';
@@ -13,12 +12,25 @@ import {
   useSingleUserSetting,
 } from 'tailchat-shared';
 import { NavbarNavItem } from './NavItem';
-import { Dropdown } from 'antd';
 import { useGroupUnreadState } from '@/hooks/useGroupUnreadState';
 import { pluginCustomPanel } from '@/plugin/common';
 import { NavbarCustomNavItem } from './CustomNavItem';
 import SortableList, { SortableItem } from 'react-easy-sort';
 import arrayMove from 'array-move';
+import { MessageSquareDotIcon, PlusIcon } from 'lucide-react';
+import { SidebarMenu } from '@/components/ui/official/sidebar';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/components/ui/official/avatar';
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from '@/components/ui/official/context-menu';
+import { useAppPortalContainer } from '@/hooks/useAppPortalContainer';
 
 /**
  * 群组导航栏栏项
@@ -27,42 +39,52 @@ const GroupNavItem: React.FC<{ group: GroupInfo }> = React.memo(({ group }) => {
   const groupId = group._id;
   const unreadState = useGroupUnreadState(groupId);
   const { markGroupAllAck } = useGroupAck(groupId);
+  const portalContainer = useAppPortalContainer();
 
-  const menu = {
-    items: [
-      {
-        key: 'ack',
-        label: t('标记为已读'),
-        icon: <Icon icon="mdi:message-badge-outline" />,
-        onClick: () => {
-          markGroupAllAck();
-          showSuccessToasts(t('已标记该群组所有消息已读'));
-        },
-      },
-    ],
+  const handleMarkAsRead = () => {
+    markGroupAllAck();
+    showSuccessToasts(t('已标记该群组所有消息已读'));
   };
 
   return (
-    <Dropdown menu={menu} trigger={['contextMenu']}>
-      <div>
-        <NavbarNavItem
-          name={group.name}
-          to={`/main/group/${group._id}`}
-          showPill={true}
-          badge={['muted', 'unread'].includes(unreadState)}
-          badgeProps={{
-            status: unreadState === 'unread' ? 'error' : 'default',
-          }}
-        >
-          <Avatar
-            shape="square"
-            size={48}
-            name={group.name}
-            src={group.avatar}
-          />
-        </NavbarNavItem>
-      </div>
-    </Dropdown>
+    <ContextMenu>
+      <ContextMenuTrigger
+        render={
+          <div>
+            <NavbarNavItem
+              name={group.name}
+              label={group.name}
+              to={`/main/group/${group._id}`}
+              showPill={true}
+              badge={['muted', 'unread'].includes(unreadState)}
+              badgeProps={{
+                status: unreadState === 'unread' ? 'error' : 'default',
+              }}
+            >
+              <Avatar size="sm" className="rounded-md after:rounded-md">
+                <AvatarImage
+                  src={group.avatar || undefined}
+                  alt={group.name}
+                  className="rounded-md"
+                />
+                <AvatarFallback className="rounded-md text-xs font-medium">
+                  {group.name.slice(0, 1).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+            </NavbarNavItem>
+          </div>
+        }
+      />
+      <ContextMenuContent
+        portalContainer={portalContainer}
+        className="min-w-40"
+      >
+        <ContextMenuItem onClick={handleMarkAsRead}>
+          <MessageSquareDotIcon />
+          {t('标记为已读')}
+        </ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
   );
 });
 GroupNavItem.displayName = 'GroupNavItem';
@@ -105,7 +127,7 @@ export const GroupNav: React.FC = React.memo(() => {
   const { groupList, handleSortEnd } = useGroupList();
 
   const handleCreateGroup = useEvent(() => {
-    openModal(<ModalCreateGroup />);
+    openModal(<ModalCreateGroup />, { closable: true });
   });
 
   const { disableCreateGroup } = useGlobalConfigStore((state) => ({
@@ -113,40 +135,42 @@ export const GroupNav: React.FC = React.memo(() => {
   }));
 
   return (
-    <div className="space-y-2" data-tc-role="navbar-groups" ref={containerRef}>
+    <div data-tc-role="navbar-groups" ref={containerRef}>
       {Array.isArray(groupList) && (
         <SortableList
-          className="space-y-2"
+          className="space-y-1"
           lockAxis="y"
           onSortEnd={handleSortEnd}
           customHolderRef={containerRef}
         >
           {groupList.map((group) => (
             <SortableItem key={group._id}>
-              <div className="overflow-hidden">
+              <SidebarMenu>
                 <GroupNavItem group={group} />
-              </div>
+              </SidebarMenu>
             </SortableItem>
           ))}
         </SortableList>
       )}
 
-      {!disableCreateGroup && (
-        <NavbarNavItem
-          className="bg-green-500"
-          name={t('创建群组')}
-          onClick={handleCreateGroup}
-          data-testid="create-group"
-        >
-          <Icon className="text-3xl text-white" icon="mdi:plus" />
-        </NavbarNavItem>
-      )}
+      <SidebarMenu className="mt-1">
+        {!disableCreateGroup && (
+          <NavbarNavItem
+            name={t('创建群组')}
+            label={t('创建群组')}
+            onClick={handleCreateGroup}
+            data-testid="create-group"
+          >
+            <PlusIcon />
+          </NavbarNavItem>
+        )}
 
-      {pluginCustomPanel
-        .filter((p) => p.position === 'navbar-group')
-        .map((p) => (
-          <NavbarCustomNavItem key={p.name} panelInfo={p} withBg={true} />
-        ))}
+        {pluginCustomPanel
+          .filter((p) => p.position === 'navbar-group')
+          .map((p) => (
+            <NavbarCustomNavItem key={p.name} panelInfo={p} withBg={true} />
+          ))}
+      </SidebarMenu>
     </div>
   );
 });

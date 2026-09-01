@@ -1,26 +1,33 @@
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { Icon } from 'tailchat-design';
-import React, { useCallback } from 'react';
+import React from 'react';
 import { useSidebarContext } from '../SidebarContext';
+import { Button } from '@/components/ui/official/button';
+import { PanelLeftCloseIcon, PanelLeftOpenIcon } from 'lucide-react';
+import { localTrans } from 'tailchat-shared';
 
 export const MobileMenuBtn: React.FC = React.memo(() => {
-  const { showSidebar, setShowSidebar } = useSidebarContext();
+  const { showSidebar, switchSidebar } = useSidebarContext();
   const isMobile = useIsMobile();
-
-  const handleSwitchSidebar = useCallback(() => {
-    setShowSidebar(!showSidebar);
-  }, [showSidebar]);
 
   if (!isMobile) {
     return null;
   }
 
   return (
-    <Icon
-      className="text-5xl mb-4 cursor-pointer"
-      icon={showSidebar ? 'mdi:menu-open' : 'mdi:menu'}
-      onClick={handleSwitchSidebar}
-    />
+    <Button
+      variant="ghost"
+      size="icon-sm"
+      aria-label={localTrans({
+        'zh-CN': showSidebar ? '关闭频道导航' : '打开频道导航',
+        'en-US': showSidebar
+          ? 'Close channel navigation'
+          : 'Open channel navigation',
+      })}
+      aria-expanded={showSidebar}
+      onClick={switchSidebar}
+    >
+      {showSidebar ? <PanelLeftCloseIcon /> : <PanelLeftOpenIcon />}
+    </Button>
   );
 });
 MobileMenuBtn.displayName = 'MobileMenuBtn';

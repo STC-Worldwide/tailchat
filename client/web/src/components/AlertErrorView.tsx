@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Alert, Button } from 'antd';
 import clsx from 'clsx';
 import { t } from 'tailchat-shared';
+import { Button } from '@/components/ui/official/button';
+import { TcAlert } from '@/components/ui/alert';
 
 /**
  * 用于接口错误显示的组件
@@ -16,10 +17,12 @@ export const AlertErrorView: React.FC<{
     <div>
       <span>{String(error.message)}</span>
       <Button
+        type="button"
+        size="sm"
+        variant="ghost"
         className={clsx({
           'opacity-0': show,
         })}
-        type="link"
         onClick={() => setShow(true)}
       >
         {t('显示详情')}
@@ -29,10 +32,10 @@ export const AlertErrorView: React.FC<{
   );
 
   return (
-    <Alert
+    <TcAlert
       className="w-full h-full select-text"
-      type="error"
-      message={String(error.name)}
+      variant="error"
+      title={String(error.name)}
       description={description}
     />
   );

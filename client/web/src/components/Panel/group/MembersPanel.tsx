@@ -1,9 +1,8 @@
-import { Icon } from 'tailchat-design';
 import { UserListItem } from '@/components/UserListItem';
-import { Dropdown, Input, Skeleton } from 'antd';
 import React, { useMemo } from 'react';
 import {
   getGroupConfigWithInfo,
+  localTrans,
   t,
   useCachedOnlineStatus,
   useGroupInfo,
@@ -12,10 +11,26 @@ import {
 import { Problem } from '@/components/Problem';
 import { useGroupMemberAction } from '@/hooks/useGroupMemberAction';
 import { UserPopover } from '@/components/popover/UserPopover';
+import { GroupMemberContextMenuItems } from '@/components/GroupMemberActionMenu';
 import { GroupedVirtuoso } from 'react-virtuoso';
 import _take from 'lodash/take';
 import _sum from 'lodash/sum';
 import _get from 'lodash/get';
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuTrigger,
+} from '@/components/ui/official/context-menu';
+import { Input } from '@/components/ui/official/input';
+import { Skeleton } from '@/components/ui/official/skeleton';
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/official/empty';
+import { SearchIcon, SearchXIcon } from 'lucide-react';
+import { useAppPortalContainer } from '@/hooks/useAppPortalContainer';
 
 interface MembersPanelProps {
   groupId: string;
@@ -41,6 +56,7 @@ export const MembersPanel: React.FC<MembersPanelProps> = React.memo((props) => {
     searchResult: filteredGroupMembers,
     generateActionMenu,
   } = useGroupMemberAction(groupId);
+  const portalContainer = useAppPortalContainer();
 
   const sortedMembers = useMemo(() => {
     const online: UserBaseInfo[] = [];
@@ -61,8 +77,12 @@ export const MembersPanel: React.FC<MembersPanelProps> = React.memo((props) => {
   }, [userInfos, membersOnlineStatus]);
 
   const { groupCounts, groupNames, getGroupedMemberInfo } = useMemo(() => {
+    const searchResultsLabel = localTrans({
+      'zh-CN': '搜索结果',
+      'en-US': 'Search results',
+    });
     const groupMemberInfo = isSearching
-      ? { '': filteredGroupMembers }
+      ? { [searchResultsLabel]: filteredGroupMembers }
       : sortedMembers;
 
     const groupCounts = Object.values(groupMemberInfo).map(
@@ -89,7 +109,19 @@ export const MembersPanel: React.FC<MembersPanelProps> = React.memo((props) => {
   }
 
   if (userInfos.length === 0) {
-    return <Skeleton />;
+    return (
+      <div className="space-y-4 p-4" role="status" aria-label={t('加载中')}>
+        {Array.from({ length: 5 }).map((_, index) => (
+          <div key={index} className="flex items-center gap-3">
+            <Skeleton className="size-10 rounded-full" />
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-4 w-2/5" />
+              <Skeleton className="h-3 w-3/5" />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
   }
 
   const renderUser = (member: UserBaseInfo | null) => {
@@ -100,15 +132,28 @@ export const MembersPanel: React.FC<MembersPanelProps> = React.memo((props) => {
     const menu = generateActionMenu(member);
     if ((menu.items ?? []).length > 0) {
       return (
-        <Dropdown key={member._id} trigger={['contextMenu']} menu={menu}>
-          <div>
-            <UserListItem
-              userId={member._id}
-              popover={<UserPopover userInfo={member} />}
-              hideDiscriminator={hideGroupMemberDiscriminator}
+        <ContextMenu key={member._id}>
+          <ContextMenuTrigger
+            render={
+              <div>
+                <UserListItem
+                  userId={member._id}
+                  popover={<UserPopover userInfo={member} />}
+                  hideDiscriminator={hideGroupMemberDiscriminator}
+                />
+              </div>
+            }
+          />
+          <ContextMenuContent
+            portalContainer={portalContainer}
+            className="min-w-44"
+          >
+            <GroupMemberContextMenuItems
+              items={menu.items}
+              portalContainer={portalContainer}
             />
-          </div>
-        </Dropdown>
+          </ContextMenuContent>
+        </ContextMenu>
       );
     } else {
       return (
@@ -123,32 +168,49 @@ export const MembersPanel: React.FC<MembersPanelProps> = React.memo((props) => {
   };
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="p-2">
-        <Input
-          placeholder={t('搜索成员')}
-          size="large"
-          suffix={<Icon fontSize={20} color="grey" icon="mdi:magnify" />}
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-        />
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="shrink-0 border-b bg-background p-3">
+        <div className="relative">
+          <SearchIcon
+            aria-hidden="true"
+            className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+          />
+          <Input
+            className="h-11 w-full pl-9 md:h-9"
+            placeholder={t('搜索成员')}
+            aria-label={t('搜索成员')}
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+          />
+        </div>
       </div>
 
-      <div className="flex-1">
-        <GroupedVirtuoso
-          className="h-full"
-          groupCounts={groupCounts}
-          groupContent={(index) => {
-            return (
-              <div className="pt-4 px-2.5 font-bold text-sm bg-content-light dark:bg-content-dark">
-                {groupNames[index]} - {groupCounts[index]}
-              </div>
-            );
-          }}
-          itemContent={(i, groupIndex) =>
-            renderUser(getGroupedMemberInfo(i, groupIndex))
-          }
-        />
+      <div className="min-h-0 flex-1">
+        {isSearching && filteredGroupMembers.length === 0 ? (
+          <Empty className="h-full border-0">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <SearchXIcon />
+              </EmptyMedia>
+              <EmptyTitle>{t('没有任何搜索结果')}</EmptyTitle>
+            </EmptyHeader>
+          </Empty>
+        ) : (
+          <GroupedVirtuoso
+            className="h-full"
+            groupCounts={groupCounts}
+            groupContent={(index) => {
+              return (
+                <div className="border-b bg-muted/70 px-3 py-2 text-xs font-medium uppercase tracking-wide text-muted-foreground backdrop-blur-sm">
+                  {groupNames[index]} · {groupCounts[index]}
+                </div>
+              );
+            }}
+            itemContent={(i, groupIndex) =>
+              renderUser(getGroupedMemberInfo(i, groupIndex))
+            }
+          />
+        )}
       </div>
     </div>
   );

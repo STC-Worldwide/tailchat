@@ -24,7 +24,9 @@ export interface AuthSession {
 }
 
 export function normalizeRoute(pathname: string): RouteId {
-  const route = pathname.replace(/^\/admin-next\/?/, '').replace(/\/$/, '');
+  const route = pathname
+    .replace(/^\/admin(?:-next)?\/?/, '')
+    .replace(/\/$/, '');
   return ROUTES.includes(route as RouteId) ? (route as RouteId) : 'dashboard';
 }
 

@@ -1,8 +1,17 @@
 import React, { PropsWithChildren, useState } from 'react';
 import { PanelCommonHeader } from '../common/Header';
-import clsx from 'clsx';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { IconBtn } from '@/components/IconBtn';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/official/sheet';
+import { useAppPortalContainer } from '@/hooks/useAppPortalContainer';
+import { localTrans, t } from 'tailchat-shared';
+import { PanelActionButton } from './PanelActionButton';
+import { XIcon } from 'lucide-react';
 
 interface RightPanelType {
   name: string;
@@ -22,17 +31,40 @@ export const CommonPanelWrapper: React.FC<CommonPanelWrapperProps> = React.memo(
   (props) => {
     const [rightPanel, setRightPanel] = useState<RightPanelType>();
     const isMobile = useIsMobile();
+    const portalContainer = useAppPortalContainer();
+    const closeRightPanel = () => setRightPanel(undefined);
+
+    const rightPanelContent = rightPanel ? (
+      <>
+        <PanelCommonHeader
+          actionsLabel={localTrans({
+            'zh-CN': '辅助面板操作',
+            'en-US': 'Secondary panel actions',
+          })}
+          actions={[
+            <PanelActionButton
+              key="close"
+              label={t('关闭')}
+              icon={<XIcon />}
+              onClick={closeRightPanel}
+            />,
+          ]}
+        >
+          {rightPanel.name}
+        </PanelCommonHeader>
+        <div className="min-h-0 flex-1 overflow-y-auto">{rightPanel.panel}</div>
+      </>
+    ) : null;
 
     return (
-      <div
-        className="w-full h-full flex"
-        style={{
-          minWidth: isMobile && !rightPanel ? 'calc(100vw - 72px)' : 0,
-        }} // NOTICE: 72px为导航栏宽度
-      >
+      <div className="flex h-full min-w-0 w-full bg-background text-foreground">
         {/* 主面板 */}
-        <div className="flex flex-col overflow-hidden flex-1">
+        <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
           <PanelCommonHeader
+            actionsLabel={localTrans({
+              'zh-CN': '面板操作',
+              'en-US': 'Panel actions',
+            })}
             actions={props.actions && props.actions({ setRightPanel })}
           >
             {props.header}
@@ -41,32 +73,38 @@ export const CommonPanelWrapper: React.FC<CommonPanelWrapperProps> = React.memo(
         </div>
 
         {/* 右侧面板 */}
-        <div
-          className={clsx(
-            'transition-all overflow-hidden border-l border-black/20 flex flex-col',
-            {
-              'w-96 mobile:w-full': rightPanel,
-              'w-0': !rightPanel,
-            }
-          )}
-        >
-          <PanelCommonHeader
-            actions={[
-              // 关闭按钮
-              <IconBtn
-                key="close"
-                shape="square"
-                icon="mdi:close"
-                iconClassName="text-2xl"
-                onClick={() => setRightPanel(undefined)}
-              />,
-            ]}
+        {isMobile ? (
+          <Sheet
+            open={Boolean(rightPanel)}
+            onOpenChange={(open) => !open && closeRightPanel()}
           >
-            {rightPanel?.name}
-          </PanelCommonHeader>
-
-          <div className="flex-1 overflow-y-auto">{rightPanel?.panel}</div>
-        </div>
+            <SheetContent
+              portalContainer={portalContainer}
+              side="right"
+              closeLabel={t('关闭')}
+              showCloseButton={false}
+              className="w-full gap-0 p-0 data-[side=right]:w-full"
+              style={{ maxWidth: '100%' }}
+            >
+              <SheetHeader className="sr-only">
+                <SheetTitle>{rightPanel?.name}</SheetTitle>
+                <SheetDescription>
+                  {localTrans({
+                    'zh-CN': '辅助面板内容',
+                    'en-US': 'Secondary panel content',
+                  })}
+                </SheetDescription>
+              </SheetHeader>
+              {rightPanelContent}
+            </SheetContent>
+          </Sheet>
+        ) : (
+          rightPanel && (
+            <aside className="flex h-full w-96 max-w-[40%] shrink-0 flex-col border-l bg-card">
+              {rightPanelContent}
+            </aside>
+          )
+        )}
       </div>
     );
   }

@@ -7,12 +7,13 @@ import {
   useAsyncRequest,
   showToasts,
 } from 'tailchat-shared';
-import { Button } from 'antd';
 import _isEqual from 'lodash/isEqual';
 import { GroupPanelTree } from './GroupPanelTree';
-import { FullModalCommonTitle } from '@/components/FullModal/CommonTitle';
 import { closeModal, openModal } from '@/components/Modal';
 import { ModalCreateGroupPanel } from '../../GroupPanel/CreateGroupPanel';
+import { Button } from '@/components/ui/official/button';
+import { PlusIcon, RotateCcwIcon, SaveIcon } from 'lucide-react';
+import { GroupDetailPage, GroupDetailSection } from '../Layout';
 
 export const GroupPanel: React.FC<{
   groupId: string;
@@ -60,35 +61,45 @@ export const GroupPanel: React.FC<{
     );
   }, []);
 
+  const isDirty = !_isEqual(groupPanels, editingGroupPanels);
+
   return (
-    <div>
-      <FullModalCommonTitle
-        extra={
-          <Button type="primary" onClick={handleOpenCreatePanelModal}>
-            {t('创建面板')}
-          </Button>
-        }
+    <GroupDetailPage
+      title={t('面板管理')}
+      description={t('组织群组频道和面板，并调整成员看到的导航结构。')}
+      action={
+        <Button onClick={handleOpenCreatePanelModal}>
+          <PlusIcon />
+          {t('创建面板')}
+        </Button>
+      }
+    >
+      <GroupDetailSection
+        title={t('频道结构')}
+        description={t('拖动项目以重新排序，或将面板移动到其他分组。')}
       >
-        {t('面板管理')}
-      </FullModalCommonTitle>
-
-      <div className="max-h-160 overflow-auto border rounded border-black/20 p-1">
-        <GroupPanelTree
-          groupId={groupId}
-          groupPanels={editingGroupPanels}
-          onChange={handleChange}
-        />
-      </div>
-
-      {!_isEqual(groupPanels, editingGroupPanels) && (
-        <div className="space-x-1 mt-2">
-          <Button type="primary" loading={loading} onClick={handleSave}>
-            {t('保存')}
-          </Button>
-          <Button onClick={handleReset}>{t('重置')}</Button>
+        <div className="max-h-[30rem] overflow-auto rounded-lg border border-border bg-background p-2">
+          <GroupPanelTree
+            groupId={groupId}
+            groupPanels={editingGroupPanels}
+            onChange={handleChange}
+          />
         </div>
-      )}
-    </div>
+
+        {isDirty && (
+          <div className="mt-4 flex items-center justify-end gap-2 rounded-lg border border-border bg-muted/40 p-3">
+            <Button variant="ghost" onClick={handleReset}>
+              <RotateCcwIcon />
+              {t('重置')}
+            </Button>
+            <Button disabled={loading} aria-busy={loading} onClick={handleSave}>
+              <SaveIcon />
+              {t('保存')}
+            </Button>
+          </div>
+        )}
+      </GroupDetailSection>
+    </GroupDetailPage>
   );
 });
 GroupPanel.displayName = 'GroupPanel';

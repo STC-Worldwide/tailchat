@@ -29,7 +29,7 @@ const Root = styled(LoadingOnFirst)({
   paddingTop: 10,
   paddingBottom: 10,
 
-  '.ant-empty': {
+  '[data-slot="empty"]': {
     paddingTop: 80,
   },
 
@@ -43,7 +43,7 @@ const Root = styled(LoadingOnFirst)({
     right: 20,
     bottom: 20,
 
-    '> .anticon': {
+    '> svg': {
       fontSize: 24,
     },
   },

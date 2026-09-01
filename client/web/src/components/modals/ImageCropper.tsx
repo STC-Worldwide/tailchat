@@ -2,8 +2,9 @@ import Cropper, { Area } from 'react-easy-crop';
 import _isNil from 'lodash/isNil';
 import { showToasts, t } from 'tailchat-shared';
 import React, { useState } from 'react';
-import { Button } from 'antd';
 import { ModalWrapper } from '../Modal';
+import { Button } from '@/components/ui/official/button';
+import { LoaderCircleIcon } from 'lucide-react';
 
 /**
  * 头像裁剪模态框
@@ -17,21 +18,34 @@ export const ImageCropperModal: React.FC<{
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [area, setArea] = useState<Area>({ width: 0, height: 0, x: 0, y: 0 });
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const handleConfirm = async () => {
-    const blobUrl = await getCroppedImg(
-      await createImage(props.imageUrl),
-      area
-    );
-    props.onConfirm(blobUrl);
+    setIsProcessing(true);
+    try {
+      const blobUrl = await getCroppedImg(
+        await createImage(props.imageUrl),
+        area
+      );
+      props.onConfirm(blobUrl);
+    } catch (error) {
+      console.error(error);
+      showToasts(t('无法裁剪图片，请重试'), 'error');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
     <ModalWrapper
-      className="flex flex-col"
-      style={{ width: '80vw', height: '80vh' }}
+      title={t('裁剪图片')}
+      className="flex h-[min(78dvh,48rem)] w-[min(92vw,64rem)] max-w-full flex-col gap-4 p-4 sm:p-6 [&_[data-slot=dialog-title]]:mb-0 [&_[data-slot=dialog-title]]:text-left"
     >
-      <div className="flex-1 relative mb-4">
+      <div
+        className="relative min-h-0 flex-1 overflow-hidden rounded-xl bg-black/80 ring-1 ring-inset ring-white/10"
+        role="region"
+        aria-label={t('图片裁剪区域')}
+      >
         <Cropper
           image={props.imageUrl}
           crop={crop}
@@ -43,9 +57,41 @@ export const ImageCropperModal: React.FC<{
         />
       </div>
 
-      <Button type="primary" onClick={handleConfirm}>
-        {t('确认')}
-      </Button>
+      <footer className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <label className="min-w-0 flex-1 sm:max-w-sm">
+          <span className="mb-2 flex items-center justify-between gap-3 text-sm font-medium text-foreground">
+            <span>{t('缩放')}</span>
+            <span className="tabular-nums text-muted-foreground">
+              {Math.round(zoom * 100)}%
+            </span>
+          </span>
+          <input
+            type="range"
+            min={1}
+            max={3}
+            step={0.01}
+            value={zoom}
+            aria-label={t('图片缩放')}
+            className="h-2 w-full cursor-pointer accent-primary"
+            onChange={(event) => setZoom(Number(event.target.value))}
+          />
+        </label>
+
+        <Button
+          className="sm:min-w-32"
+          disabled={isProcessing || area.width === 0 || area.height === 0}
+          aria-busy={isProcessing}
+          onClick={handleConfirm}
+        >
+          {isProcessing && (
+            <LoaderCircleIcon
+              data-icon="inline-start"
+              className="size-4 animate-spin"
+            />
+          )}
+          {isProcessing ? t('处理中') : t('应用裁剪')}
+        </Button>
+      </footer>
     </ModalWrapper>
   );
 });
@@ -84,46 +130,47 @@ function getCroppedImg(
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
 
-  if (!_isNil(ctx)) {
-    const maxSize = Math.max(image.width, image.height);
-    const safeArea = 2 * ((maxSize / 2) * Math.sqrt(2));
-
-    // set each dimensions to double largest dimension to allow for a safe area for the
-    // image to rotate in without being clipped by canvas context
-    canvas.width = safeArea;
-    canvas.height = safeArea;
-
-    // translate canvas context to a central location on image to allow rotating around the center.
-    ctx.translate(safeArea / 2, safeArea / 2);
-    ctx.rotate(getRadianAngle(rotation));
-    ctx.translate(-safeArea / 2, -safeArea / 2);
-
-    // draw rotated image and store data.
-    ctx.drawImage(
-      image,
-      safeArea / 2 - image.width * 0.5,
-      safeArea / 2 - image.height * 0.5
-    );
-    const data = ctx.getImageData(0, 0, safeArea, safeArea);
-
-    // set canvas width to final desired crop size - this will clear existing context
-    canvas.width = crop.width;
-    canvas.height = crop.height;
-
-    // paste generated rotate image with correct offsets for x,y crop values.
-    ctx.putImageData(
-      data,
-      Math.round(0 - safeArea / 2 + image.width * 0.5 - crop.x),
-      Math.round(0 - safeArea / 2 + image.height * 0.5 - crop.y)
-    );
+  if (_isNil(ctx)) {
+    return Promise.reject(new Error('Canvas is unavailable'));
   }
 
-  return new Promise<string>((resolve) => {
+  const maxSize = Math.max(image.width, image.height);
+  const safeArea = 2 * ((maxSize / 2) * Math.sqrt(2));
+
+  // set each dimensions to double largest dimension to allow for a safe area for the
+  // image to rotate in without being clipped by canvas context
+  canvas.width = safeArea;
+  canvas.height = safeArea;
+
+  // translate canvas context to a central location on image to allow rotating around the center.
+  ctx.translate(safeArea / 2, safeArea / 2);
+  ctx.rotate(getRadianAngle(rotation));
+  ctx.translate(-safeArea / 2, -safeArea / 2);
+
+  // draw rotated image and store data.
+  ctx.drawImage(
+    image,
+    safeArea / 2 - image.width * 0.5,
+    safeArea / 2 - image.height * 0.5
+  );
+  const data = ctx.getImageData(0, 0, safeArea, safeArea);
+
+  // set canvas width to final desired crop size - this will clear existing context
+  canvas.width = crop.width;
+  canvas.height = crop.height;
+
+  // paste generated rotate image with correct offsets for x,y crop values.
+  ctx.putImageData(
+    data,
+    Math.round(0 - safeArea / 2 + image.width * 0.5 - crop.x),
+    Math.round(0 - safeArea / 2 + image.height * 0.5 - crop.y)
+  );
+
+  return new Promise<string>((resolve, reject) => {
     try {
       canvas.toBlob((blob) => {
         if (!blob) {
-          // reject(new Error('Canvas is empty'));
-          console.error('Canvas is empty');
+          reject(new Error('Canvas is empty'));
           return;
         }
         (blob as any).name = fileName;
@@ -134,8 +181,7 @@ function getCroppedImg(
         resolve(fileUrlTemp);
       }, 'image/jpeg');
     } catch (err) {
-      console.error(err);
-      showToasts('无法正确生成图片, 可能是因为您的浏览器版本过旧', 'error');
+      reject(err);
     }
   });
 }

@@ -1,11 +1,12 @@
-import { SectionHeader } from '@/components/SectionHeader';
-import { Space } from 'antd';
+import { cn } from '@/lib/utils';
 import React, { PropsWithChildren } from 'react';
 
 interface PanelCommonHeaderProps extends PropsWithChildren {
   prefix?: React.ReactNode;
   suffix?: React.ReactNode;
   actions?: React.ReactNode[];
+  actionsLabel?: string;
+  className?: string;
 }
 
 /**
@@ -14,17 +15,35 @@ interface PanelCommonHeaderProps extends PropsWithChildren {
 export const PanelCommonHeader: React.FC<PanelCommonHeaderProps> = React.memo(
   (props) => {
     return (
-      <SectionHeader>
-        <div className="flex flex-wrap text-xl justify-between">
-          <div className="flex items-center">
-            <div className="text-gray-500 mr-1">{props.prefix}</div>
-            <div className="text-base">{props.children}</div>
-            <div className="ml-2">{props.suffix}</div>
+      <header
+        data-slot="panel-header"
+        className={cn(
+          'flex h-14 shrink-0 items-center gap-3 border-b bg-background/95 px-3 text-foreground supports-backdrop-filter:backdrop-blur-sm md:px-4',
+          props.className
+        )}
+      >
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          {props.prefix && (
+            <span className="shrink-0 text-muted-foreground">
+              {props.prefix}
+            </span>
+          )}
+          <div className="min-w-0 truncate text-sm font-semibold md:text-base">
+            {props.children}
           </div>
-
-          <Space>{props.actions}</Space>
+          {props.suffix && <div className="shrink-0">{props.suffix}</div>}
         </div>
-      </SectionHeader>
+
+        {props.actions && props.actions.length > 0 && (
+          <div
+            className="ml-auto flex shrink-0 items-center gap-0.5"
+            role="toolbar"
+            aria-label={props.actionsLabel}
+          >
+            {props.actions}
+          </div>
+        )}
+      </header>
     );
   }
 );

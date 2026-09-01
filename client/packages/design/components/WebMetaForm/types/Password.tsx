@@ -1,7 +1,6 @@
 import React from 'react';
-import { Input, Form } from 'antd';
 import type { FastifyFormFieldComponent } from 'react-fastify-form';
-import { getValidateStatus } from '../utils';
+import { MetaFormField } from './Field';
 
 export const FastifyFormPassword: FastifyFormFieldComponent = React.memo(
   (props) => {
@@ -17,22 +16,18 @@ export const FastifyFormPassword: FastifyFormFieldComponent = React.memo(
     } = props;
 
     return (
-      <Form.Item
-        label={label}
-        validateStatus={getValidateStatus(error)}
-        help={error}
-      >
-        <Input.Password
+      <MetaFormField label={label} error={error}>
+        <input
+          className="h-8 w-full rounded-lg border border-control-border bg-transparent px-2.5 py-1 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
           name={name}
           type="password"
-          size="large"
           maxLength={maxLength}
           placeholder={placeholder}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onBlur={onBlur}
         />
-      </Form.Item>
+      </MetaFormField>
     );
   }
 );

@@ -1,14 +1,11 @@
 import { AvatarUploader } from '@/components/ImageUploader';
-import { FullModalCommonTitle } from '@/components/FullModal/CommonTitle';
 import {
   DefaultFullModalInputEditorRender,
   FullModalField,
   FullModalFieldEditorRenderComponent,
 } from '@/components/FullModal/Field';
 import { NoData } from '@/components/NoData';
-import { Input } from 'antd';
 import React from 'react';
-import { Avatar } from 'tailchat-design';
 import {
   modifyGroupField,
   PERMISSION,
@@ -20,6 +17,17 @@ import {
   useGroupInfo,
   useHasGroupPermission,
 } from 'tailchat-shared';
+import { Textarea } from '@/components/ui/official/textarea';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/components/ui/official/avatar';
+import {
+  GroupDetailFieldGroup,
+  GroupDetailPage,
+  GroupDetailSection,
+} from './Layout';
 
 export const GroupSummary: React.FC<{
   groupId: string;
@@ -58,45 +66,63 @@ export const GroupSummary: React.FC<{
   }
 
   return (
-    <div>
-      <FullModalCommonTitle>{t('群组概述')}</FullModalCommonTitle>
+    <GroupDetailPage
+      title={t('群组概述')}
+      description={t('管理群组的公开资料和基本信息。')}
+    >
+      <GroupDetailSection
+        title={t('群组资料')}
+        description={t('这些信息会展示在群组、邀请页面和成员列表中。')}
+      >
+        <div className="grid gap-8 md:grid-cols-[9rem_minmax(0,1fr)]">
+          <div className="flex flex-col items-center gap-3">
+            <AvatarUploader
+              circle={true}
+              usage="group"
+              onUploadSuccess={handleGroupAvatarChange}
+            >
+              <Avatar className="size-28 border border-border shadow-sm">
+                <AvatarImage src={groupInfo.avatar} alt={groupInfo.name} />
+                <AvatarFallback className="text-3xl font-semibold">
+                  {groupInfo.name.slice(0, 1).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+            </AvatarUploader>
+            <p className="text-center text-xs leading-5 text-muted-foreground">
+              {t('点击头像上传新的群组图片')}
+            </p>
+          </div>
 
-      <div className="flex flex-wrap">
-        <div className="w-1/3 mobile:w-full mobile:text-center">
-          <AvatarUploader
-            circle={true}
-            usage="group"
-            onUploadSuccess={handleGroupAvatarChange}
-          >
-            <Avatar size={128} name={groupInfo.name} src={groupInfo.avatar} />
-          </AvatarUploader>
+          <GroupDetailFieldGroup className="[&>[data-slot=field]]:mb-0 [&>[data-slot=field]]:px-4 [&>[data-slot=field]]:py-3.5">
+            <FullModalField
+              title={t('群组名称')}
+              value={groupInfo.name}
+              editable={hasBaseInfoPermission}
+              renderEditor={DefaultFullModalInputEditorRender}
+              onSave={handleUpdateGroupName}
+            />
+
+            <FullModalField
+              title={t('成员数')}
+              value={String(groupInfo.members.length)}
+            />
+
+            <FullModalField
+              title={t('群组描述')}
+              value={groupInfo.description ?? ''}
+              content={
+                <p className="whitespace-pre-wrap text-sm leading-6">
+                  {groupInfo.description || t('暂无群组描述')}
+                </p>
+              }
+              editable={hasBaseInfoPermission}
+              renderEditor={GroupDescriptionEditorRender}
+              onSave={handleUpdateGroupDescription}
+            />
+          </GroupDetailFieldGroup>
         </div>
-
-        <div className="w-2/3 mobile:w-full">
-          <FullModalField
-            title={t('群组名称')}
-            value={groupInfo.name}
-            editable={hasBaseInfoPermission}
-            renderEditor={DefaultFullModalInputEditorRender}
-            onSave={handleUpdateGroupName}
-          />
-
-          <FullModalField
-            title={t('成员数')}
-            value={String(groupInfo.members.length)}
-          />
-
-          <FullModalField
-            title={t('群组描述')}
-            value={groupInfo.description ?? ''}
-            content={<pre>{groupInfo.description ?? ''}</pre>}
-            editable={hasBaseInfoPermission}
-            renderEditor={GroupDescriptionEditorRender}
-            onSave={handleUpdateGroupDescription}
-          />
-        </div>
-      </div>
-    </div>
+      </GroupDetailSection>
+    </GroupDetailPage>
   );
 });
 GroupSummary.displayName = 'GroupSummary';
@@ -105,11 +131,10 @@ const GroupDescriptionEditorRender: FullModalFieldEditorRenderComponent = ({
   value,
   onChange,
 }) => (
-  <Input.TextArea
-    autoSize={{ minRows: 4, maxRows: 6 }}
+  <Textarea
+    rows={5}
     maxLength={120}
     value={value}
     onChange={(e) => onChange(e.target.value)}
-    showCount={true}
   />
 );

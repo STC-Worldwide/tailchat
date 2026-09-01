@@ -1,7 +1,6 @@
 import { IconBtn } from '@/components/IconBtn';
 import { UserName } from '@/components/UserName';
 import { fetchImagePrimaryColor } from '@/utils/image-helper';
-import { Space, Tag, Tooltip } from 'antd';
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { getTextColorHex } from 'tailchat-design';
@@ -16,6 +15,8 @@ import {
 } from 'tailchat-shared';
 import { UserProfileContainer } from '../../UserProfileContainer';
 import { usePluginUserExtraInfo } from './usePluginUserExtraInfo';
+import { TcTag } from '@/components/ui/tag';
+import { TcTooltip } from '@/components/ui/tooltip';
 
 export const GroupUserPopover: React.FC<{
   userInfo: UserBaseInfo;
@@ -61,36 +62,36 @@ export const GroupUserPopover: React.FC<{
           )}
         </div>
 
-        <Space size={4} wrap={true} className="py-1">
-          {groupInfo.owner === userId && <Tag color="gold">{t('创建者')}</Tag>}
+        <div className="flex flex-wrap gap-1 py-1">
+          {groupInfo.owner === userId && <TcTag variant="warning">{t('创建者')}</TcTag>}
 
           {userInfo.type === 'openapiBot' && (
-            <Tag color="orange">{t('开放平台机器人')}</Tag>
+            <TcTag variant="warning">{t('开放平台机器人')}</TcTag>
           )}
 
           {userInfo.type === 'pluginBot' && (
-            <Tag color="orange">{t('插件机器人')}</Tag>
+            <TcTag variant="warning">{t('插件机器人')}</TcTag>
           )}
 
-          {userInfo.temporary && <Tag color="processing">{t('游客')}</Tag>}
+          {userInfo.temporary && <TcTag>{t('游客')}</TcTag>}
 
           {roleNames.map((name) => (
-            <Tag key={name} color={getTextColorHex(name)}>
+            <TcTag key={name} style={{ color: getTextColorHex(name) }}>
               {name}
-            </Tag>
+            </TcTag>
           ))}
-        </Space>
+        </div>
 
         <div className="pt-2">{pluginUserExtraInfoEl}</div>
 
         <div className="text-right">
           {allowSendMessage && (
-            <Tooltip title={t('发送消息')}>
+            <TcTooltip label={t('发送消息')}>
               <IconBtn
                 icon="mdi:message-processing-outline"
                 onClick={handleCreateConverse}
               />
-            </Tooltip>
+            </TcTooltip>
           )}
         </div>
       </UserProfileContainer>

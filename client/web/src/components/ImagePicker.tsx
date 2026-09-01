@@ -1,10 +1,10 @@
 import React, { PropsWithChildren, useRef } from 'react';
 import { closeModal, openModal } from './Modal';
 import { showToasts, t, useEvent } from 'tailchat-shared';
-import { Icon } from 'tailchat-design';
 import { ImageCropperModal } from './modals/ImageCropper';
 import { isGIF } from '@/utils/file-helper';
 import clsx from 'clsx';
+import { CameraIcon } from 'lucide-react';
 
 interface ImagePickerProps extends PropsWithChildren {
   className?: string;
@@ -68,34 +68,29 @@ export const ImagePicker: React.FC<ImagePickerProps> = React.memo((props) => {
   );
 
   return (
-    <div className={props.className}>
-      <div
-        className="cursor-pointer inline-block relative"
-        onClick={() => !props.disabled && fileRef.current?.click()}
+    <div className={clsx('relative inline-grid', props.className)}>
+      <input
+        ref={fileRef}
+        type="file"
+        className="hidden"
+        tabIndex={-1}
+        onChange={handleSelectFile}
+        accept="image/*"
+      />
+
+      <button
+        type="button"
+        className="group relative inline-grid overflow-hidden rounded-[inherit] outline-none ring-ring transition focus-visible:ring-3 disabled:cursor-not-allowed disabled:opacity-50"
+        disabled={props.disabled}
+        aria-label={t('选择图片')}
+        onClick={() => fileRef.current?.click()}
       >
-        <input
-          ref={fileRef}
-          type="file"
-          className="hidden"
-          onChange={handleSelectFile}
-          accept="image/*"
-        />
+        {props.children}
 
-        <div className={clsx('group', props.className)}>
-          {props.children}
-
-          <div
-            className={
-              'absolute inset-0 bg-black/50 flex items-center justify-center transition opacity-0 group-hover:opacity-100'
-            }
-          >
-            <Icon
-              className="text-white opacity-80 text-4xl"
-              icon="mdi:camera-outline"
-            />
-          </div>
-        </div>
-      </div>
+        <span className="absolute inset-0 flex items-center justify-center bg-black/55 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+          <CameraIcon aria-hidden="true" className="size-8 text-white" />
+        </span>
+      </button>
     </div>
   );
 });

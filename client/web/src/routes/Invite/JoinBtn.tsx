@@ -1,6 +1,5 @@
 import { openModal } from '@/components/Modal';
 import { getUserJWT } from '@/utils/jwt-helper';
-import { Button } from 'antd';
 import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router';
 import {
@@ -14,6 +13,8 @@ import {
   useAsyncRequest,
 } from 'tailchat-shared';
 import { SuccessModal } from './SuccessModal';
+import { Button } from '@/components/ui/official/button';
+import { LoaderCircleIcon } from 'lucide-react';
 
 interface Props {
   inviteCode: string;
@@ -88,9 +89,9 @@ export const JoinBtn: React.FC<Props> = React.memo((props) => {
   if (isJoined) {
     return (
       <Button
-        block={true}
-        type="primary"
-        size="large"
+        type="button"
+        className="w-full"
+        size="lg"
         onClick={handleJumpToGroup}
       >
         {t('已加入，跳转到群组')}
@@ -100,7 +101,7 @@ export const JoinBtn: React.FC<Props> = React.memo((props) => {
 
   if (props.expired && new Date(props.expired).valueOf() < Date.now()) {
     return (
-      <Button block={true} type="primary" size="large" disabled={true}>
+      <Button type="button" className="w-full" size="lg" disabled={true}>
         {t('邀请码已过期')}
       </Button>
     );
@@ -108,16 +109,18 @@ export const JoinBtn: React.FC<Props> = React.memo((props) => {
 
   return isTokenValid ? (
     <Button
-      block={true}
-      type="primary"
-      size="large"
-      loading={joinLoading}
+      type="button"
+      className="w-full"
+      size="lg"
+      disabled={joinLoading}
+      aria-busy={joinLoading}
       onClick={handleJoinGroup}
     >
+      {joinLoading && <LoaderCircleIcon className="animate-spin" />}
       {t('加入群组')}
     </Button>
   ) : (
-    <Button block={true} type="primary" size="large" onClick={handleLogin}>
+    <Button type="button" className="w-full" size="lg" onClick={handleLogin}>
       {t('尚未登录, 立即登录')}
     </Button>
   );

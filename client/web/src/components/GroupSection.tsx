@@ -1,39 +1,33 @@
-import { Icon } from 'tailchat-design';
 import React, { PropsWithChildren } from 'react';
-import { useReducer } from 'react';
+import { ChevronRightIcon } from 'lucide-react';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/official/collapsible';
+import {
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+} from '@/components/ui/official/sidebar';
 
 export const GroupSection: React.FC<
   PropsWithChildren<{
     header: string;
   }>
 > = React.memo((props) => {
-  const [isShow, switchShow] = useReducer((v) => !v, true);
-
   return (
-    <div>
-      <div
-        className="flex items-center cursor-pointer py-1 text-xs"
-        onClick={switchShow}
-      >
-        <Icon
-          className="mr-1"
-          icon="mdi:chevron-right"
-          rotate={isShow ? 45 : 0}
-        />
-        <div>{props.header}</div>
-      </div>
-      <div
-        className="transition-all overflow-hidden space-y-0.5 pl-2 ml-1 border-l-4/40 "
-        style={{
-          maxHeight: isShow ? 'var(--max-height)' : 0,
-        }}
-        ref={(ref) =>
-          ref?.style.setProperty('--max-height', `${ref.scrollHeight}px`)
-        }
-      >
-        {props.children}
-      </div>
-    </div>
+    <Collapsible defaultOpen className="group/collapsible">
+      <SidebarMenuItem>
+        <CollapsibleTrigger render={<SidebarMenuButton />}>
+          <ChevronRightIcon className="transition-transform group-data-open/collapsible:rotate-90" />
+          <span>{props.header}</span>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <SidebarMenuSub>{props.children}</SidebarMenuSub>
+        </CollapsibleContent>
+      </SidebarMenuItem>
+    </Collapsible>
   );
 });
 GroupSection.displayName = 'GroupSection';

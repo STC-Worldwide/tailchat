@@ -5,9 +5,12 @@ import test from 'node:test';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { BarChart, Button, Card, LineChart } from './components';
 
-test('renders shared primitives with Arco Design', () => {
-  assert.match(renderToStaticMarkup(<Button>Save</Button>), /arco-btn/);
-  assert.match(renderToStaticMarkup(<Card>Content</Card>), /arco-card/);
+test('renders shared primitives with local Shadcn components', () => {
+  const button = renderToStaticMarkup(<Button>Save</Button>);
+  assert.match(button, /data-slot="button"/);
+  assert.match(button, /button-secondary/);
+  assert.match(renderToStaticMarkup(<Card>Content</Card>), /class="card\s*"/);
+  assert.doesNotMatch(button, /arco-/);
 });
 
 test('renders line and bar charts with Recharts', () => {
@@ -24,33 +27,46 @@ test('renders line and bar charts with Recharts', () => {
   }
 });
 
-test('styles Arco controls without generic native form overrides', () => {
+test('styles Shadcn controls and data tables', () => {
   const styles = readFileSync(`${__dirname}/styles.css`, 'utf8');
 
-  assert.match(styles, /\.admin-table \.arco-table-th/);
-  assert.match(styles, /\.resource-pagination/);
-  assert.doesNotMatch(styles, /:where\(input:not/);
+  assert.match(styles, /@import "tailwindcss"/);
+  assert.match(styles, /\.admin-table \[data-slot="table"\]/);
+  assert.match(styles, /\.pagination-controls/);
+  assert.doesNotMatch(styles, /\.arco-/);
 });
 
-test('maps Arco dark theme variables to the existing admin palette', () => {
+test('maps Shadcn semantic tokens to the admin palette', () => {
   const styles = readFileSync(`${__dirname}/styles.css`, 'utf8');
 
-  assert.match(styles, /--color-bg-1:\s*var\(--panel\)/);
-  assert.match(styles, /--primary-6:\s*var\(--primary-rgb\)/);
-  assert.match(styles, /--border-radius-small:\s*var\(--control-radius\)/);
+  assert.match(styles, /--color-background:\s*var\(--background\)/);
+  assert.match(styles, /--color-primary:\s*var\(--primary\)/);
+  assert.match(styles, /--color-control-border:\s*var\(--control-border\)/);
 });
 
-test('uses Arco controls for forms, tables, pagination, and confirmations', () => {
+test('uses Shadcn-backed controls for forms, tables, and confirmations', () => {
   const app = readFileSync(`${__dirname}/App.tsx`, 'utf8');
   const pages = readFileSync(`${__dirname}/pages.tsx`, 'utf8');
   const resources = readFileSync(`${__dirname}/resources.tsx`, 'utf8');
+  const adminControls = readFileSync(
+    `${__dirname}/components/ui/admin.tsx`,
+    'utf8'
+  );
 
-  assert.match(app, /<Input\.Password/);
+  assert.match(app, /components\/ui\/input/);
   assert.match(pages, /<Radio\.Group/);
   assert.match(pages, /<Upload/);
   assert.match(resources, /<Table/);
   assert.match(resources, /<Pagination/);
   assert.match(resources, /<Popconfirm/);
+  assert.match(adminControls, /from '\.\/dialog'/);
+  assert.match(adminControls, /from '\.\/table'/);
+  assert.match(adminControls, /from '\.\/dropdown-menu'/);
+  assert.match(adminControls, /t\('common\.loading'\)/);
+  assert.match(adminControls, /t\('resource\.pageSize'\)/);
+  assert.doesNotMatch(adminControls, /> Loading/);
+  assert.doesNotMatch(adminControls, /aria-label="(?:Clear|Remove|Rows per page)"/);
+  assert.doesNotMatch(`${app}\n${pages}\n${resources}`, /@arco-design/);
   assert.doesNotMatch(`${pages}\n${resources}`, /window\.confirm/);
 });
 
@@ -58,7 +74,7 @@ test('keeps inactive navigation neutral and groups user actions in a dropdown', 
   const styles = readFileSync(`${__dirname}/styles.css`, 'utf8');
   const resources = readFileSync(`${__dirname}/resources.tsx`, 'utf8');
 
-  assert.match(styles, /\.sidebar \.nav \.arco-btn-text:not\(\.active\)/);
+  assert.match(styles, /\.sidebar \.nav button:not\(\.active\)/);
   assert.match(resources, /<Dropdown/);
   assert.match(resources, /<Menu\.Item key="delete"/);
   assert.match(resources, /icon="more"/);

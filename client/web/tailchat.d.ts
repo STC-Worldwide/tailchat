@@ -72,6 +72,10 @@ declare module '@capital/common' {
 
   export const useIsMobile: any;
 
+  export const isMobile: any;
+
+  export const getPopupContainer: any;
+
   export const getGlobalState: any;
 
   export const useGlobalSocketEvent: <T>(
@@ -191,6 +195,8 @@ declare module '@capital/common' {
   export const fetchAvailableServices: any;
 
   export const isValidStr: (str: any) => str is string;
+
+  export const useGroupInfo: any;
 
   export const useGroupPanelInfo: any;
 
@@ -451,28 +457,18 @@ declare module '@capital/common' {
  * Tailchat 组件
  */
 declare module '@capital/component' {
-  export const Button: any;
-
-  export const Checkbox: any;
-
-  export const Input: any;
-
-  export const Divider: any;
-
-  export const Space: any;
-
   export const Menu: any;
 
   export const Table: any;
-
-  export const Switch: any;
-
-  export const Tooltip: any;
 
   /**
    * @link https://ant.design/components/notification-cn/
    */
   export const notification: any;
+
+  export const Popconfirm: any;
+
+  export const Checkbox: any;
 
   export const Empty: React.FC<
     React.PropsWithChildren<{
@@ -487,9 +483,21 @@ declare module '@capital/component' {
 
   export const Popover: any;
 
+  export const Skeleton: any;
+
   export const Tag: any;
 
-  export const Skeleton: any;
+  export const Tooltip: any;
+
+  export const Button: any;
+
+  export const Divider: any;
+
+  export const Input: any;
+
+  export const Space: any;
+
+  export const Switch: any;
 
   export const TextArea: any;
 

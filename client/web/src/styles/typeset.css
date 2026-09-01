@@ -1,0 +1,126 @@
+/* Chat/document typography preset following shadcn/typeset's three rhythm
+   controls. It is intentionally local and editable with the application CSS. */
+.typeset {
+  --typeset-font-body: inherit;
+  --typeset-font-heading: inherit;
+  --typeset-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  --typeset-size: 1em;
+  --typeset-leading: 1.55;
+  --typeset-flow: 1em;
+
+  color: var(--tc-text-body);
+  font-family: var(--typeset-font-body);
+  font-size: var(--typeset-size);
+  line-height: var(--typeset-leading);
+  overflow-wrap: anywhere;
+}
+
+.typeset > * + * {
+  margin-block-start: var(--typeset-flow);
+}
+
+.typeset :where(h1, h2, h3, h4, h5, h6) {
+  color: var(--tc-text-body);
+  font-family: var(--typeset-font-heading);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-block: calc(var(--typeset-flow) * 1.5) var(--typeset-flow);
+  text-wrap: balance;
+}
+
+.typeset :where(h1) {
+  font-size: 1.75em;
+}
+
+.typeset :where(h2) {
+  font-size: 1.5em;
+}
+
+.typeset :where(h3) {
+  font-size: 1.25em;
+}
+
+.typeset :where(h4, h5, h6) {
+  font-size: 1.1em;
+}
+
+.typeset :where(p, ul, ol, blockquote, pre, table) {
+  margin-block: var(--typeset-flow);
+}
+
+.typeset :where(ul, ol) {
+  padding-inline-start: 2em;
+}
+
+.typeset :where(ul) {
+  list-style: disc;
+}
+
+.typeset :where(ol) {
+  list-style: decimal;
+}
+
+.typeset :where(a) {
+  color: var(--tc-primary-color);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 0.15em;
+}
+
+.typeset :where(code) {
+  font-family: var(--typeset-font-mono);
+  font-size: 0.875em;
+  background: color-mix(in srgb, var(--tc-text-body) 10%, transparent);
+  border: 1px solid var(--tc-border-subtle);
+  border-radius: 0.25rem;
+  padding: 0.15em 0.35em;
+}
+
+.typeset :where(pre) {
+  overflow-x: auto;
+  background: color-mix(in srgb, var(--tc-text-body) 10%, transparent);
+  border: 1px solid var(--tc-border-subtle);
+  border-radius: 0.5rem;
+  padding: 0.75em 1em;
+}
+
+.typeset :where(pre code) {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+}
+
+.typeset :where(blockquote) {
+  color: var(--tc-text-muted);
+  border-inline-start: 0.25rem solid var(--tc-text-muted);
+  padding-inline-start: 0.75em;
+}
+
+.typeset :where(hr) {
+  border: 0;
+  border-block-start: 1px solid var(--tc-border-subtle);
+}
+
+.typeset :where(img, iframe) {
+  max-width: 100%;
+}
+
+.typeset :where(table) {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
+
+.typeset :where(th, td) {
+  border: 1px solid var(--tc-border-subtle);
+  padding: 0.25em 0.75em;
+  text-align: left;
+}
+
+.typeset :where(th) {
+  background: color-mix(in srgb, var(--tc-text-body) 8%, transparent);
+  font-weight: 700;
+}

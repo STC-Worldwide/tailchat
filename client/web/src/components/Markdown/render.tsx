@@ -6,7 +6,6 @@ import { Image } from 'tailchat-design';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import rehypeSanitize from 'rehype-sanitize';
-import './render.less';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -25,7 +24,11 @@ export const Markdown: React.FC<{
         return url;
       }
 
-      return new URL(url, makeAbsoluteUrl(baseUrl)).href;
+      try {
+        return new URL(url, makeAbsoluteUrl(baseUrl)).href;
+      } catch {
+        return url;
+      }
     },
     [baseUrl]
   );
@@ -39,6 +42,8 @@ export const Markdown: React.FC<{
     () => ({
       img: (props) => (
         <Image
+          alt={props.alt}
+          className="max-w-full rounded-lg border border-border"
           style={props.style}
           width={props.width}
           height={props.height}
@@ -65,20 +70,28 @@ export const Markdown: React.FC<{
         if (src && src.includes('?')) {
           src += '&autoplay=0'; // make sure media autoplay is false
         }
-        return <iframe {...props} src={src} />;
+        return (
+          <iframe
+            {...props}
+            src={src}
+            loading="lazy"
+            title={props.title ?? t('嵌入内容')}
+            className="min-h-64 w-full rounded-lg border border-border bg-muted"
+          />
+        );
       },
       embed: () => <div>{t('不支持embed')}</div>,
       html: () => <div>{t('不支持自定义HTML')}</div>,
       style: () => <div>{t('不支持自定义样式')}</div>,
       meta: () => <div>{t('不支持自定义Meta')}</div>,
     }),
-    []
+    [allowIframe, t]
   );
   // [md]<iframe src="//player.bilibili.com/player.html?isOutside=true&aid=113350126076732&bvid=BV1ZpyHYkEQ3&cid=26409569922&p=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>[/md]
   // <iframe src="//player.bilibili.com/player.html?isOutside=true&aid=113350126076732&bvid=BV1ZpyHYkEQ3&cid=26409569922&p=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
   return (
     <ReactMarkdown
-      className="tailchat-markdown"
+      className="typeset tailchat-markdown min-h-6 select-text [&_*]:select-text"
       transformImageUri={(src) => transformUrl(src)}
       transformLinkUri={(href) => transformUrl(href)}
       remarkPlugins={[remarkGfm]}

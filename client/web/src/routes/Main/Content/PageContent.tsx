@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useCallback } from 'react';
+import React, { PropsWithChildren } from 'react';
 import { useSidebarContext } from '../SidebarContext';
 import _isNil from 'lodash/isNil';
 import { EventTypes, useDrag, UserDragConfig } from '@use-gesture/react';
@@ -6,7 +6,16 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 import clsx from 'clsx';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import type { ReactDOMAttributes } from '@use-gesture/react/dist/declarations/src/types';
-import { useWatch } from 'tailchat-shared';
+import { localTrans, t, useWatch } from 'tailchat-shared';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/official/sheet';
+import { useAppPortalContainer } from '@/hooks/useAppPortalContainer';
+import { useLocation } from 'react-router';
 
 interface PageContentRootProps extends PropsWithChildren<ReactDOMAttributes> {
   className?: string;
@@ -73,72 +82,64 @@ export const PageContent: React.FC<PropsWithChildren<PageContentProps>> =
     const { sidebar, children } = props;
     const { showSidebar, setShowSidebar } = useSidebarContext();
     const isMobile = useIsMobile();
-    const handleHideSidebar = useCallback(
-      (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        e.stopPropagation();
-        e.preventDefault();
-        setShowSidebar(false);
-      },
-      []
-    );
+    const portalContainer = useAppPortalContainer();
+    const location = useLocation();
 
-    useWatch([isMobile], () => {
-      if (isMobile === false) {
-        // 如果不为移动端, 则一定显示侧边栏
-        setShowSidebar(true);
-      }
+    useWatch([isMobile, location.pathname], () => {
+      // 桌面端保持导航可见；移动端默认优先展示会话内容，导航由顶部按钮或
+      // 横向手势按需打开。
+      setShowSidebar(isMobile === false);
     });
 
-    const sidebarEl = _isNil(sidebar) ? null : (
-      <div
-        className={clsx(
-          'bg-sidebar-light dark:bg-sidebar-dark flex-shrink-0 transition-width w-60'
-        )}
-      >
-        {props.sidebar}
-      </div>
-    );
-
-    // 是否显示遮罩层
-    const showMask =
-      isMobile === true && showSidebar === true && !_isNil(sidebarEl);
-
-    const contentMaskEl = showMask ? (
-      <div
-        className="absolute right-0 top-0 bottom-0 z-10"
-        style={{ width: 'calc(100% - 15rem)' }} // 15rem is "w-60" which sidebar with
-        onClick={handleHideSidebar}
-      />
+    const hasSidebar = !_isNil(sidebar);
+    const desktopSidebar = hasSidebar ? (
+      <aside className="hidden w-64 shrink-0 border-r border-sidebar-border bg-sidebar/35 text-sidebar-foreground md:block">
+        {sidebar}
+      </aside>
     ) : null;
+
+    const mobileSidebar =
+      isMobile && hasSidebar ? (
+        <Sheet open={showSidebar} onOpenChange={setShowSidebar}>
+          <SheetContent
+            portalContainer={portalContainer}
+            side="left"
+            className="w-72 gap-0 border-sidebar-border bg-sidebar p-0 text-sidebar-foreground [&_[data-slot=sidebar-header]]:pr-11"
+            closeLabel={t('关闭')}
+          >
+            <SheetHeader className="sr-only">
+              <SheetTitle>
+                {localTrans({
+                  'zh-CN': '频道导航',
+                  'en-US': 'Channel navigation',
+                })}
+              </SheetTitle>
+              <SheetDescription>
+                {localTrans({
+                  'zh-CN': '浏览频道和会话',
+                  'en-US': 'Browse channels and conversations',
+                })}
+              </SheetDescription>
+            </SheetHeader>
+            {sidebar}
+          </SheetContent>
+        </Sheet>
+      ) : null;
 
     const contentEl = children;
 
     const el = (
       <ErrorBoundary>
-        {sidebarEl}
-
-        {contentMaskEl}
+        {desktopSidebar}
+        {mobileSidebar}
 
         <div
-          className={clsx(
-            'flex flex-auto bg-content-light dark:bg-content-dark overflow-hidden',
-            isMobile &&
-              'transform left-0 w-full h-full absolute transition-transform',
-            isMobile && {
-              'translate-x-60': showSidebar,
-              'translate-x-0': !showSidebar,
-            }
-          )}
+          className="flex min-w-0 flex-auto overflow-hidden bg-content-light dark:bg-content-dark"
           data-tc-role={props['data-tc-role']}
         >
           <div className="tc-content-background" />
 
-          <div
-            className={clsx('flex relative w-full', {
-              'overflow-auto': !showMask,
-              'overflow-hidden': showMask,
-            })}
-          >
+          <div className="relative flex w-full overflow-auto">
             <ErrorBoundary>{contentEl}</ErrorBoundary>
           </div>
         </div>

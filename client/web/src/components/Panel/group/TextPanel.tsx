@@ -1,6 +1,5 @@
 import { ChatBox } from '@/components/ChatBox';
 import { ChatInputMentionsContextProvider } from '@/components/ChatBox/ChatInputBox/context';
-import { IconBtn } from '@/components/IconBtn';
 import {
   GroupPluginPanelActionProps,
   pluginPanelActions,
@@ -24,6 +23,11 @@ import { useFriendNicknameMap } from 'tailchat-shared';
 import { MembersPanel } from './MembersPanel';
 import { GroupPanelContainer } from './shared/GroupPanelContainer';
 import { MessageSearchPanel } from '../common/MessageSearch';
+import {
+  PanelActionButton,
+  PluginPanelActionIcon,
+} from '../common/PanelActionButton';
+import { SearchIcon, UsersIcon } from 'lucide-react';
 
 /**
  * 聊天输入框显示状态管理
@@ -104,12 +108,10 @@ export const TextPanel: React.FC<TextPanelProps> = React.memo(
                 action.position === 'group'
             )
             .map((action) => (
-              <IconBtn
+              <PanelActionButton
                 key={action.name}
-                title={action.label}
-                shape="square"
-                icon={action.icon}
-                iconClassName="text-2xl"
+                label={action.label}
+                icon={<PluginPanelActionIcon icon={action.icon} />}
                 onClick={() =>
                   action.onClick({
                     groupId,
@@ -120,12 +122,10 @@ export const TextPanel: React.FC<TextPanelProps> = React.memo(
             )),
         ]}
         suffixActions={({ setRightPanel }) => [
-          <IconBtn
+          <PanelActionButton
             key="search"
-            title={t('聊天记录搜索')}
-            shape="square"
-            icon="mdi:text-search"
-            iconClassName="text-2xl"
+            label={t('聊天记录搜索')}
+            icon={<SearchIcon />}
             onClick={() =>
               setRightPanel({
                 name: t('聊天记录'),
@@ -135,12 +135,10 @@ export const TextPanel: React.FC<TextPanelProps> = React.memo(
               })
             }
           />,
-          <IconBtn
+          <PanelActionButton
             key="members"
-            title={t('成员列表')}
-            shape="square"
-            icon="mdi:account-supervisor-outline"
-            iconClassName="text-2xl"
+            label={t('成员列表')}
+            icon={<UsersIcon />}
             onClick={() =>
               setRightPanel({
                 name: t('成员') + ` (${groupMembers.length})`,
