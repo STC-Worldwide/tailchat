@@ -4,7 +4,7 @@ Production chat for STC Worldwide, served publicly at `https://$CHAT_DOMAIN`.
 
 - **Host:** netcup-vps-01 (152.53.82.15 public / 100.66.129.67 tailnet), Debian 13, root over key-only SSH
 - **Location on host:** `/opt/tailchat/`
-- **Image:** `ghcr.io/stc-worldwide/tailchat:1.16.0` (pinned; built from this fork by `.github/workflows/docker-publish.yml` on `v*.*.*` tags and on `master` pushes. The GHCR package must be set public once — org packages default private — or the VPS needs `docker login ghcr.io` with a read:packages PAT. Before 1.12.0 the deployment ran upstream's `moonrailgun/tailchat:1.11.12`.)
+- **Image:** `ghcr.io/stc-worldwide/tailchat:1.17.0` (pinned; built from this fork by `.github/workflows/docker-publish.yml` on `v*.*.*` tags and on `master` pushes. The GHCR package must be set public once — org packages default private — or the VPS needs `docker login ghcr.io` with a read:packages PAT. Before 1.12.0 the deployment ran upstream's `moonrailgun/tailchat:1.11.12`.)
 - **Topology:** Caddy (public 80/443, Let's Encrypt) → traefik (internal path router) → tailchat services. MongoDB/Redis/MinIO are internal-only.
 
 ## Deploy / redeploy
@@ -28,11 +28,20 @@ then check `docker compose ps` and `docker inspect --format '{{.Config.Image}}' 
 
 ## Ship a new release
 
-1. Tag the fork: `git tag v1.x.y && git push origin v1.x.y` — `docker-publish.yml`
-   builds and pushes `ghcr.io/stc-worldwide/tailchat:1.x.y` (~30–60 min; watch the
-   Actions run).
-2. Edit the pinned tag in `deploy/stc/docker-compose.yml` (all four app services), PR it.
-3. Copy to VPS, `docker compose pull && docker compose up -d`.
+**Bump first, tag second.** The `deploy` job's first step greps
+`deploy/stc/docker-compose.yml` *at the tagged commit* for the tag's own version and
+aborts if it does not match. Tagging before the bump burns the tag: the image builds
+(~30–60 min) and then the deploy fails, and re-tagging needs the tag deleted first.
+
+1. On a `chore/release-1.x` branch, bump the version in all three places:
+   `package.json` `"version"`, the **four** `image:` lines in
+   `deploy/stc/docker-compose.yml`, and the `**Image:**` line above. PR it and merge.
+2. Tag the resulting merge commit on master: `git tag v1.x.y && git push origin v1.x.y`.
+   Confirm first that `git show v1.x.y:deploy/stc/docker-compose.yml | grep -c 1.x.y`
+   returns `4`.
+3. `docker-publish.yml` then builds, pushes `ghcr.io/stc-worldwide/tailchat:1.x.y`,
+   canary-boots it, copies this compose file to the VPS and rolls the stack. No manual
+   `docker compose` step is needed — the workflow does it (watch the Actions run).
 4. Smoke-test: login, send message, upload image, `/admin/`.
 
 (Upstream `moonrailgun/tailchat` images are no longer used; the fork builds its own.)
@@ -102,8 +111,16 @@ container restart needed for content changes.
 ## Admin panel
 
 `https://$CHAT_DOMAIN/admin/` (trailing slash required). Credentials: `ADMIN_USER` /
-`ADMIN_PASS` from `docker-compose.env`. The newer `admin-next` app is NOT deployed —
-it postdates the 1.11.12 image.
+`ADMIN_PASS` from `docker-compose.env`.
+
+**As of v1.17.0 this is `server/admin-next`.** The legacy react-admin app under
+`server/admin` was deleted in PR #26 and the `tailchat-admin` service's
+`command: pnpm start:admin` now resolves to admin-next. Credentials are unchanged —
+admin-next reads the same `ADMIN_USER` / `ADMIN_PASS` / `SECRET` — and it listens on
+the same port 3000 that the traefik label routes to. If `/admin/` misbehaves after a
+release, this is the most-changed and least-exercised service in the stack: check
+`docker logs tailchat-admin` for `Server is listening on port 3000` before looking
+anywhere else.
 
 ## Deploy safety
 

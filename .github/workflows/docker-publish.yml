@@ -116,11 +116,32 @@ jobs:
           docker compose pull -q
           docker compose up -d
       - name: Smoke test
+        # Two probes, both through traefik on the loopback debug bind. /health is
+        # the gateway; /admin/ is the admin container, which the canary does NOT
+        # cover (it boots SERVICES=core/gateway only). Since v1.17.0 /admin is
+        # served by server/admin-next rather than the deleted server/admin, so a
+        # gateway-only smoke test would let a crash-looping admin ship green.
+        # /admin/ returns the SPA shell unauthenticated — auth() is applied
+        # per-route on /admin/api, not to the shell — so a 200 here is the right
+        # assertion.
         run: |
           sleep 30
           docker compose -f /opt/tailchat/docker-compose.yml ps --format '{{.Name}} {{.Image}} {{.Status}}'
+          ok=0
           for i in $(seq 1 10); do
-            if wget -q -O /dev/null http://127.0.0.1:11000/health; then echo "health OK"; exit 0; fi
+            if wget -q -O /dev/null http://127.0.0.1:11000/health; then ok=1; break; fi
             sleep 10
           done
-          echo "health endpoint never came up"; exit 1
+          if [ "$ok" != 1 ]; then echo "::error::health endpoint never came up"; exit 1; fi
+          echo "health OK"
+          admin_ok=0
+          for i in $(seq 1 10); do
+            if wget -q -O /dev/null http://127.0.0.1:11000/admin/; then admin_ok=1; break; fi
+            sleep 10
+          done
+          if [ "$admin_ok" != 1 ]; then
+            echo "::error::/admin/ never came up — admin container is not serving. Last logs:"
+            docker logs --tail 60 tailchat-admin 2>&1 || true
+            exit 1
+          fi
+          echo "admin OK"
