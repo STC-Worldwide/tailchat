@@ -1,19 +1,39 @@
-import { Avatar } from 'tailchat-design';
-import { Button, Space } from 'antd';
 import React, { useCallback, useState } from 'react';
 import {
   isValidStr,
+  localTrans,
   parseUrlStr,
-  PluginManifest,
+  type PluginManifest,
   showAlert,
   showToasts,
   t,
   useAsyncRequest,
 } from 'tailchat-shared';
+import {
+  BookOpenIcon,
+  LoaderCircleIcon,
+  PackageCheckIcon,
+  PackageMinusIcon,
+  PackagePlusIcon,
+} from 'lucide-react';
 import { ModalWrapper, openModal } from '../common';
 import { pluginManager } from '../manager';
 import { DocumentView } from './DocumentView';
 import { getManifestFieldWithI18N } from '../utils';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/components/ui/official/avatar';
+import { Badge } from '@/components/ui/official/badge';
+import { Button } from '@/components/ui/official/button';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/official/card';
 
 /**
  * 插件项
@@ -41,10 +61,16 @@ export const PluginStoreItem: React.FC<{
       message: t('是否要卸载插件'),
       onConfirm: async () => {
         await pluginManager.uninstallPlugin(manifest.name);
+        setInstalled(false);
         showToasts(t('插件卸载成功, 刷新页面后生效'), 'success');
       },
     });
   }, [manifest]);
+
+  const label = getManifestFieldWithI18N(manifest, 'label');
+  const description = getManifestFieldWithI18N(manifest, 'description');
+  const titleId = `plugin-${manifest.name.replace(/[^a-zA-Z0-9_-]/g, '-')}`;
+  const hasDocument = isValidStr(manifest.documentUrl);
 
   const handleShowDocument = useCallback(() => {
     if (!isValidStr(manifest.documentUrl)) {
@@ -56,55 +82,100 @@ export const PluginStoreItem: React.FC<{
         <DocumentView documentUrl={parseUrlStr(manifest.documentUrl)} />
       </ModalWrapper>
     );
-  }, [manifest]);
-
-  const label = getManifestFieldWithI18N(manifest, 'label');
-  const description = getManifestFieldWithI18N(manifest, 'description');
+  }, [label, manifest.documentUrl]);
 
   return (
-    <div className="mobile:w-full sm:w-full md:w-full lg:w-1/2 xl:w-1/3 2xl:w-1/4 p-1">
-      <div className="rounded-md flex w-full h-36 bg-white/40 dark:bg-black/40 shadow py-2 px-3">
-        <div className="mr-2">
-          <Avatar shape="square" src={manifest.icon} name={label} />
+    <Card
+      size="sm"
+      className="h-full bg-card/75 transition-colors hover:bg-card"
+      role="article"
+      aria-labelledby={titleId}
+    >
+      <CardHeader className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
+        <Avatar
+          className="row-span-3 size-11 rounded-lg after:rounded-lg"
+          aria-hidden="true"
+        >
+          <AvatarImage
+            src={manifest.icon || undefined}
+            alt=""
+            className="rounded-lg"
+          />
+          <AvatarFallback className="rounded-lg bg-primary/10 font-semibold text-primary">
+            {label.slice(0, 1).toUpperCase() || '?'}
+          </AvatarFallback>
+        </Avatar>
+        <div className="flex min-w-0 items-start justify-between gap-2">
+          <CardTitle id={titleId} className="line-clamp-2 min-w-0">
+            {label}
+          </CardTitle>
+          {builtin && (
+            <Badge variant="secondary" className="shrink-0">
+              <PackageCheckIcon data-icon="inline-start" />
+              {localTrans({ 'zh-CN': '内置', 'en-US': 'Built in' })}
+            </Badge>
+          )}
         </div>
+        <code className="block truncate rounded-none border-0! bg-transparent! p-0! text-xs text-muted-foreground ring-0! shadow-none!">
+          {manifest.name}
+        </code>
+      </CardHeader>
 
-        <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
-          <div className="font-bold">{label}</div>
+      <CardContent className="flex-1">
+        <p className="line-clamp-3 text-sm leading-5 text-muted-foreground">
+          {description ||
+            localTrans({
+              'zh-CN': '该插件没有提供描述。',
+              'en-US': 'No description was provided for this plugin.',
+            })}
+        </p>
+      </CardContent>
 
-          <div className="text-xs text-gray-700/50 dark:text-gray-300 ">
-            {manifest.name}
-          </div>
+      {(hasDocument || !builtin) && (
+        <CardFooter className="min-h-14 justify-end gap-2 border-border/70 px-3 py-2.5">
+          {hasDocument && (
+            <Button variant="ghost" size="sm" onClick={handleShowDocument}>
+              <BookOpenIcon data-icon="inline-start" />
+              {t('文档')}
+            </Button>
+          )}
 
-          <div className="flex-1 overflow-auto">{description}</div>
-
-          <Space className="mt-1 justify-end">
-            {isValidStr(manifest.documentUrl) && (
-              <Button onClick={handleShowDocument}>{t('文档')}</Button>
-            )}
-
-            <div>
-              {builtin ? (
-                <Button type="primary" disabled={true}>
-                  {t('内置插件')}
-                </Button>
-              ) : installed ? (
-                <Button type="default" onClick={handleUninstallPlugin}>
-                  {t('已安装')}
-                </Button>
-              ) : (
-                <Button
-                  type="primary"
-                  loading={loading}
-                  onClick={handleInstallPlugin}
-                >
-                  {t('安装')}
-                </Button>
-              )}
-            </div>
-          </Space>
-        </div>
-      </div>
-    </div>
+          {!builtin &&
+            (installed ? (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleUninstallPlugin}
+              >
+                <PackageMinusIcon data-icon="inline-start" />
+                {localTrans({ 'zh-CN': '卸载', 'en-US': 'Uninstall' })}
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                disabled={loading}
+                aria-busy={loading}
+                onClick={handleInstallPlugin}
+              >
+                {loading ? (
+                  <LoaderCircleIcon
+                    data-icon="inline-start"
+                    className="animate-spin"
+                  />
+                ) : (
+                  <PackagePlusIcon data-icon="inline-start" />
+                )}
+                {loading
+                  ? localTrans({
+                      'zh-CN': '正在安装',
+                      'en-US': 'Installing',
+                    })
+                  : t('安装')}
+              </Button>
+            ))}
+        </CardFooter>
+      )}
+    </Card>
   );
 });
 PluginStoreItem.displayName = 'PluginStoreItem';

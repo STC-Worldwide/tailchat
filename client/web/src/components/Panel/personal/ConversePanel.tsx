@@ -15,11 +15,20 @@ import { openModal } from '@/components/Modal';
 import { AppendDMConverseMembers } from '@/components/modals/AppendDMConverseMembers';
 import { usePanelWindow } from '@/hooks/usePanelWindow';
 import { OpenedPanelTip } from '@/components/OpenedPanelTip';
-import { IconBtn } from '@/components/IconBtn';
 import { DMPluginPanelActionProps, pluginPanelActions } from '@/plugin/common';
 import { CreateDMConverse } from '@/components/modals/CreateDMConverse';
 import { MessageSearchPanel } from '../common/MessageSearch';
 import { ChatInputMentionsContextProvider } from '@/components/ChatBox/ChatInputBox/context';
+import {
+  PanelActionButton,
+  PluginPanelActionIcon,
+} from '../common/PanelActionButton';
+import {
+  PanelTopOpenIcon,
+  SearchIcon,
+  UserRoundPlusIcon,
+  UsersIcon,
+} from 'lucide-react';
 
 const ConversePanelTitle: React.FC<{ converse: ChatConverseState }> =
   React.memo(({ converse }) => {
@@ -32,7 +41,7 @@ ConversePanelTitle.displayName = 'ConversePanelTitle';
 const ConversePanelMembers: React.FC<{ members: string[] }> = React.memo(
   ({ members }) => {
     return (
-      <div>
+      <div className="p-2">
         {members.map((member) => (
           <UserListItem key={member} userId={member} />
         ))}
@@ -80,59 +89,51 @@ export const ConversePanel: React.FC<ConversePanelProps> = React.memo(
                   action.position === 'dm'
               )
               .map((action) => (
-                <IconBtn
+                <PanelActionButton
                   key={action.name}
-                  title={action.label}
-                  shape="square"
-                  icon={action.icon}
-                  iconClassName="text-2xl"
+                  label={action.label}
+                  icon={<PluginPanelActionIcon icon={action.icon} />}
                   onClick={() => action.onClick({ converseId })}
                 />
               )),
-            <IconBtn
+            <PanelActionButton
               key="open"
-              title={t('在新窗口打开')}
-              shape="square"
-              icon="mdi:dock-window"
-              iconClassName="text-2xl"
+              label={t('在新窗口打开')}
+              icon={<PanelTopOpenIcon />}
               onClick={openPanelWindow}
             />,
             converse.members.length === 2 ? (
-              <IconBtn
+              <PanelActionButton
                 key="create"
-                title={t('创建会话')}
-                shape="square"
-                icon="mdi:account-multiple-plus-outline"
-                iconClassName="text-2xl"
+                label={t('创建会话')}
+                icon={<UserRoundPlusIcon />}
                 onClick={() =>
                   openModal(
-                    <CreateDMConverse hiddenUserIds={converse.members} />
+                    <CreateDMConverse hiddenUserIds={converse.members} />,
+                    { closable: true }
                   )
                 }
               />
             ) : (
-              <IconBtn
+              <PanelActionButton
                 key="add"
-                title={t('邀请成员')}
-                shape="square"
-                icon="mdi:account-multiple-plus-outline"
-                iconClassName="text-2xl"
+                label={t('邀请成员')}
+                icon={<UserRoundPlusIcon />}
                 onClick={() =>
                   openModal(
                     <AppendDMConverseMembers
                       converseId={converse._id}
                       withoutUserIds={converse.members}
-                    />
+                    />,
+                    { closable: true }
                   )
                 }
               />
             ),
-            <IconBtn
+            <PanelActionButton
               key="search"
-              title={t('聊天记录搜索')}
-              shape="square"
-              icon="mdi:text-search"
-              iconClassName="text-2xl"
+              label={t('聊天记录搜索')}
+              icon={<SearchIcon />}
               onClick={() =>
                 setRightPanel({
                   name: t('聊天记录'),
@@ -142,12 +143,10 @@ export const ConversePanel: React.FC<ConversePanelProps> = React.memo(
             />,
             // 当成员数大于2时，显示成员列表按钮
             converse.members.length > 2 && (
-              <IconBtn
+              <PanelActionButton
                 key="members"
-                title={t('成员列表')}
-                shape="square"
-                icon="mdi:account-supervisor-outline"
-                iconClassName="text-2xl"
+                label={t('成员列表')}
+                icon={<UsersIcon />}
                 onClick={() =>
                   setRightPanel({
                     name: t('成员') + ` (${converse.members.length})`,

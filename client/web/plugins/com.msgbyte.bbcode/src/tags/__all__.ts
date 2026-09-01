@@ -12,8 +12,6 @@ import { UnderlinedTag } from './UnderlinedTag';
 import { DeleteTag } from './DeleteTag';
 import { CardTag } from './CardTag';
 
-import './styles.less';
-
 /**
  * Reference: https://en.wikipedia.org/wiki/BBCode
  */

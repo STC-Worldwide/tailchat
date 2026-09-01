@@ -1,6 +1,10 @@
 import React, { PropsWithChildren, useContext } from 'react';
-import type { SuggestionDataItem } from 'react-mentions';
 import { useShallowObject } from 'tailchat-shared';
+
+export interface ChatInputSuggestionItem {
+  id: string | number;
+  display?: string;
+}
 
 /**
  * Input Actions
@@ -25,8 +29,8 @@ export function useChatInputActionContext() {
  * Input Mentions
  */
 interface ChatInputMentionsContextProps extends PropsWithChildren {
-  users?: SuggestionDataItem[];
-  panels?: SuggestionDataItem[];
+  users?: ChatInputSuggestionItem[];
+  panels?: ChatInputSuggestionItem[];
   placeholder?: string;
   disabled?: boolean;
 }

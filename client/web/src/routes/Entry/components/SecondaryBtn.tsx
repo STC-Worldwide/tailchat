@@ -1,18 +1,21 @@
-import clsx from 'clsx';
 import React, { ButtonHTMLAttributes } from 'react';
+import { Button } from '@/components/ui/official/button';
+import { cn } from '@/lib/utils';
 
 export const SecondaryBtn: React.FC<ButtonHTMLAttributes<HTMLButtonElement>> =
   React.memo((props) => {
     return (
-      <button
+      <Button
+        type={props.type ?? 'button'}
+        variant="ghost"
         {...props}
-        className={clsx(
-          'w-full py-2 px-4 border border-transparent text-sm font-medium text-white focus:outline-none disabled:opacity-50',
+        className={cn(
+          'h-9 w-full justify-center text-muted-foreground hover:text-foreground',
           props.className
         )}
       >
         {props.children}
-      </button>
+      </Button>
     );
   });
 SecondaryBtn.displayName = 'SecondaryBtn';

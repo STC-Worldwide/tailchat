@@ -3,7 +3,6 @@ import { TextPanel } from '@/components/Panel/group/TextPanel';
 import { Problem } from '@/components/Problem';
 import { GroupPanelContext } from '@/context/GroupPanelContext';
 import { useUserSessionPreference } from '@/hooks/useUserPreference';
-import { Alert } from 'antd';
 import React, { useEffect, useMemo } from 'react';
 import {
   GroupInfoContextProvider,
@@ -15,6 +14,7 @@ import {
   useHasGroupPanelPermission,
 } from 'tailchat-shared';
 import { useGroupPanelParams } from './utils';
+import { TcAlert } from '@/components/ui/alert';
 
 /**
  * 记录下最后访问的面板id
@@ -55,10 +55,10 @@ export const GroupPanelRender: React.FC<GroupPanelRenderProps> = React.memo(
 
     if (groupInfo === null) {
       return (
-        <Alert
+        <TcAlert
           className="w-full text-center"
-          type="error"
-          message={t('群组不存在')}
+          variant="error"
+          title={t('群组不存在')}
         />
       );
     }
@@ -89,10 +89,10 @@ export const GroupPanelRender: React.FC<GroupPanelRenderProps> = React.memo(
     }
 
     return (
-      <Alert
+      <TcAlert
         className="w-full text-center"
-        type="error"
-        message={t('未知的面板类型')}
+        variant="error"
+        title={t('未知的面板类型')}
       />
     );
   }

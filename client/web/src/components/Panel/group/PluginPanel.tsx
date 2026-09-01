@@ -1,8 +1,8 @@
 import { Problem } from '@/components/Problem';
 import { findPluginPanelInfoByName } from '@/utils/plugin-helper';
-import { Alert } from 'antd';
 import React, { useMemo } from 'react';
 import { isValidStr, t, useGroupPanelInfo } from 'tailchat-shared';
+import { TcAlert } from '@/components/ui/alert';
 
 interface GroupPluginPanelProps {
   groupId: string;
@@ -18,15 +18,15 @@ export const GroupPluginPanel: React.FC<GroupPluginPanelProps> = React.memo(
 
     if (!panelInfo) {
       return (
-        <Alert className="w-full text-center" message={t('无法获取面板信息')} />
+        <TcAlert className="w-full text-center" title={t('无法获取面板信息')} />
       );
     }
 
     if (typeof panelInfo.provider !== 'string') {
       return (
-        <Alert
+        <TcAlert
           className="w-full text-center"
-          message={t('未找到插件的提供者')}
+          title={t('未找到插件的提供者')}
         />
       );
     }
@@ -43,9 +43,9 @@ export const GroupPluginPanel: React.FC<GroupPluginPanelProps> = React.memo(
     if (!pluginPanelInfo) {
       // TODO: 如果没有安装, 引导用户安装插件
       return (
-        <Alert
+        <TcAlert
           className="w-full text-center"
-          message={
+          description={
             <div>
               <p>{t('该面板由插件提供')}</p>
               <p>

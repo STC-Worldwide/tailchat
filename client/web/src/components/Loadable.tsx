@@ -6,9 +6,7 @@ import loadable, {
 } from '@loadable/component';
 import pMinDelay from 'p-min-delay';
 import { LoadingSpinner } from './LoadingSpinner';
-import { isValidStr, t } from 'tailchat-shared';
-import { message } from 'antd';
-import _uniqueId from 'lodash/uniqueId';
+import { isValidStr, showGlobalLoading, t } from 'tailchat-shared';
 
 function promiseUsage<T>(p: Promise<T>, name: string): Promise<T> {
   const start = new Date().valueOf();
@@ -23,18 +21,18 @@ function promiseUsage<T>(p: Promise<T>, name: string): Promise<T> {
 }
 
 function promiseLoading<T>(p: Promise<T>): Promise<T> {
-  const key = _uniqueId('Loadable');
-  message.loading({
-    content: t('加载中...'),
-    key,
-    duration: 0,
-  });
+  const hide = showGlobalLoading(t('加载中...'));
 
-  return p.then((r) => {
-    message.destroy(key);
-
-    return r;
-  });
+  return p.then(
+    (r) => {
+      hide();
+      return r;
+    },
+    (error) => {
+      hide();
+      throw error;
+    }
+  );
 }
 
 interface LoadableOptions<P> extends OptionsWithoutResolver<P> {

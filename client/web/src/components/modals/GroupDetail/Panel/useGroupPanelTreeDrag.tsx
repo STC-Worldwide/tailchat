@@ -1,19 +1,27 @@
 import { useCallback, useRef } from 'react';
 import { showToasts, GroupPanel as GroupPanelInfo } from 'tailchat-shared';
-import type { NodeDragEventParams } from 'rc-tree/lib/contextTypes';
-import type { DataNode, EventDataNode } from 'antd/lib/tree';
-import type { Key } from 'rc-tree/lib/interface';
-import type { AllowDrop } from 'rc-tree/lib/Tree';
 import _cloneDeep from 'lodash/cloneDeep';
-import { rebuildGroupPanelOrder } from './utils';
+import { GroupPanelTreeNode, rebuildGroupPanelOrder } from './utils';
+
+type TreeDragInfo = {
+  node: GroupPanelTreeNode;
+};
+
+type TreeDropInfo = {
+  node: GroupPanelTreeNode;
+  dragNode: GroupPanelTreeNode;
+  dragNodesKeys: string[];
+  dropPosition: number;
+  dropToGap: boolean;
+};
 
 export function useGroupPanelTreeDrag(
   groupPanels: GroupPanelInfo[],
   onChangeGroupPanels: (newGroupPanels: GroupPanelInfo[]) => void
 ) {
-  const draggingNode = useRef<DataNode | null>(null);
+  const draggingNode = useRef<GroupPanelTreeNode | null>(null);
 
-  const handleDragStart = useCallback((info: NodeDragEventParams<any>) => {
+  const handleDragStart = useCallback((info: TreeDragInfo) => {
     draggingNode.current = info.node;
   }, []);
 
@@ -22,7 +30,7 @@ export function useGroupPanelTreeDrag(
   }, []);
 
   const handleAllowDrop = useCallback(
-    ({ dropNode, dropPosition }: Parameters<AllowDrop>[0]) => {
+    ({ dropNode, dropPosition }: { dropNode: GroupPanelTreeNode; dropPosition: number }) => {
       if (draggingNode.current?.isLeaf === true) {
         // 如果正在拖拽的节点是面板
         if (dropPosition === 0) {
@@ -45,12 +53,7 @@ export function useGroupPanelTreeDrag(
 
   const handleDrop = useCallback(
     (
-      info: NodeDragEventParams & {
-        dragNode: EventDataNode<any>;
-        dragNodesKeys: Key[];
-        dropPosition: number;
-        dropToGap: boolean;
-      }
+      info: TreeDropInfo
     ) => {
       const newGroupPanels = _cloneDeep(groupPanels);
       const dropNodePos = newGroupPanels.findIndex(

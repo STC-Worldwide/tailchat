@@ -1,10 +1,9 @@
-import { notification } from 'antd';
 import React from 'react';
-import { t } from 'tailchat-shared';
+import { showNotification, t } from 'tailchat-shared';
 
 export function showPluginLoadError(loadErrorPluginNames: string[]) {
-  notification.warn({
-    message: (
+  showNotification(
+    (
       <div>
         <p>{t('插件加载失败')}:</p>
 
@@ -13,6 +12,6 @@ export function showPluginLoadError(loadErrorPluginNames: string[]) {
         ))}
       </div>
     ),
-    duration: 2,
-  });
+    2
+  );
 }

@@ -1,5 +1,3 @@
-import { Icon } from 'tailchat-design';
-import type { MenuProps } from 'antd';
 import React, { useCallback } from 'react';
 import {
   ChatMessage,
@@ -19,6 +17,14 @@ import { openReconfirmModalP } from '@/components/Modal';
 import copy from 'copy-to-clipboard';
 import { getMessageTextDecorators } from '@/plugin/common';
 import _compact from 'lodash/compact';
+import type { TcDropdownMenu } from '@/components/ui/dropdown';
+import {
+  CopyIcon,
+  LoaderCircleIcon,
+  ReplyIcon,
+  RotateCcwIcon,
+  Trash2Icon,
+} from 'lucide-react';
 
 /**
  * 消息的会话操作
@@ -26,7 +32,7 @@ import _compact from 'lodash/compact';
 export function useChatMessageItemAction(
   payload: ChatMessage,
   options: { onClick?: () => void }
-): MenuProps {
+): TcDropdownMenu {
   const context = useChatBoxContext();
   const groupInfo = useGroupInfoContext();
   const userInfo = useUserInfo();
@@ -48,19 +54,21 @@ export function useChatMessageItemAction(
     showSuccessToasts(t('复制消息文本成功'));
   }, [payload.content]);
 
-  const [, handleRecallMessage] = useAsyncRequest(async () => {
-    if (await openReconfirmModalP()) {
-      await recallMessage(payload._id);
-      showSuccessToasts(t('消息撤回成功'));
-    }
-  }, [payload._id]);
+  const [{ loading: recallLoading }, handleRecallMessage] =
+    useAsyncRequest(async () => {
+      if (await openReconfirmModalP()) {
+        await recallMessage(payload._id);
+        showSuccessToasts(t('消息撤回成功'));
+      }
+    }, [payload._id]);
 
-  const [, handleDeleteMessage] = useAsyncRequest(async () => {
-    if (await openReconfirmModalP()) {
-      await deleteMessage(payload._id);
-      showSuccessToasts(t('消息删除成功'));
-    }
-  }, [payload._id]);
+  const [{ loading: deleteLoading }, handleDeleteMessage] =
+    useAsyncRequest(async () => {
+      if (await openReconfirmModalP()) {
+        await deleteMessage(payload._id);
+        showSuccessToasts(t('消息删除成功'));
+      }
+    }, [payload._id]);
 
   const isGroupOwner = groupInfo && groupInfo.owner === userInfo?._id; //
   const isMessageAuthor = payload.author === userInfo?._id;
@@ -71,28 +79,38 @@ export function useChatMessageItemAction(
       {
         key: 'copy',
         label: t('复制'),
-        icon: <Icon icon="mdi:content-copy" />,
+        icon: <CopyIcon className="size-4" />,
         onClick: handleCopy,
       },
       context.hasContext && {
         key: 'reply',
         label: t('回复'),
-        icon: <Icon icon="mdi:reply" />,
+        icon: <ReplyIcon className="size-4" />,
         onClick: () => sharedEvent.emit('replyMessage', payload),
       },
       (isGroupOwner || isMessageAuthor) && {
         key: 'recall',
         label: t('撤回'),
-        icon: <Icon icon="mdi:restore" />,
+        icon: recallLoading ? (
+          <LoaderCircleIcon className="size-4 animate-spin" />
+        ) : (
+          <RotateCcwIcon className="size-4" />
+        ),
+        disabled: recallLoading || deleteLoading,
         onClick: handleRecallMessage,
       },
       hasDeleteMessagePermission && {
         key: 'delete',
         label: t('删除'),
         danger: true,
-        icon: <Icon icon="mdi:delete-outline" />,
+        icon: deleteLoading ? (
+          <LoaderCircleIcon className="size-4 animate-spin" />
+        ) : (
+          <Trash2Icon className="size-4" />
+        ),
+        disabled: recallLoading || deleteLoading,
         onClick: handleDeleteMessage,
       },
-    ] as MenuProps['items']),
+    ] as TcDropdownMenu['items']),
   };
 }

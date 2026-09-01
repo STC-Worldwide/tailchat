@@ -1,6 +1,6 @@
 import type { PluginCustomPanel } from '@/plugin/common';
 import React, { useMemo } from 'react';
-import { Icon } from 'tailchat-design';
+import { Icon } from '@iconify/react';
 import { SidebarItem } from './SidebarItem';
 
 const defaultUseIsShow = () => true;

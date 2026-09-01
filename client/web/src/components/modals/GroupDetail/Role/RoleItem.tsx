@@ -1,24 +1,24 @@
-import clsx from 'clsx';
 import React, { PropsWithChildren } from 'react';
+import { Button } from '@/components/ui/official/button';
+import { cn } from '@/lib/utils';
 
 export const RoleItem: React.FC<
   PropsWithChildren<{
     active: boolean;
     onClick?: () => void;
+    className?: string;
   }>
 > = React.memo((props) => {
   return (
-    <div
-      className={clsx(
-        'px-2 py-1 rounded cursor-pointer mb-1 hover:bg-black/20 ',
-        {
-          'bg-black/20 ': props.active,
-        }
-      )}
+    <Button
+      type="button"
+      variant={props.active ? 'secondary' : 'ghost'}
+      className={cn('w-full justify-start', props.className)}
+      aria-current={props.active ? 'page' : undefined}
       onClick={props.onClick}
     >
       {props.children}
-    </div>
+    </Button>
   );
 });
 RoleItem.displayName = 'RoleItem';

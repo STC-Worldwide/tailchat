@@ -1,9 +1,10 @@
-import { Button } from 'antd';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { createDMConverse, t, useAsyncRequest } from 'tailchat-shared';
+import { createDMConverse, localTrans, useAsyncRequest } from 'tailchat-shared';
 import { FriendPicker } from '../UserPicker/FriendPicker';
 import { closeModal, ModalWrapper } from '../Modal';
+import { Button } from '@/components/ui/official/button';
+import { LoaderCircleIcon, MessagesSquareIcon } from 'lucide-react';
 
 interface CreateDMConverseProps {
   /**
@@ -29,16 +30,49 @@ export const CreateDMConverse: React.FC<CreateDMConverseProps> = React.memo(
     }, [selectedFriendIds]);
 
     return (
-      <ModalWrapper title={t('创建多人会话')}>
+      <ModalWrapper
+        className="w-[min(26rem,calc(100vw-2rem))]"
+        style={{ maxWidth: 416 }}
+        title={localTrans({
+          'zh-CN': '创建群聊',
+          'en-US': 'Create group chat',
+        })}
+      >
         <FriendPicker
           withoutUserIds={hiddenUserIds}
           selectedIds={selectedFriendIds}
           onChange={setSelectedFriendIds}
+          emptyTitle={localTrans({
+            'zh-CN': '没有可选择的好友',
+            'en-US': 'No friends available',
+          })}
+          emptyDescription={localTrans({
+            'zh-CN': '请先添加好友，然后返回这里创建群聊。',
+            'en-US':
+              'Add friends first, then return here to start a group chat.',
+          })}
         />
 
-        <div className="text-right">
-          <Button type="primary" loading={loading} onClick={handleCreate}>
-            {t('创建')}
+        <div className="mt-4 flex justify-end border-t border-border/70 pt-4">
+          <Button
+            disabled={loading || selectedFriendIds.length === 0}
+            aria-busy={loading}
+            onClick={handleCreate}
+          >
+            {loading ? (
+              <LoaderCircleIcon
+                data-icon="inline-start"
+                className="animate-spin"
+              />
+            ) : (
+              <MessagesSquareIcon data-icon="inline-start" />
+            )}
+            {loading
+              ? localTrans({ 'zh-CN': '正在创建', 'en-US': 'Creating' })
+              : localTrans({
+                  'zh-CN': '创建群聊',
+                  'en-US': 'Create group chat',
+                })}
           </Button>
         </div>
       </ModalWrapper>

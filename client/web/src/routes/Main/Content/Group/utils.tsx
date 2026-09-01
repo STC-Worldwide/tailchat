@@ -3,10 +3,9 @@ import {
   pluginGroupTextPanelExtraMenus,
 } from '@/plugin/common';
 import { findPluginPanelInfoByName } from '@/utils/plugin-helper';
-import type { ItemType } from 'antd/lib/menu/hooks/useItems';
 import React, { useMemo } from 'react';
 import { useParams } from 'react-router';
-import { Icon } from 'tailchat-design';
+import { Icon } from '@iconify/react';
 import {
   GroupPanel,
   GroupPanelType,
@@ -14,6 +13,15 @@ import {
   useSharedEventHandler,
 } from 'tailchat-shared';
 import { useUpdate } from 'ahooks';
+
+export interface GroupPanelMenuItem {
+  key: React.Key;
+  label?: React.ReactNode;
+  icon?: React.ReactNode;
+  type?: 'divider';
+  disabled?: boolean;
+  onClick?: () => void;
+}
 
 /**
  * 获取群组面板的参数
@@ -33,7 +41,7 @@ export function useGroupPanelParams(): {
 /**
  * 获取来自插件的菜单项
  */
-export function useExtraMenuItems(panel: GroupPanel): ItemType[] {
+export function useExtraMenuItems(panel: GroupPanel): GroupPanelMenuItem[] {
   const extraMenuItems = useMemo(() => {
     if (panel.type === GroupPanelType.TEXT) {
       return pluginGroupTextPanelExtraMenus;
@@ -47,6 +55,7 @@ export function useExtraMenuItems(panel: GroupPanel): ItemType[] {
   if (Array.isArray(extraMenuItems) && extraMenuItems.length > 0) {
     return [
       {
+        key: 'plugin-divider',
         type: 'divider',
       },
       ...extraMenuItems.map((item) => ({

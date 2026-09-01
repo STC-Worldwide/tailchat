@@ -1,9 +1,9 @@
 import { openModal } from '@/plugin/common';
-import { Button } from 'antd';
 import React, { useCallback } from 'react';
 import { t, Trans, useUserInfo } from 'tailchat-shared';
 import { closeModal } from './Modal';
 import { ClaimTemporaryUser } from './modals/ClaimTemporaryUser';
+import { Button } from '@/components/ui/official/button';
 
 /**
  * 访客账号提示
@@ -26,13 +26,14 @@ export const GlobalTemporaryTip: React.FC = React.memo(() => {
   }, [userInfo?._id]);
 
   return show ? (
-    <div className="text-center bg-indigo-400 text-white">
+    <div className="flex min-h-8 items-center justify-center bg-primary px-3 text-center text-sm text-primary-foreground">
       <Trans>
         当前使用的是一个临时账号,{' '}
         <Button
-          type="link"
-          className="text-indigo-700 font-bold"
-          size="small"
+          type="button"
+          variant="link"
+          size="sm"
+          className="h-7 px-1 font-semibold text-primary-foreground hover:text-primary-foreground"
           onClick={handleClaim}
         >
           立即认领

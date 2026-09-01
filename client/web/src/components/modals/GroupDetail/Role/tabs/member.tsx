@@ -1,10 +1,7 @@
-import { IconBtn } from '@/components/IconBtn';
 import { closeModal, openModal } from '@/components/Modal';
 import { SelectGroupMember } from '@/components/modals/SelectGroupMember';
 import { UserListItem } from '@/components/UserListItem';
-import { Button, Input } from 'antd';
 import React from 'react';
-import { Icon } from 'tailchat-design';
 import {
   model,
   showErrorToasts,
@@ -17,6 +14,9 @@ import {
   useUserInfoList,
 } from 'tailchat-shared';
 import _compact from 'lodash/compact';
+import { Button } from '@/components/ui/official/button';
+import { Input } from '@/components/ui/official/input';
+import { PlusIcon, SearchIcon, UserMinusIcon } from 'lucide-react';
 
 interface RoleMemberProps {
   groupId: string;
@@ -80,37 +80,48 @@ export const RoleMember: React.FC<RoleMemberProps> = React.memo((props) => {
   );
 
   return (
-    <div>
+    <div className="space-y-4 py-2">
       {/* 管理成员 */}
-      <div className="text-right mb-2 flex space-x-1">
-        <Button type="primary" onClick={handleAddMember}>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <Button onClick={handleAddMember}>
+          <PlusIcon />
           {t('添加成员')}
         </Button>
 
         {userInfoList.length > 0 && (
-          <Input
-            placeholder={t('搜索成员')}
-            size="middle"
-            suffix={<Icon fontSize={20} color="grey" icon="mdi:magnify" />}
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-          />
+          <div className="relative w-64 max-w-full">
+            <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              className="pl-9"
+              placeholder={t('搜索成员')}
+              aria-label={t('搜索成员')}
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+            />
+          </div>
         )}
       </div>
 
-      {(isSearching ? filterMembers : userInfoList).map((m) => (
-        <UserListItem
-          key={m._id}
-          userId={m._id}
-          actions={[
-            <IconBtn
-              key="remove"
-              icon="mdi:close"
-              onClick={() => handleRemoveMember(m._id)}
-            />,
-          ]}
-        />
-      ))}
+      <div className="overflow-hidden rounded-lg border border-border">
+        {(isSearching ? filterMembers : userInfoList).map((m) => (
+          <UserListItem
+            key={m._id}
+            userId={m._id}
+            actions={[
+              <Button
+                key="remove"
+                variant="destructive"
+                size="icon-sm"
+                aria-label={t('移除成员')}
+                title={t('移除成员')}
+                onClick={() => handleRemoveMember(m._id)}
+              >
+                <UserMinusIcon />
+              </Button>,
+            ]}
+          />
+        ))}
+      </div>
     </div>
   );
 });

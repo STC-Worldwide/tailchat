@@ -1,8 +1,18 @@
-import { Badge, BadgeProps, Space, Typography } from 'antd';
 import clsx from 'clsx';
 import React from 'react';
 import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
+import {
+  SidebarBadge,
+  type SidebarBadgeProps,
+} from '@/components/SidebarBadge';
+import {
+  SidebarMenuBadge,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+} from '@/components/ui/official/sidebar';
 
 /**
  * 群组面板项
@@ -14,49 +24,74 @@ export const GroupPanelItem: React.FC<{
   to: string;
   dimmed?: boolean; // 颜色暗淡
   badge?: boolean;
-  badgeProps?: BadgeProps;
+  badgeProps?: SidebarBadgeProps;
   extraBadge?: React.ReactNode[];
+  nested?: boolean;
 }> = React.memo((props) => {
-  const { icon, name, to, dimmed = false, badge } = props;
+  const { icon, name, to, dimmed = false, badge, nested = false } = props;
   const location = useLocation();
   const isActive = location.pathname.startsWith(to);
+  const hasExtraBadge = Boolean(props.extraBadge?.some(Boolean));
+  const showBadge = badge === true || hasExtraBadge;
+  const badgeDot =
+    typeof props.badgeProps?.count !== 'number' ||
+    props.badgeProps.count <= 0;
+
+  const content = (
+    <>
+      <span className="flex size-4 shrink-0 items-center justify-center [&>svg]:size-4">
+        {icon}
+      </span>
+      <span>{name}</span>
+      {nested && showBadge && (
+        <span className="ml-auto flex items-center gap-1">
+          {badge === true && (
+            <SidebarBadge {...props.badgeProps} dot={badgeDot} />
+          )}
+          {props.extraBadge}
+        </span>
+      )}
+    </>
+  );
+
+  if (nested) {
+    return (
+      <SidebarMenuSubItem>
+        <SidebarMenuSubButton
+          render={<Link to={to} />}
+          isActive={isActive}
+          className={clsx(
+            'text-sidebar-foreground! no-underline data-active:bg-sidebar-accent! data-active:text-sidebar-accent-foreground!',
+            dimmed && 'opacity-50'
+          )}
+        >
+          {content}
+        </SidebarMenuSubButton>
+      </SidebarMenuSubItem>
+    );
+  }
 
   return (
-    <Link className="block" to={to}>
-      <div
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        render={<Link to={to} />}
+        isActive={isActive}
         className={clsx(
-          'w-full hover:bg-black/20 dark:hover:bg-white/20 cursor-pointer rounded px-1 h-8 flex items-center text-base group',
-          {
-            'bg-black/20 dark:bg-white/20 ': isActive,
-          },
-          dimmed
-            ? 'text-gray-900/40 dark:text-white/40'
-            : 'text-gray-900 dark:text-white'
+          'text-sidebar-foreground! no-underline data-active:bg-sidebar-accent! data-active:text-sidebar-accent-foreground!',
+          dimmed && 'opacity-50'
         )}
       >
-        <div className={clsx('flex items-center justify-center px-1 mr-1')}>
-          {icon}
-        </div>
-
-        <Typography.Text
-          className={clsx(
-            'flex-1',
-            dimmed
-              ? 'text-gray-900/40 dark:text-white/40'
-              : 'text-gray-900 dark:text-white'
+        {content}
+      </SidebarMenuButton>
+      {showBadge && (
+        <SidebarMenuBadge className="gap-1">
+          {badge === true && (
+            <SidebarBadge {...props.badgeProps} dot={badgeDot} />
           )}
-          ellipsis={true}
-        >
-          {name}
-        </Typography.Text>
-
-        <Space>
-          {badge === true && <Badge status="error" {...props.badgeProps} />}
-
           {props.extraBadge}
-        </Space>
-      </div>
-    </Link>
+        </SidebarMenuBadge>
+      )}
+    </SidebarMenuItem>
   );
 });
 GroupPanelItem.displayName = 'GroupPanelItem';

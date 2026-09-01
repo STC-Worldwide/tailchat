@@ -7,8 +7,6 @@ import i18nZh from '@emoji-mart/data/i18n/zh.json';
 import i18nEn from '@emoji-mart/data/i18n/en.json';
 import spritesUrl from './twitter.png';
 
-import './Picker.less';
-
 interface EmojiPickerProps {
   onSelect: (code: string) => void;
 }

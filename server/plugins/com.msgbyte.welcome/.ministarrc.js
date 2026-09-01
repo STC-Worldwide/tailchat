@@ -5,7 +5,6 @@ module.exports = {
     'react',
     'react-router',
     'axios',
-    'styled-components',
     'zustand',
     'zustand/middleware/immer',
   ],

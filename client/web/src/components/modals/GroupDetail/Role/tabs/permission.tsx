@@ -1,9 +1,10 @@
 import { ALL_PERMISSION, getDefaultPermissionList } from 'tailchat-shared';
-import { Button } from 'antd';
 import React, { useCallback, useMemo } from 'react';
 import { model, t } from 'tailchat-shared';
 import { useModifyPermission } from '../useModifyPermission';
 import { PermissionList } from '@/components/PermissionList';
+import { Button } from '@/components/ui/official/button';
+import { RotateCcwIcon, SaveIcon } from 'lucide-react';
 
 interface RolePermissionProps {
   roleId: typeof ALL_PERMISSION | string;
@@ -31,13 +32,16 @@ export const RolePermission: React.FC<RolePermissionProps> = React.memo(
     // 权限概述
     return (
       <div>
-        <div className="mb-2 space-x-2 text-right">
-          <Button onClick={handleResetPermission}>{t('重置为默认值')}</Button>
+        <div className="mb-4 flex items-center justify-end gap-2">
+          <Button variant="ghost" onClick={handleResetPermission}>
+            <RotateCcwIcon />
+            {t('重置为默认值')}
+          </Button>
           <Button
-            type="primary"
             disabled={!isEditing}
             onClick={() => props.onSavePermission(editingPermission)}
           >
+            <SaveIcon />
             {t('保存')}
           </Button>
         </div>

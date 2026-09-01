@@ -1,106 +1,113 @@
-import React, { ForwardRefExoticComponent, useMemo } from 'react';
-import { Avatar as AntdAvatar, Badge } from 'antd';
+import React, { useMemo, useState } from 'react';
 import _head from 'lodash/head';
 import _upperCase from 'lodash/upperCase';
 import _isNil from 'lodash/isNil';
-import _isEmpty from 'lodash/isEmpty';
-import _isNumber from 'lodash/isNumber';
-import _omit from 'lodash/omit';
-import type { AvatarProps as AntdAvatarProps } from 'antd/lib/avatar';
 import { getTextColorHex, px2rem } from './utils';
 import { isValidStr } from '../utils';
 import { imageUrlParser } from '../Image';
 
 export { getTextColorHex };
 
-export interface AvatarProps extends AntdAvatarProps {
+export interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
   name?: string;
   isOnline?: boolean;
+  src?: string | React.ReactElement | null;
+  icon?: React.ReactNode;
+  size?: 'small' | 'middle' | 'large' | number;
+  shape?: 'circle' | 'square';
 }
 
-const _Avatar: React.FC<AvatarProps> = React.memo((_props) => {
-  const { isOnline, ...props } = _props;
-  const src = isValidStr(props.src) ? imageUrlParser(props.src) : undefined;
-
-  const name = useMemo(() => _upperCase(_head(props.name)), [props.name]);
+const _Avatar: React.FC<AvatarProps> = React.memo((props) => {
+  const {
+    isOnline,
+    name,
+    src: source,
+    icon,
+    size = 'middle',
+    shape = 'circle',
+    style: customStyle,
+    ...rest
+  } = props;
+  const [imageFailed, setImageFailed] = useState(false);
+  const src =
+    typeof source === 'string' && isValidStr(source)
+      ? imageUrlParser(source)
+      : undefined;
+  const initial = useMemo(() => _upperCase(_head(name)), [name]);
+  const sizeValue = typeof size === 'number' ? size : ({ small: 24, middle: 32, large: 40 }[size] ?? 32);
 
   const color = useMemo(
     () =>
-      // 如果src为空 且 icon为空 则给个固定颜色
-      _isEmpty(src) && _isNil(props.icon)
-        ? getTextColorHex(props.name)
+      (src === undefined || imageFailed) && _isNil(icon)
+        ? getTextColorHex(name)
         : undefined,
-    [src, props.icon, props.name]
+    [src, imageFailed, icon, name]
   );
 
-  const style = useMemo(() => {
-    const _style: React.CSSProperties = {
+  const style = useMemo<React.CSSProperties>(() => {
+    return {
       userSelect: 'none',
-      ...props.style,
+      ...customStyle,
+      width: customStyle?.width ?? px2rem(sizeValue),
+      height: customStyle?.height ?? px2rem(sizeValue),
+      fontSize: customStyle?.fontSize ?? px2rem(sizeValue * 0.4),
       backgroundColor: color,
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
+      overflow: 'hidden',
+      borderRadius: shape === 'circle' ? '50%' : 3,
     };
-
-    if (_isNumber(props.size)) {
-      // 为了支持rem统一管理宽度，将size转换为样式宽度(size类型上不支持rem单位)
-      if (!_style.width) {
-        _style.width = px2rem(props.size);
-      }
-      if (!_style.height) {
-        _style.height = px2rem(props.size);
-      }
-
-      if (typeof _style.fontSize === 'undefined') {
-        // 如果props.size是数字且没有指定文字大小
-        // 则自动增加fontSize大小
-        _style.fontSize = px2rem(props.size * 0.4);
-      }
-    }
-
-    return _style;
-  }, [props.style, props.size, color]);
+  }, [customStyle, sizeValue, color, shape]);
 
   const inner = (
-    <AntdAvatar
-      draggable={false}
-      {..._omit(props, ['size'])}
-      src={src}
-      style={style}
-    >
-      {name}
-    </AntdAvatar>
+    <div {...rest} style={style}>
+      {src && !imageFailed ? (
+        <img
+          src={src}
+          alt={name}
+          draggable={false}
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          onError={() => setImageFailed(true)}
+        />
+      ) : (
+        icon ?? initial
+      )}
+    </div>
   );
 
-  if (typeof isOnline === 'boolean') {
-    const style = {
-      bottom: 0,
-      top: 'auto',
-    };
-
-    if (isOnline === true) {
-      return (
-        <Badge dot={true} color="green" style={style}>
-          {inner}
-        </Badge>
-      );
-    } else {
-      return (
-        <Badge dot={true} color="#999" style={style}>
-          {inner}
-        </Badge>
-      );
-    }
+  if (typeof isOnline !== 'boolean') {
+    return inner;
   }
 
-  return inner;
+  return (
+    <span style={{ position: 'relative', display: 'inline-flex' }}>
+      {inner}
+      <span
+        aria-label={isOnline ? 'online' : 'offline'}
+        style={{
+          position: 'absolute',
+          right: 0,
+          bottom: 0,
+          width: 8,
+          height: 8,
+          borderRadius: '50%',
+          backgroundColor: isOnline ? '#22c55e' : '#999',
+          boxShadow: '0 0 0 2px var(--tc-surface-sidebar, #fff)',
+        }}
+      />
+    </span>
+  );
 });
 _Avatar.displayName = 'Avatar';
 
-type CompoundedComponent = ForwardRefExoticComponent<AvatarProps> & {
-  Group: typeof AntdAvatar.Group;
+type CompoundedComponent = React.FC<AvatarProps> & {
+  Group: React.FC<React.HTMLAttributes<HTMLDivElement>>;
 };
 
 export const Avatar: CompoundedComponent = _Avatar as any;
-Avatar.Group = AntdAvatar.Group;
+Avatar.Group = ({ children, ...props }) => (
+  <div {...props} style={{ display: 'flex', alignItems: 'center', ...props.style }}>
+    {children}
+  </div>
+);

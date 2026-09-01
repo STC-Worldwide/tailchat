@@ -32,6 +32,27 @@ global.ResizeObserver = class ResizeObserver {
   disconnect() {}
 };
 
+// jsdom has no responsive media-query implementation (Shadcn use-mobile uses it)
+window.matchMedia =
+  window.matchMedia ||
+  function matchMedia(query) {
+    return {
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener() {},
+      removeListener() {},
+      addEventListener() {},
+      removeEventListener() {},
+      dispatchEvent() {
+        return false;
+      },
+    };
+  };
+
+// jsdom 16 has no PointerEvent (Base UI dispatches one for checkbox clicks)
+window.PointerEvent = window.PointerEvent || MouseEvent;
+
 // jsdom has no scrollIntoView (cmdk scrolls the selected item into view)
 Element.prototype.scrollIntoView =
   Element.prototype.scrollIntoView || function () {};

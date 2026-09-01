@@ -1,5 +1,3 @@
-import { message, Modal, notification } from 'antd';
-import React from 'react';
 import {
   buildStorage,
   setAlert,
@@ -18,13 +16,18 @@ import {
   onLanguageLoaded,
   setNotification,
 } from 'tailchat-shared';
-import { getPopupContainer } from './utils/dom-helper';
 import { getUserJWT } from './utils/jwt-helper';
 import _get from 'lodash/get';
-import _uniqueId from 'lodash/uniqueId';
 import { recordMeasure } from './utils/measure-helper';
 import { postMessageEvent } from './utils/event-helper';
 import { setImageUrlParser, setWebMetaFormConfig } from 'tailchat-design';
+import {
+  showFeedbackAlert,
+  showFeedbackLoading,
+  showFeedbackNotification,
+  showFeedbackToast,
+} from './components/ui/feedback';
+import { registerShadcnMetaForm } from './components/forms/ShadcnMetaForm';
 
 recordMeasure('init');
 postMessageEvent('init');
@@ -48,46 +51,23 @@ if (localStorageServiceUrl) {
 }
 
 setToasts((msg, type = 'info') => {
-  message.open({
-    type,
-    duration: 3,
-    content: <span data-testid="toast">{String(msg)}</span>,
-  });
+  showFeedbackToast(String(msg), type);
 });
 
 setAlert((options) => {
-  Modal.confirm({
-    content: options.message,
-    onOk: async () => {
-      if (typeof options.onConfirm === 'function') {
-        await options.onConfirm();
-      }
-    },
-    getContainer: getPopupContainer,
-  });
+  showFeedbackAlert(options);
 });
 
 setGlobalLoading((text) => {
-  const hide = message.loading(text, 0);
-
-  return hide;
+  return showFeedbackLoading(text);
 });
 
 setNotification((message, duration) => {
-  const key = _uniqueId('notification');
-  notification.open({
-    key,
-    message,
-    duration,
-    getContainer: getPopupContainer,
-  });
-
-  return () => {
-    notification.close(key);
-  };
+  return showFeedbackNotification(message, duration);
 });
 
 setImageUrlParser(parseUrlStr);
+registerShadcnMetaForm();
 
 onLanguageLoaded(() => {
   setWebMetaFormConfig({

@@ -28,6 +28,7 @@ export const SendMiaoModal: React.FC<SendMiaoModalProps> = React.memo(
     return (
       <ModalWrapper title={Translate.title}>
         <TextArea
+          aria-label={Translate.inputHuman}
           placeholder={Translate.inputHuman}
           value={text}
           onChange={(e) => setText(e.target.value)}

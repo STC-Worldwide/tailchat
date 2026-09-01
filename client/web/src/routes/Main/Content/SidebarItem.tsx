@@ -1,16 +1,29 @@
 import React from 'react';
 import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Typography, Badge } from 'antd';
-import clsx from 'clsx';
-import { Avatar } from 'tailchat-design';
+import { SidebarBadge } from '@/components/SidebarBadge';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/components/ui/official/avatar';
+import {
+  SidebarMenuAction,
+  SidebarMenuBadge,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from '@/components/ui/official/sidebar';
 
 interface SidebarItemProps {
   name: string;
   to: string;
   badge?: boolean | number;
   icon?: string | React.ReactElement;
-  action?: React.ReactNode;
+  action?: {
+    icon: React.ReactNode;
+    label: string;
+    onClick: React.MouseEventHandler<HTMLButtonElement>;
+  };
 }
 export const SidebarItem: React.FC<SidebarItemProps> = React.memo((props) => {
   const { icon, name, to, badge } = props;
@@ -18,43 +31,54 @@ export const SidebarItem: React.FC<SidebarItemProps> = React.memo((props) => {
   const isActive = location.pathname.startsWith(to);
 
   return (
-    <Link to={to}>
-      <div
-        className={clsx(
-          'w-full hover:bg-black/20 dark:hover:bg-white/20 cursor-pointer text-gray-700 dark:text-white rounded px-2 h-11 flex items-center text-base group mb-0.5',
-          {
-            'bg-black/20 dark:bg-white/20 ': isActive,
-          }
-        )}
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        render={<Link to={to} />}
+        isActive={isActive}
+        aria-current={isActive ? 'page' : undefined}
+        size="lg"
+        className="h-10 rounded-lg text-sidebar-foreground! no-underline data-active:bg-sidebar-accent! data-active:text-sidebar-accent-foreground!"
       >
-        <div className="flex h-8 items-center justify-center text-2xl w-8 mr-3">
+        <span className="flex size-6 shrink-0 items-center justify-center overflow-hidden rounded-md [&>svg]:size-4">
           {React.isValidElement(icon) ? (
             icon
           ) : (
-            <Avatar src={icon} name={name} />
+            <Avatar size="sm" className="rounded-md after:rounded-md">
+              <AvatarImage
+                src={typeof icon === 'string' ? icon : undefined}
+                alt={name}
+                className="rounded-md"
+              />
+              <AvatarFallback className="rounded-md font-medium">
+                {name.slice(0, 1).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
           )}
-        </div>
+        </span>
 
-        <Typography.Text
-          className="flex-1 text-gray-900 dark:text-white"
-          ellipsis={true}
+        <span>{name}</span>
+      </SidebarMenuButton>
+
+      {badge && (
+        <SidebarMenuBadge>
+          {badge === true ? (
+            <SidebarBadge dot={true} />
+          ) : (
+            <SidebarBadge count={badge} />
+          )}
+        </SidebarMenuBadge>
+      )}
+
+      {props.action && (
+        <SidebarMenuAction
+          showOnHover
+          aria-label={props.action.label}
+          onClick={props.action.onClick}
         >
-          {name}
-        </Typography.Text>
-
-        {badge === true ? (
-          <Badge status="error" />
-        ) : (
-          <Badge count={Number(badge) || 0} />
-        )}
-
-        {props.action && (
-          <div className="text-base p-1 cursor-pointer hidden opacity-70 group-hover:block hover:opacity-100">
-            {props.action}
-          </div>
-        )}
-      </div>
-    </Link>
+          {props.action.icon}
+        </SidebarMenuAction>
+      )}
+    </SidebarMenuItem>
   );
 });
 SidebarItem.displayName = 'SidebarItem';

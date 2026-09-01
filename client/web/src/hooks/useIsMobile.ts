@@ -1,10 +1,5 @@
-import { useWindowSize } from './useWindowSize';
-
 /**
- * 判定是否为移动版网页
+ * Keep Tailchat's historical hook path while using the same responsive source
+ * as the official Shadcn sidebar and Sheet primitives.
  */
-export function useIsMobile(): boolean {
-  const { width } = useWindowSize();
-
-  return width < 768;
-}
+export { useIsMobile } from '@/components/ui/official/use-mobile';

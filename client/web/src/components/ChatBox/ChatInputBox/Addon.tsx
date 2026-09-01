@@ -2,15 +2,15 @@ import {
   getMessageTextDecorators,
   pluginChatInputActions,
 } from '@/plugin/common';
-import { Icon } from 'tailchat-design';
-import { Dropdown, MenuProps } from 'antd';
 import React, { useState } from 'react';
 import { t } from 'tailchat-shared';
 import { useChatInputActionContext } from './context';
 import { uploadMessageFile, uploadMessageImage } from './utils';
 import clsx from 'clsx';
-import type { MenuItemType } from 'antd/lib/menu/hooks/useItems';
 import { openFile } from '@/utils/file-helper';
+import { TcDropdown, type TcDropdownMenu } from '@/components/ui/dropdown';
+import { Button } from '@/components/ui/official/button';
+import { FileIcon, ImageIcon, PlusIcon } from 'lucide-react';
 
 export const ChatInputAddon: React.FC = React.memo(() => {
   const [open, setOpen] = useState(false);
@@ -44,11 +44,12 @@ export const ChatInputAddon: React.FC = React.memo(() => {
     }
   };
 
-  const menu: MenuProps = {
+  const menu: TcDropdownMenu = {
     items: [
       {
         key: 'send-image',
         label: t('发送图片'),
+        icon: <ImageIcon />,
         onClick: async () => {
           setOpen(false);
           const file = await openFile({ accept: 'image/*' });
@@ -60,6 +61,7 @@ export const ChatInputAddon: React.FC = React.memo(() => {
       {
         key: 'send-file',
         label: t('发送文件'),
+        icon: <FileIcon />,
         onClick: async () => {
           setOpen(false);
           const file = await openFile();
@@ -69,36 +71,38 @@ export const ChatInputAddon: React.FC = React.memo(() => {
         },
       },
       ...pluginChatInputActions.map(
-        (item, i) =>
-          ({
-            key: item.label + i,
-            label: item.label,
-            onClick: () => {
-              item.onClick(actionContext);
-              setOpen(false);
-            },
-          } as MenuItemType)
+        (item, i) => ({
+          key: item.label + i,
+          label: item.label,
+          onClick: () => {
+            item.onClick(actionContext);
+            setOpen(false);
+          },
+        })
       ),
     ],
   };
 
   return (
-    <Dropdown
+    <TcDropdown
       menu={menu}
-      open={open}
       onOpenChange={setOpen}
-      placement="topRight"
-      trigger={['click']}
+      placement="topEnd"
     >
-      <div>
-        <Icon
-          className={clsx('text-2xl cursor-pointer transition transform', {
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        aria-label={t('更多')}
+        className="size-8 text-muted-foreground hover:text-foreground"
+      >
+        <PlusIcon
+          className={clsx('transition-transform', {
             'rotate-45': open,
           })}
-          icon="mdi:plus-circle-outline"
         />
-      </div>
-    </Dropdown>
+      </Button>
+    </TcDropdown>
   );
 });
 ChatInputAddon.displayName = 'ChatInputAddon';

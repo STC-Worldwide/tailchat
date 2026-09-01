@@ -1,8 +1,8 @@
 import { useLocalStorageState } from '@/hooks/useLocalStorage';
-import { Button } from 'antd';
 import React from 'react';
-import { Icon } from 'tailchat-design';
 import { t, useGlobalConfigStore } from 'tailchat-shared';
+import { Button } from '@/components/ui/official/button';
+import { XIcon } from 'lucide-react';
 
 export const GlobalAnnouncementBar: React.FC = React.memo(() => {
   const announcementInfo = useGlobalConfigStore((state) => state.announcement);
@@ -18,25 +18,31 @@ export const GlobalAnnouncementBar: React.FC = React.memo(() => {
   }
 
   return (
-    <div className="text-center bg-indigo-400 text-white relative px-6">
+    <div className="relative flex min-h-8 items-center justify-center gap-1 bg-primary px-10 text-center text-sm text-primary-foreground">
       <span className="select-text">{announcementInfo.text}</span>
 
       {announcementInfo.link && (
         <Button
-          type="link"
-          className="text-indigo-700 font-bold ml-2"
-          size="small"
+          type="button"
+          variant="link"
+          size="sm"
+          className="h-7 px-1 font-semibold text-primary-foreground hover:text-primary-foreground"
           onClick={() => window.open(announcementInfo.link)}
         >
           {t('了解更多')}
         </Button>
       )}
 
-      <Icon
-        className="absolute top-0.5 right-1 opacity-80 hover:opacity-100 cursor-pointer text-xl"
-        icon="mdi:close-circle-outline"
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon-xs"
+        className="absolute right-1.5 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
+        aria-label={t('关闭')}
         onClick={() => setAckId(announcementInfo.id)}
-      />
+      >
+        <XIcon />
+      </Button>
     </div>
   );
 });

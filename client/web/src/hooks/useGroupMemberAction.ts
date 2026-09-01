@@ -1,5 +1,5 @@
 import { openReconfirmModalP } from '@/components/Modal';
-import type { MenuProps } from 'antd';
+import type { ReactNode } from 'react';
 import {
   formatFullTime,
   humanizeMsDuration,
@@ -16,6 +16,20 @@ import {
   useUserSearch,
 } from 'tailchat-shared';
 import _compact from 'lodash/compact';
+
+export interface GroupMemberActionItem {
+  key: string;
+  label: ReactNode;
+  danger?: boolean;
+  disabled?: boolean;
+  checked?: boolean;
+  children?: GroupMemberActionItem[];
+  onClick?: () => void | Promise<void>;
+}
+
+export interface GroupMemberActionMenu {
+  items: GroupMemberActionItem[];
+}
 
 /**
  * 群组成员管理相关操作
@@ -73,129 +87,129 @@ export function useGroupMemberAction(groupId: string) {
   /**
    * 生成群组成员操作菜单
    */
-  const generateActionMenu = useEvent((member: UserBaseInfo): MenuProps => {
-    const hasMute = getMemberHasMute(member._id);
-    const memberRoles = getMemberRoles(member._id);
+  const generateActionMenu = useEvent(
+    (member: UserBaseInfo): GroupMemberActionMenu => {
+      const hasMute = getMemberHasMute(member._id);
+      const memberRoles = getMemberRoles(member._id);
 
-    const muteItems: MenuProps['items'] = allowManageUser
-      ? hasMute
-        ? [
-            {
-              key: 'unmute',
-              label: t('解除禁言'),
-              onClick: () => handleUnmuteMember(member._id),
-            },
-          ]
-        : [
-            {
-              key: 'mute',
-              label: t('禁言'),
-              children: [
-                {
-                  key: '1m',
-                  label: t('1分钟'),
-                  onClick: () => handleMuteMember(member._id, 1 * 60 * 1000),
-                },
-                {
-                  key: '5m',
-                  label: t('5分钟'),
-                  onClick: () => handleMuteMember(member._id, 5 * 60 * 1000),
-                },
-                {
-                  key: '10m',
-                  label: t('10分钟'),
-                  onClick: () => handleMuteMember(member._id, 10 * 60 * 1000),
-                },
-                {
-                  key: '30m',
-                  label: t('30分钟'),
-                  onClick: () => handleMuteMember(member._id, 30 * 60 * 1000),
-                },
-                {
-                  key: '1d',
-                  label: t('1天'),
-                  onClick: () =>
-                    handleMuteMember(member._id, 1 * 24 * 60 * 60 * 1000),
-                },
-                {
-                  key: '7d',
-                  label: t('7天'),
-                  onClick: () =>
-                    handleMuteMember(member._id, 7 * 24 * 60 * 60 * 1000),
-                },
-                {
-                  key: '30d',
-                  label: t('30天'),
-                  onClick: () =>
-                    handleMuteMember(member._id, 30 * 24 * 60 * 60 * 1000),
-                },
-              ],
-            },
-          ]
-      : [];
-
-    const roleItems: MenuProps['items'] =
-      allowManageRoles && roles.length > 0
-        ? [
-            {
-              key: 'manageRole',
-              label: t('分配身份组'),
-              children: roles.map((role) => ({
-                key: role._id,
-                label: role.name,
-                className: memberRoles.includes(role._id)
-                  ? 'underline'
-                  : undefined,
-                onClick: async () => {
-                  // switch member role
-                  if (memberRoles.includes(role._id)) {
-                    // 已拥有该身份
-                    await model.group.removeGroupMemberRoles(
-                      groupId,
-                      [member._id],
-                      [role._id]
-                    );
-                    showSuccessToasts(
-                      t('移除用户 [{{name}}] 身份组 [{{roleName}}] 成功', {
-                        name: member.nickname,
-                        roleName: role.name,
-                      })
-                    );
-                  } else {
-                    // 没有该身份
-                    await model.group.appendGroupMemberRoles(
-                      groupId,
-                      [member._id],
-                      [role._id]
-                    );
-                    showSuccessToasts(
-                      t('授予用户 [{{name}}] 身份组 [{{roleName}}] 成功', {
-                        name: member.nickname,
-                        roleName: role.name,
-                      })
-                    );
-                  }
-                },
-              })),
-            },
-          ]
+      const muteItems: GroupMemberActionItem[] = allowManageUser
+        ? hasMute
+          ? [
+              {
+                key: 'unmute',
+                label: t('解除禁言'),
+                onClick: () => handleUnmuteMember(member._id),
+              },
+            ]
+          : [
+              {
+                key: 'mute',
+                label: t('禁言'),
+                children: [
+                  {
+                    key: '1m',
+                    label: t('1分钟'),
+                    onClick: () => handleMuteMember(member._id, 1 * 60 * 1000),
+                  },
+                  {
+                    key: '5m',
+                    label: t('5分钟'),
+                    onClick: () => handleMuteMember(member._id, 5 * 60 * 1000),
+                  },
+                  {
+                    key: '10m',
+                    label: t('10分钟'),
+                    onClick: () => handleMuteMember(member._id, 10 * 60 * 1000),
+                  },
+                  {
+                    key: '30m',
+                    label: t('30分钟'),
+                    onClick: () => handleMuteMember(member._id, 30 * 60 * 1000),
+                  },
+                  {
+                    key: '1d',
+                    label: t('1天'),
+                    onClick: () =>
+                      handleMuteMember(member._id, 1 * 24 * 60 * 60 * 1000),
+                  },
+                  {
+                    key: '7d',
+                    label: t('7天'),
+                    onClick: () =>
+                      handleMuteMember(member._id, 7 * 24 * 60 * 60 * 1000),
+                  },
+                  {
+                    key: '30d',
+                    label: t('30天'),
+                    onClick: () =>
+                      handleMuteMember(member._id, 30 * 24 * 60 * 60 * 1000),
+                  },
+                ],
+              },
+            ]
         : [];
 
-    const menu: MenuProps = {
-      items: _compact([
-        ...muteItems,
-        ...roleItems,
-        allowManageUser && {
-          key: 'delete',
-          label: t('移出群组'),
-          danger: true,
-          onClick: () => handleRemoveGroupMember(member._id),
-        },
-      ] as MenuProps['items']),
-    };
+      const roleItems: GroupMemberActionItem[] =
+        allowManageRoles && roles.length > 0
+          ? [
+              {
+                key: 'manageRole',
+                label: t('分配身份组'),
+                children: roles.map((role) => ({
+                  key: role._id,
+                  label: role.name,
+                  checked: memberRoles.includes(role._id),
+                  onClick: async () => {
+                    // switch member role
+                    if (memberRoles.includes(role._id)) {
+                      // 已拥有该身份
+                      await model.group.removeGroupMemberRoles(
+                        groupId,
+                        [member._id],
+                        [role._id]
+                      );
+                      showSuccessToasts(
+                        t('移除用户 [{{name}}] 身份组 [{{roleName}}] 成功', {
+                          name: member.nickname,
+                          roleName: role.name,
+                        })
+                      );
+                    } else {
+                      // 没有该身份
+                      await model.group.appendGroupMemberRoles(
+                        groupId,
+                        [member._id],
+                        [role._id]
+                      );
+                      showSuccessToasts(
+                        t('授予用户 [{{name}}] 身份组 [{{roleName}}] 成功', {
+                          name: member.nickname,
+                          roleName: role.name,
+                        })
+                      );
+                    }
+                  },
+                })),
+              },
+            ]
+          : [];
 
-    return menu;
-  });
+      const menu: GroupMemberActionMenu = {
+        items: _compact([
+          ...muteItems,
+          ...roleItems,
+          allowManageUser && {
+            key: 'delete',
+            label: t('移出群组'),
+            danger: true,
+            onClick: () => handleRemoveGroupMember(member._id),
+          },
+        ] as (GroupMemberActionItem | false | null | undefined)[]),
+      };
+
+      return menu;
+    }
+  );
 
   return {
     userInfos,

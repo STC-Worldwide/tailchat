@@ -1,9 +1,8 @@
-import type { AvatarProps } from 'antd';
 import React from 'react';
 import { Avatar } from 'tailchat-design';
 import { useCachedUserInfo } from 'tailchat-shared';
 
-interface UserAvatarProps extends AvatarProps {
+interface UserAvatarProps extends React.ComponentProps<typeof Avatar> {
   userId: string;
 }
 

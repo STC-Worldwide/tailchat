@@ -12,9 +12,9 @@ import {
   Tag,
   Button,
   Divider,
+  Icon,
 } from '@capital/component';
 import axios from 'axios';
-import styled from 'styled-components';
 import {
   improveTextPrompt,
   longerTextPrompt,
@@ -23,38 +23,21 @@ import {
   translateTextPrompt,
 } from './prompt';
 
-const Root = styled.div`
-  padding: 0.5rem;
-  max-width: 300px;
-`;
-
-const Tip = styled.div`
-  margin-bottom: 4px;
-`;
-
-const Answer = styled.pre`
-  white-space: pre-wrap;
-  max-height: 50vh;
-  overflow: auto;
-`;
-
-const ActionButton = styled.div`
-  min-width: 180px;
-  padding: 4px 6px;
-  border-radius: 3px;
-  background-color: rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  margin-bottom: 4px;
-
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.2);
-  }
-`;
-
-const ActionTip = styled.div`
-  font-size: 12px;
-  opacity: 0.6;
-`;
+const ActionButton: React.FC<{
+  children: React.ReactNode;
+  icon: string;
+  onClick: () => void | Promise<void>;
+}> = ({ children, icon, onClick }) => (
+  <Button
+    block={true}
+    type="text"
+    className="h-auto min-h-9 justify-start whitespace-normal px-3 py-2 text-left font-normal"
+    icon={<Icon aria-hidden="true" icon={icon} />}
+    onClick={onClick}
+  >
+    {children}
+  </Button>
+);
 
 export const AssistantPopover: React.FC<{
   onCompleted: () => void;
@@ -75,21 +58,45 @@ export const AssistantPopover: React.FC<{
 
   if (loading) {
     return (
-      <Root>
+      <div
+        className="flex min-h-32 w-full items-center justify-center p-4"
+        role="status"
+      >
         <LoadingSpinner />
-      </Root>
+      </div>
     );
   }
 
   return (
-    <Root>
-      <div>
+    <div className="w-full space-y-3 p-3">
+      <header className="space-y-1">
+        <div className="flex items-center gap-2">
+          <Icon
+            aria-hidden="true"
+            className="text-lg text-primary"
+            icon="eos-icons:ai"
+          />
+          <h2 className="text-sm font-semibold text-foreground">
+            {Translate.name}
+          </h2>
+        </div>
+        <p className="text-xs leading-5 text-muted-foreground">
+          {Translate.description}
+        </p>
+      </header>
+
+      <div aria-live="polite">
         {typeof value === 'object' && (
           <>
             {value.result ? (
-              <div>
-                <Answer>{value.answer}</Answer>
-                <div>
+              <section
+                aria-label={Translate.result}
+                className="space-y-3 rounded-lg border border-border bg-muted/40 p-3"
+              >
+                <div className="max-h-[40vh] overflow-auto whitespace-pre-wrap break-words text-sm leading-6 text-foreground">
+                  {value.answer}
+                </div>
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <Tag color="green">
                     {Translate.usage}: {value.usage}ms
                   </Tag>
@@ -105,74 +112,96 @@ export const AssistantPopover: React.FC<{
                     {Translate.apply}
                   </Button>
                 </div>
-              </div>
+              </section>
             ) : (
-              <div>
-                <div>{Translate.serviceBusy}</div>
+              <div
+                className="space-y-2 rounded-lg border border-destructive/30 bg-destructive/10 p-3"
+                role="alert"
+              >
+                <p className="text-sm text-foreground">
+                  {Translate.serviceBusy}
+                </p>
                 <Tag color="red">{Translate.callError}</Tag>
               </div>
             )}
 
-            <Divider />
+            <Divider className="mt-3" />
           </>
         )}
       </div>
 
-      <Tip>{Translate.helpMeTo}</Tip>
+      <section aria-labelledby="ai-assistant-actions" className="space-y-1">
+        <h3
+          className="px-2 text-xs font-medium text-muted-foreground"
+          id="ai-assistant-actions"
+        >
+          {Translate.helpMeTo}
+        </h3>
 
-      <ActionButton
-        onClick={async () => {
-          const plainMessages = (
-            await Promise.all(
-              [...messages]
-                .filter((item) => !item.hasRecall) // filter recalled message
-                .slice(messages.length - 30, messages.length) // get last 30 message, too much will throw error
-                .map(
-                  async (item) =>
-                    `${
-                      (
-                        await getCachedUserInfo(item.author)
-                      ).nickname
-                    }: ${getMessageTextDecorators().serialize(
-                      item.content ?? ''
-                    )}`
-                )
-            )
-          ).join('\n');
+        <ActionButton
+          icon="mdi:text-box-search-outline"
+          onClick={async () => {
+            const plainMessages = (
+              await Promise.all(
+                [...messages]
+                  .filter(
+                    (item): item is typeof item & { author: string } =>
+                      !item.hasRecall && typeof item.author === 'string'
+                  ) // filter recalled and unauthored system messages
+                  .slice(messages.length - 30, messages.length) // get last 30 message, too much will throw error
+                  .map(
+                    async (item) =>
+                      `${
+                        (
+                          await getCachedUserInfo(item.author)
+                        ).nickname
+                      }: ${getMessageTextDecorators().serialize(
+                        item.content ?? ''
+                      )}`
+                  )
+              )
+            ).join('\n');
 
-          handleCallAI(summaryMessagesPrompt + '\n' + plainMessages);
-        }}
-      >
-        {Translate.summaryMessages}
-      </ActionButton>
+            handleCallAI(summaryMessagesPrompt + '\n' + plainMessages);
+          }}
+        >
+          {Translate.summaryMessages}
+        </ActionButton>
 
-      {typeof message === 'string' && message.length > 0 ? (
-        <>
-          <ActionButton
-            onClick={() => handleCallAI(improveTextPrompt + message)}
-          >
-            {Translate.improveText}
-          </ActionButton>
-          <ActionButton
-            onClick={() => handleCallAI(shorterTextPrompt + message)}
-          >
-            {Translate.makeShorter}
-          </ActionButton>
-          <ActionButton
-            onClick={() => handleCallAI(longerTextPrompt + message)}
-          >
-            {Translate.makeLonger}
-          </ActionButton>
-          <ActionButton
-            onClick={() => handleCallAI(translateTextPrompt + message)}
-          >
-            {Translate.translateInputText}
-          </ActionButton>
-        </>
-      ) : (
-        <ActionTip>{Translate.inputTextShowMoreActionTip}</ActionTip>
-      )}
-    </Root>
+        {typeof message === 'string' && message.length > 0 ? (
+          <>
+            <ActionButton
+              icon="mdi:auto-fix"
+              onClick={() => handleCallAI(improveTextPrompt + message)}
+            >
+              {Translate.improveText}
+            </ActionButton>
+            <ActionButton
+              icon="mdi:format-line-spacing"
+              onClick={() => handleCallAI(shorterTextPrompt + message)}
+            >
+              {Translate.makeShorter}
+            </ActionButton>
+            <ActionButton
+              icon="mdi:arrow-expand-vertical"
+              onClick={() => handleCallAI(longerTextPrompt + message)}
+            >
+              {Translate.makeLonger}
+            </ActionButton>
+            <ActionButton
+              icon="mdi:translate"
+              onClick={() => handleCallAI(translateTextPrompt + message)}
+            >
+              {Translate.translateInputText}
+            </ActionButton>
+          </>
+        ) : (
+          <p className="px-2 pt-2 text-xs leading-5 text-muted-foreground">
+            {Translate.inputTextShowMoreActionTip}
+          </p>
+        )}
+      </section>
+    </div>
   );
 });
 AssistantPopover.displayName = 'AssistantPopover';

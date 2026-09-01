@@ -1,12 +1,19 @@
-import { FullModalCommonTitle } from '@/components/FullModal/CommonTitle';
-import { IconBtn } from '@/components/IconBtn';
 import { UserListItem } from '@/components/UserListItem';
 import { useGroupMemberAction } from '@/hooks/useGroupMemberAction';
-import { Dropdown, Input, MenuProps } from 'antd';
+import { GroupMemberDropdownItems } from '@/components/GroupMemberActionMenu';
+import { Button } from '@/components/ui/official/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/official/dropdown-menu';
+import { Input } from '@/components/ui/official/input';
+import { useAppPortalContainer } from '@/hooks/useAppPortalContainer';
 import React from 'react';
-import { Icon } from 'tailchat-design';
 import { t, UserBaseInfo } from 'tailchat-shared';
 import { Virtuoso } from 'react-virtuoso';
+import { MoreVerticalIcon, SearchIcon } from 'lucide-react';
+import { GroupDetailPage, GroupDetailSection } from './Layout';
 
 /**
  * 群组成员管理
@@ -22,49 +29,82 @@ export const GroupMember: React.FC<{ groupId: string }> = React.memo(
       searchResult: filteredGroupMembers,
       generateActionMenu,
     } = useGroupMemberAction(groupId);
+    const portalContainer = useAppPortalContainer();
 
     const renderUser = (member: UserBaseInfo) => {
-      const menu: MenuProps = generateActionMenu(member);
+      const menu = generateActionMenu(member);
+
+      const actions = menu.items.length
+        ? [
+            <DropdownMenu key="more">
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="size-10 md:size-8"
+                    aria-label={t('更多操作')}
+                  >
+                    <MoreVerticalIcon />
+                  </Button>
+                }
+              />
+              <DropdownMenuContent
+                portalContainer={portalContainer}
+                side="bottom"
+                align="end"
+                sideOffset={6}
+                className="min-w-44"
+              >
+                <GroupMemberDropdownItems
+                  items={menu.items}
+                  portalContainer={portalContainer}
+                />
+              </DropdownMenuContent>
+            </DropdownMenu>,
+          ]
+        : undefined;
 
       return (
-        <UserListItem
-          key={member._id}
-          userId={member._id}
-          actions={[
-            <div key="more">
-              <Dropdown menu={menu} trigger={['click']} placement="bottomRight">
-                <div>
-                  <IconBtn icon="mdi:dots-vertical" />
-                </div>
-              </Dropdown>
-            </div>,
-          ]}
-        />
+        <UserListItem key={member._id} userId={member._id} actions={actions} />
       );
     };
 
     return (
-      <div className="flex flex-col h-full">
-        <FullModalCommonTitle>{t('成员管理')}</FullModalCommonTitle>
-
-        <div className="py-2">
-          <Input
-            placeholder={t('搜索成员')}
-            size="large"
-            suffix={<Icon fontSize={20} color="grey" icon="mdi:magnify" />}
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-          />
-        </div>
-
-        <div className="flex-1 overflow-auto">
-          <Virtuoso
-            className="h-full"
-            data={isSearching ? filteredGroupMembers : userInfos}
-            itemContent={(index, item) => renderUser(item)}
-          />
-        </div>
-      </div>
+      <GroupDetailPage
+        title={t('成员管理')}
+        description={t('查找成员并管理他们在当前群组中的访问权限。')}
+      >
+        <GroupDetailSection
+          title={t('群组成员')}
+          description={
+            <>
+              {t('当前群组成员数')}: {userInfos.length}
+            </>
+          }
+          action={
+            <div className="relative w-64 max-w-full">
+              <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                className="pl-9"
+                aria-label={t('搜索成员')}
+                placeholder={t('搜索成员')}
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+              />
+            </div>
+          }
+        >
+          <div className="h-[min(32rem,55vh)] overflow-hidden rounded-lg border border-border">
+            <Virtuoso
+              className="h-full"
+              data={isSearching ? filteredGroupMembers : userInfos}
+              itemContent={(index, item) => renderUser(item)}
+            />
+          </div>
+        </GroupDetailSection>
+      </GroupDetailPage>
     );
   }
 );

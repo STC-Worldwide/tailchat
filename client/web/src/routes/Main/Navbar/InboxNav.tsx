@@ -1,7 +1,7 @@
-import { Icon } from 'tailchat-design';
 import React from 'react';
 import { t, useInboxList } from 'tailchat-shared';
 import { NavbarNavItem } from './NavItem';
+import { InboxIcon } from 'lucide-react';
 
 /**
  * 收件箱
@@ -12,8 +12,8 @@ export const InboxNav: React.FC = React.memo(() => {
 
   return (
     <NavbarNavItem
-      className="bg-gray-700"
       name={t('收件箱')}
+      label={t('收件箱')}
       to={'/main/inbox'}
       showPill={true}
       badge={unreadList.length > 0}
@@ -22,7 +22,7 @@ export const InboxNav: React.FC = React.memo(() => {
       }}
       data-testid="inbox"
     >
-      <Icon className="text-3xl text-white" icon="mdi:inbox-arrow-down" />
+      <InboxIcon />
     </NavbarNavItem>
   );
 });

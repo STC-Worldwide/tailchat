@@ -1,4 +1,3 @@
-import { IconBtn } from '@/components/IconBtn';
 import React, { PropsWithChildren } from 'react';
 import { t, useGroupPanelInfo } from 'tailchat-shared';
 import {
@@ -8,6 +7,8 @@ import {
 import _isNil from 'lodash/isNil';
 import { usePanelWindow } from '@/hooks/usePanelWindow';
 import { OpenedPanelTip } from '@/components/OpenedPanelTip';
+import { PanelActionButton } from '../../common/PanelActionButton';
+import { PanelTopOpenIcon } from 'lucide-react';
 
 interface GroupPanelWithHeader extends PropsWithChildren {
   groupId: string;
@@ -36,12 +37,10 @@ export const GroupPanelContainer: React.FC<GroupPanelWithHeader> = React.memo(
         header={panelInfo.name}
         actions={(ctx) => [
           ...(props.prefixActions?.(ctx) ?? []),
-          <IconBtn
+          <PanelActionButton
             key="open"
-            title={t('在新窗口打开')}
-            shape="square"
-            icon="mdi:dock-window"
-            iconClassName="text-2xl"
+            label={t('在新窗口打开')}
+            icon={<PanelTopOpenIcon />}
             onClick={openPanelWindow}
           />,
           ...(props.suffixActions?.(ctx) ?? []),

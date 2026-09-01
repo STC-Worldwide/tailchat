@@ -1,12 +1,17 @@
-import { Divider, Tooltip } from 'antd';
 import React from 'react';
 import {
   datetimeFromNow,
   formatFullTime,
   GroupInvite,
+  localTrans,
   t,
-  Trans,
 } from 'tailchat-shared';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/official/tooltip';
+import { useAppPortalContainer } from '@/hooks/useAppPortalContainer';
 
 interface InviteCodeExpiredAtProps {
   invite: Pick<GroupInvite, 'expiredAt' | 'usageLimit'>;
@@ -14,6 +19,7 @@ interface InviteCodeExpiredAtProps {
 export const InviteCodeExpiredAt: React.FC<InviteCodeExpiredAtProps> =
   React.memo((props) => {
     const { invite } = props;
+    const portalContainer = useAppPortalContainer();
 
     if (invite.expiredAt && new Date(invite.expiredAt).valueOf() < Date.now()) {
       return <span>{t('该邀请码已过期')}</span>;
@@ -24,28 +30,36 @@ export const InviteCodeExpiredAt: React.FC<InviteCodeExpiredAtProps> =
         {!invite.expiredAt ? (
           <span>{t('该邀请码永不过期')}</span>
         ) : (
-          <Trans>
-            该邀请将于{' '}
-            <Tooltip title={formatFullTime(invite.expiredAt)}>
-              <span className="font-bold">
-                {{ date: datetimeFromNow(invite.expiredAt) } as any}
-              </span>
-            </Tooltip>{' '}
-            过期
-          </Trans>
+          <span>
+            {localTrans({ 'zh-CN': '将在 ', 'en-US': 'Expires ' })}
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <span className="cursor-help font-medium underline decoration-dotted underline-offset-4">
+                    {datetimeFromNow(invite.expiredAt)}
+                  </span>
+                }
+              />
+              <TooltipContent portalContainer={portalContainer}>
+                {formatFullTime(invite.expiredAt)}
+              </TooltipContent>
+            </Tooltip>
+            {localTrans({ 'zh-CN': ' 过期', 'en-US': '' })}
+          </span>
         )}
 
         {invite.usageLimit && (
           <>
-            <Divider type="vertical" />
+            <span aria-hidden="true" className="mx-2 text-muted-foreground">
+              ·
+            </span>
 
-            <Trans>
-              可使用{' '}
-              <span className="font-bold">
-                {{ num: invite.usageLimit } as any}
-              </span>{' '}
-              次
-            </Trans>
+            <span>
+              {localTrans({
+                'zh-CN': `可使用 ${invite.usageLimit} 次`,
+                'en-US': `Can be used ${invite.usageLimit} times`,
+              })}
+            </span>
           </>
         )}
       </>

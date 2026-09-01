@@ -18,7 +18,6 @@ import {
   MentionSuggestionListRef,
   SuggestionItem,
 } from './MentionSuggestionList';
-import './tiptap.less';
 
 const MAX_MESSAGE_LENGTH = 1000;
 
@@ -142,8 +141,7 @@ function buildMentionExtension(options: {
 }
 
 /**
- * 基于 tiptap 的聊天输入框 (facelift, alpha 模式下启用)
- * 与 react-mentions 版保持相同的 props 契约
+ * 基于 Tiptap 的聊天输入框，保留 Tailchat 的消息串与 mention 契约。
  */
 export const TiptapChatInput: React.FC<ChatInputBoxInputProps> = React.memo(
   (props) => {
@@ -181,7 +179,8 @@ export const TiptapChatInput: React.FC<ChatInputBoxInputProps> = React.memo(
         buildMentionExtension({
           name: 'userMention',
           char: '@',
-          className: 'tc-mention',
+          className:
+            'rounded bg-primary/10 px-0.5 font-medium text-primary',
           hideDiscriminator: hideGroupMemberDiscriminator,
           getItems: (query) =>
             (dataRef.current.users ?? [])
@@ -192,7 +191,8 @@ export const TiptapChatInput: React.FC<ChatInputBoxInputProps> = React.memo(
         buildMentionExtension({
           name: 'panelMention',
           char: '#',
-          className: 'tc-mention',
+          className:
+            'rounded bg-primary/10 px-0.5 font-medium text-primary',
           hideDiscriminator: hideGroupMemberDiscriminator,
           getItems: (query) =>
             (dataRef.current.panels ?? [])
@@ -214,7 +214,13 @@ export const TiptapChatInput: React.FC<ChatInputBoxInputProps> = React.memo(
           propsRef.current.onChange(docToMessage(doc), collectMentions(doc));
         },
         editorProps: {
-          attributes: { class: 'tiptap-chat-input_editor' },
+          attributes: {
+            class:
+              'box-border min-h-10 max-h-[40vh] overflow-y-auto break-words px-3 py-2 text-sm leading-6 outline-none [&_p]:m-0!',
+            role: 'textbox',
+            'aria-multiline': 'true',
+            'aria-label': placeholder ?? t('输入一些什么'),
+          },
           handleKeyDown: (view, event) => {
             let prevented = false;
             propsRef.current.onKeyDown?.({
@@ -287,12 +293,12 @@ export const TiptapChatInput: React.FC<ChatInputBoxInputProps> = React.memo(
 
     return (
       <div
-        className="tiptap-chat-input relative"
+        className="relative min-h-10"
         onContextMenu={stopPropagation}
         onPasteCapture={handlePaste}
       >
         {props.value === '' && (
-          <div className="absolute inset-0 px-3 py-2 pointer-events-none text-muted truncate">
+          <div className="pointer-events-none absolute inset-0 truncate px-3 py-2 text-sm leading-6 text-muted-foreground">
             {placeholder ?? t('输入一些什么')}
           </div>
         )}

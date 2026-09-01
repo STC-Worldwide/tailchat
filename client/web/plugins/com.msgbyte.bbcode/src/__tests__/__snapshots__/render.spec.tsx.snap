@@ -3,16 +3,16 @@
 exports[`render <BBCode /> mention with space name 1`] = `
 <div>
   <span
-    class="plugin-bbcode-mention-tag"
+    class="inline-flex rounded-sm bg-primary/20 px-1 text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
     data-userid="6251986eab331ca2efbba9c6"
   >
     @
     [UserName {"userId":"6251986eab331ca2efbba9c6","fallbackName":"Notify Bot"}]
   </span>
-  <pre
-    style="display: inline; white-space: break-spaces;"
+  <span
+    style="white-space: break-spaces;"
   >
      123123
-  </pre>
+  </span>
 </div>
 `;

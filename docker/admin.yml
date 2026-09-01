@@ -19,21 +19,3 @@ services:
     networks:
       - internal
     command: pnpm start:admin
-
-  tailchat-admin-next:
-    build:
-      context: .
-    image: tailchat
-    restart: unless-stopped
-    env_file: docker-compose.env
-    depends_on:
-      - mongo
-      - redis
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.admin-next.rule=PathPrefix(`/admin-next`)"
-      - "traefik.http.routers.admin-next.priority=100"
-      - "traefik.http.services.admin-next.loadbalancer.server.port=3100"
-    networks:
-      - internal
-    command: pnpm start:admin-next

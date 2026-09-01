@@ -1,7 +1,6 @@
-import { notification } from 'antd';
 import React from 'react';
 import _once from 'lodash/once';
-import { showErrorToasts, t } from 'tailchat-shared';
+import { showErrorToasts, showNotification, t } from 'tailchat-shared';
 import { UpdateNotificationBtn } from '@/components/UpdateNotificationBtn';
 
 type BeforeInstallPromptEvent = Event & {
@@ -19,12 +18,24 @@ type BeforeInstallPromptEvent = Event & {
 const handleShowUpdateTip = _once(() => {
   setTimeout(() => {
     // 两秒后再弹出以确保不会出现加载到一半的情况
-    notification.open({
-      message: t('更新版本'),
-      description: t('检测到有新版本, 是否立即刷新以升级到最新内容'),
-      duration: 0,
-      btn: React.createElement(UpdateNotificationBtn),
-    });
+    showNotification(
+      React.createElement(
+        'div',
+        null,
+        React.createElement('div', { className: 'font-semibold' }, t('更新版本')),
+        React.createElement(
+          'div',
+          { className: 'mt-1' },
+          t('检测到有新版本, 是否立即刷新以升级到最新内容')
+        ),
+        React.createElement(
+          'div',
+          { className: 'mt-2' },
+          React.createElement(UpdateNotificationBtn)
+        )
+      ),
+      0
+    );
   }, 2000);
 });
 

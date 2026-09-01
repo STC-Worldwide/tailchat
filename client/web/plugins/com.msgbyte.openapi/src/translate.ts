@@ -30,6 +30,28 @@ export const Translate = {
     'zh-CN': '创建应用',
     'en-US': 'Create Application',
   }),
+  manageApplications: localTrans({
+    'zh-CN': '创建并管理接入 Tailchat 的应用与能力。',
+    'en-US':
+      'Create and manage applications and capabilities connected to Tailchat.',
+  }),
+  noApplications: localTrans({
+    'zh-CN': '暂无应用',
+    'en-US': 'No applications yet',
+  }),
+  backToApplications: localTrans({
+    'zh-CN': '返回应用列表',
+    'en-US': 'Back to applications',
+  }),
+  dangerZone: localTrans({
+    'zh-CN': '危险操作',
+    'en-US': 'Danger zone',
+  }),
+  deleteApplicationHint: localTrans({
+    'zh-CN': '永久删除此应用及其开放平台配置。',
+    'en-US':
+      'Permanently delete this application and its OpenAPI configuration.',
+  }),
   createApplicationSuccess: localTrans({
     'zh-CN': '创建应用成功',
     'en-US': 'Create Application Success',

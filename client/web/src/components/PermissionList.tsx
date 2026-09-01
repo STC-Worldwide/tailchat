@@ -1,4 +1,3 @@
-import { Col, Divider, Row, Switch } from 'antd';
 import React from 'react';
 import {
   getPermissionList,
@@ -10,6 +9,14 @@ import {
 import _uniq from 'lodash/uniq';
 import _without from 'lodash/without';
 import { pluginPermission } from '@/plugin/common';
+import { Switch } from '@/components/ui/official/switch';
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldGroup,
+  FieldTitle,
+} from '@/components/ui/official/field';
 
 interface PermissionListProps {
   /**
@@ -68,43 +75,49 @@ export const PermissionList: React.FC<PermissionListProps> = React.memo(
     }
 
     return (
-      <div>
+      <div className="space-y-6">
         {/* 权限详情 */}
-        {builtinPermissionList.map((p) => (
-          <PermissionItem
-            key={p.key}
-            title={p.title}
-            desc={p.desc}
-            disabled={
-              p.required
-                ? !p.required.every((r) => props.value.includes(r))
-                : undefined
-            }
-            checked={props.value.includes(p.key)}
-            onChange={(checked) => handleSwitchPermission(p.key, checked)}
-          />
-        ))}
+        <FieldGroup className="gap-0 divide-y divide-border rounded-lg border border-border">
+          {builtinPermissionList.map((p) => (
+            <PermissionItem
+              key={p.key}
+              title={p.title}
+              desc={p.desc}
+              disabled={
+                p.required
+                  ? !p.required.every((r) => props.value.includes(r))
+                  : undefined
+              }
+              checked={props.value.includes(p.key)}
+              onChange={(checked) => handleSwitchPermission(p.key, checked)}
+            />
+          ))}
+        </FieldGroup>
 
         {pluginPermissionList.length > 0 && (
-          <>
-            <Divider>{t('以下为插件权限')}</Divider>
+          <section className="space-y-3">
+            <h3 className="text-sm font-semibold text-foreground">
+              {t('以下为插件权限')}
+            </h3>
 
             {/* 权限详情 */}
-            {pluginPermission.map((p) => (
-              <PermissionItem
-                key={p.key}
-                title={p.title}
-                desc={p.desc}
-                disabled={
-                  p.required
-                    ? !p.required.every((r) => props.value.includes(r))
-                    : undefined
-                }
-                checked={props.value.includes(p.key)}
-                onChange={(checked) => handleSwitchPermission(p.key, checked)}
-              />
-            ))}
-          </>
+            <FieldGroup className="gap-0 divide-y divide-border rounded-lg border border-border">
+              {pluginPermissionList.map((p) => (
+                <PermissionItem
+                  key={p.key}
+                  title={p.title}
+                  desc={p.desc}
+                  disabled={
+                    p.required
+                      ? !p.required.every((r) => props.value.includes(r))
+                      : undefined
+                  }
+                  checked={props.value.includes(p.key)}
+                  onChange={(checked) => handleSwitchPermission(p.key, checked)}
+                />
+              ))}
+            </FieldGroup>
+          </section>
         )}
       </div>
     );
@@ -122,23 +135,24 @@ interface PermissionItemProps {
 
 const PermissionItem: React.FC<PermissionItemProps> = React.memo((props) => {
   return (
-    <div className="mx-2 py-3 border-b border-white/20 ">
-      <Row>
-        <Col flex={1} className="font-bold">
-          {props.title}
-        </Col>
+    <Field
+      orientation="horizontal"
+      data-disabled={props.disabled || undefined}
+      className="min-h-16 gap-4 px-4 py-3.5"
+    >
+      <FieldContent className="min-w-0">
+        <FieldTitle>{props.title}</FieldTitle>
+        {props.desc && <FieldDescription>{props.desc}</FieldDescription>}
+      </FieldContent>
 
-        <Col>
-          <Switch
-            disabled={props.disabled}
-            checked={props.checked}
-            onChange={props.onChange}
-          />
-        </Col>
-      </Row>
-
-      <div className="text-gray-400">{props.desc}</div>
-    </div>
+      <Switch
+        className="shrink-0"
+        aria-label={props.title}
+        disabled={props.disabled}
+        checked={props.checked}
+        onCheckedChange={props.onChange}
+      />
+    </Field>
   );
 });
 PermissionItem.displayName = 'PermissionItem';

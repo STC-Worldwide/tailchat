@@ -10,7 +10,6 @@ import {
   useAsyncRequest,
   useInboxList,
 } from 'tailchat-shared';
-import clsx from 'clsx';
 import _orderBy from 'lodash/orderBy';
 import { GroupName } from '@/components/GroupName';
 import { ConverseName } from '@/components/ConverseName';
@@ -22,6 +21,12 @@ import { SectionHeader } from '@/components/SectionHeader';
 import { openReconfirmModalP } from '@/components/Modal';
 import { CommonSidebarWrapper } from '@/components/CommonSidebarWrapper';
 import { Virtuoso } from 'react-virtuoso';
+import {
+  SidebarMenu,
+  SidebarMenuBadge,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from '@/components/ui/official/sidebar';
 
 const buildLink = (itemId: string) => `/main/inbox/${itemId}`;
 
@@ -181,27 +186,37 @@ const InboxSidebarItem: React.FC<{
   const isActive = location.pathname.startsWith(props.to);
 
   return (
-    <Link to={props.to}>
-      <div
-        className={clsx(
-          'p-2 overflow-auto cursor-pointer hover:bg-black/10 dark:hover:bg-white/10 border-r-4 rounded',
-          {
-            'bg-black/10 dark:bg-white/10 ': isActive,
-          },
-          props.readed ? 'border-transparent' : 'border-green-500'
+    <SidebarMenu className="px-2 py-0.5">
+      <SidebarMenuItem>
+        <SidebarMenuButton
+          render={<Link to={props.to} />}
+          isActive={isActive}
+          size="lg"
+          className="h-auto min-h-16 items-start rounded-lg py-2 pr-7 text-sidebar-foreground! no-underline data-active:bg-sidebar-accent! data-active:text-sidebar-accent-foreground!"
+        >
+          <div className="min-w-0 flex-1 space-y-1">
+            <div className="truncate text-sm font-medium">
+              {props.title || <span>&nbsp;</span>}
+            </div>
+            <div className="line-clamp-2 break-words text-xs leading-relaxed text-muted-foreground">
+              {props.desc}
+            </div>
+            <div className="truncate text-[11px] text-muted-foreground">
+              {t('来自')}: {props.source}
+            </div>
+          </div>
+        </SidebarMenuButton>
+
+        {!props.readed && (
+          <SidebarMenuBadge className="top-3">
+            <span
+              className="size-2 rounded-full bg-primary"
+              aria-label="Unread"
+            />
+          </SidebarMenuBadge>
         )}
-      >
-        <div className="text-lg overflow-ellipsis overflow-hidden text-gray-700 dark:text-white">
-          {props.title || <span>&nbsp;</span>}
-        </div>
-        <div className="break-all text-black/80 dark:text-white/80 text-sm p-1 border-l-2 border-gray-500/50">
-          {props.desc}
-        </div>
-        <div className="text-xs text-black/50 dark:text-white/50">
-          {t('来自')}: {props.source}
-        </div>
-      </div>
-    </Link>
+      </SidebarMenuItem>
+    </SidebarMenu>
   );
 });
 InboxSidebarItem.displayName = 'InboxSidebarItem';

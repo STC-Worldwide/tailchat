@@ -2,25 +2,42 @@
 
 exports[`DelayTip render: default 1`] = `
 <div>
-  <div
-    data-testid="inner"
-  />
+  <span
+    style="position: relative; display: inline-flex;"
+  >
+    <div
+      data-testid="inner"
+    />
+  </span>
 </div>
 `;
 
 exports[`DelayTip render: not open 1`] = `
 <div>
-  <div
-    data-testid="inner"
-  />
+  <span
+    style="position: relative; display: inline-flex;"
+  >
+    <div
+      data-testid="inner"
+    />
+  </span>
 </div>
 `;
 
 exports[`DelayTip render: open 1`] = `
 <div>
-  <div
-    class="ant-tooltip-open"
-    data-testid="inner"
-  />
+  <span
+    style="position: relative; display: inline-flex;"
+  >
+    <div
+      data-testid="inner"
+    />
+    <span
+      role="tooltip"
+      style="position: absolute; left: 50%; bottom: calc(100% + 8px); z-index: 1000; max-width: 240px; padding: 6px 8px; border-radius: 6px; color: rgb(255, 255, 255); font-size: 12px; line-height: 1.35; white-space: nowrap; transform: translateX(-50%); pointer-events: none;"
+    >
+      any tip
+    </span>
+  </span>
 </div>
 `;

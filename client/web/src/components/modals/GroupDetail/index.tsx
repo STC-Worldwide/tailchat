@@ -15,6 +15,15 @@ import { GroupSummary } from './Summary';
 import _compact from 'lodash/compact';
 import { GroupConfig } from './Config';
 import { GroupMember } from './Member';
+import {
+  LayoutDashboardIcon,
+  PanelsTopLeftIcon,
+  PuzzleIcon,
+  Settings2Icon,
+  ShieldCheckIcon,
+  TicketIcon,
+  UsersIcon,
+} from 'lucide-react';
 
 interface SettingsViewProps {
   groupId: string;
@@ -54,31 +63,37 @@ export const GroupDetail: React.FC<SettingsViewProps> = React.memo((props) => {
           {
             type: 'item',
             title: t('概述'),
+            icon: <LayoutDashboardIcon />,
             content: <GroupSummary groupId={groupId} />,
           },
           allowManageConfig && {
             type: 'item',
             title: t('配置'),
+            icon: <Settings2Icon />,
             content: <GroupConfig groupId={groupId} />,
           },
           allowManageUser && {
             type: 'item',
             title: t('成员'),
+            icon: <UsersIcon />,
             content: <GroupMember groupId={groupId} />,
           },
           allowManagePanel && {
             type: 'item',
             title: t('面板'),
+            icon: <PanelsTopLeftIcon />,
             content: <GroupPanel groupId={groupId} />,
           },
           allowManageInvite && {
             type: 'item',
             title: t('邀请码'),
+            icon: <TicketIcon />,
             content: <GroupInvite groupId={groupId} />,
           },
           allowManageRoles && {
             type: 'item',
             title: t('身份组'),
+            icon: <ShieldCheckIcon />,
             content: <GroupRole groupId={groupId} />,
           },
         ]),
@@ -91,6 +106,7 @@ export const GroupDetail: React.FC<SettingsViewProps> = React.memo((props) => {
       .map((p) => ({
         type: 'item',
         title: p.label,
+        icon: <PuzzleIcon />,
         content: React.createElement(p.render),
       }));
 
@@ -103,7 +119,14 @@ export const GroupDetail: React.FC<SettingsViewProps> = React.memo((props) => {
     }
 
     return _menu;
-  }, []);
+  }, [
+    allowManageConfig,
+    allowManageInvite,
+    allowManagePanel,
+    allowManageRoles,
+    allowManageUser,
+    groupId,
+  ]);
 
   return (
     <GroupIdContextProvider value={groupId}>

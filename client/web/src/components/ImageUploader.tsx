@@ -5,6 +5,7 @@ import {
   uploadFile,
   UploadFileResult,
   UploadFileUsage,
+  t,
   useAsyncRequest,
 } from 'tailchat-shared';
 import { ImagePicker } from './ImagePicker';
@@ -51,7 +52,12 @@ export const ImageUploader: React.FC<ImageUploaderProps> = React.memo(
       >
         {loading && (
           <div
-            className="absolute bottom-0 left-0 h-1"
+            className="absolute bottom-0 left-0 z-10 h-1 bg-primary transition-[width]"
+            role="progressbar"
+            aria-label={t('上传进度')}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={uploadProgress}
             style={{ width: `${uploadProgress}%` }}
           />
         )}

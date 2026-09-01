@@ -9,7 +9,7 @@ import {
   Tag,
   Upload,
   type TableColumnProps,
-} from '@arco-design/web-react';
+} from './components/ui/admin';
 import { Editor } from '@bytemd/react';
 import gfm from '@bytemd/plugin-gfm';
 import filesize from 'filesize';
@@ -617,7 +617,11 @@ export function NotifyPage() {
         <form onSubmit={send}>
           <label>
             <span>{t('notify.scope')}</span>
-            <Radio.Group type="button" value={scope} onChange={setScope}>
+            <Radio.Group
+              type="button"
+              value={scope}
+              onChange={(value) => setScope(value as 'all' | 'specified')}
+            >
               <Radio value="all">{t('notify.all')}</Radio>
               <Radio value="specified">{t('notify.specified')}</Radio>
             </Radio.Group>

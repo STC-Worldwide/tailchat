@@ -7,10 +7,11 @@ import path from 'path';
 import dotenv from 'dotenv';
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 import { apiRouter } from './router/api';
+import { getAdminPort, getLegacyAdminRedirect } from './runtime';
 
 const app = express();
 
-const port = Number(process.env.ADMIN_NEXT_PORT || 3100);
+const port = getAdminPort(process.env);
 
 if (!process.env.MONGO_URL) {
   console.error('Require env: MONGO_URL');
@@ -41,7 +42,14 @@ app.use(express.static('public', { maxAge: '1h' }));
 
 app.use(morgan('tiny'));
 
+app.use('/admin/api', apiRouter);
 app.use('/admin-next/api', apiRouter);
+
+app.get(/^\/admin-next(?:\/.*)?$/, (req, res, next) => {
+  const target = getLegacyAdminRedirect(req.originalUrl);
+  if (!target) return next();
+  return res.redirect(308, target);
+});
 
 app.use((err: any, req: any, res: any, next: any) => {
   res.status(500);
@@ -56,6 +64,6 @@ if (process.env.NODE_ENV === 'production') {
 
 ViteExpress.listen(app, port, () => {
   console.log(
-    `Server is listening on port ${port}, visit with: http://localhost:${port}/admin-next/`
+    `Server is listening on port ${port}, visit with: http://localhost:${port}/admin/`
   );
 });

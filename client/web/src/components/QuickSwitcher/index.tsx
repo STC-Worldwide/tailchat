@@ -43,10 +43,10 @@ const QuickSwitcher: React.FC = React.memo(() => {
         <Command.Input
           autoFocus={true}
           placeholder={t('快速搜索、跳转')}
-          className="w-full bg-transparent border-0 border-b border-subtle outline-none px-4 py-3 text-lg text-body placeholder:text-muted"
+          className="w-full bg-transparent border-0 border-b border-subtle outline-none px-4 py-3 text-lg text-body placeholder:text-muted-foreground"
         />
         <Command.List className="max-h-[50vh] overflow-y-auto p-2 thin-scrollbar">
-          <Command.Empty className="px-3 py-6 text-center text-muted">
+          <Command.Empty className="px-3 py-6 text-center text-muted-foreground">
             {t('无搜索结果')}
           </Command.Empty>
           {allActions.map((action) => (
@@ -61,7 +61,7 @@ const QuickSwitcher: React.FC = React.memo(() => {
               className="px-3 py-2 rounded cursor-pointer data-[selected=true]:bg-primary/15"
             >
               <div className="truncate">{action.label}</div>
-              <div className="text-xs text-muted">{action.source}</div>
+              <div className="text-xs text-muted-foreground">{action.source}</div>
             </Command.Item>
           ))}
         </Command.List>

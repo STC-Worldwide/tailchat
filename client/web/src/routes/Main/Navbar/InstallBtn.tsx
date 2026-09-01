@@ -1,6 +1,11 @@
 import { canInstallprompt, showInstallPrompt } from '@/utils/sw-helper';
 import React, { useEffect, useState } from 'react';
-import { Icon } from 'tailchat-design';
+import { DownloadIcon } from 'lucide-react';
+import { t } from 'tailchat-shared';
+import {
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from '@/components/ui/official/sidebar';
 
 /**
  * 安装按钮
@@ -13,11 +18,12 @@ export const InstallBtn: React.FC = React.memo(() => {
   }
 
   return (
-    <Icon
-      className="text-3xl text-gray-600 dark:text-white cursor-pointer"
-      icon="mdi:download"
-      onClick={showInstallPrompt}
-    />
+    <SidebarMenuItem>
+      <SidebarMenuButton tooltip={t('安装应用')} onClick={showInstallPrompt}>
+        <DownloadIcon />
+        <span>{t('安装应用')}</span>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
   );
 });
 InstallBtn.displayName = 'InstallBtn';

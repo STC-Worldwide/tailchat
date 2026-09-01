@@ -1,73 +1,140 @@
 import React from 'react';
 import { GroupNav } from './GroupNav';
-import { MobileMenuBtn } from './MobileMenuBtn';
 import { SettingBtn } from './SettingBtn';
-import { Divider } from 'antd';
 import { PersonalNav } from './PersonalNav';
 import { InboxNav } from './InboxNav';
 import { InstallBtn } from './InstallBtn';
-import { ReactQueryDevBtn } from './ReactQueryDevBtn';
 import { pluginCustomPanel } from '@/plugin/common';
 import { NavbarCustomNavItem } from './CustomNavItem';
 import { QuickSwitcherNav } from './QuickSwitcherNav';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarRail,
+  SidebarSeparator,
+  useSidebar,
+} from '@/components/ui/official/sidebar';
+import { localTrans, t } from 'tailchat-shared';
+import { MessageSquareMoreIcon } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 /**
  * 导航栏组件
  */
 export const Navbar: React.FC = React.memo(() => {
+  const { isMobile, setOpenMobile } = useSidebar();
+
   return (
-    <div
+    <Sidebar
       data-tc-role="navbar"
-      className="w-18 mobile:zoom-4/5 bg-navbar-light dark:bg-navbar-dark flex flex-col justify-start items-center pt-4 pb-4"
+      variant="inset"
+      collapsible="icon"
+      mobileTitle={localTrans({
+        'zh-CN': '应用导航',
+        'en-US': 'App navigation',
+      })}
+      mobileDescription={localTrans({
+        'zh-CN': '浏览个人空间、收件箱和群组',
+        'en-US': 'Browse personal spaces, inbox, and groups',
+      })}
+      mobileCloseLabel={t('关闭')}
+      className="bg-sidebar"
     >
-      <MobileMenuBtn />
+      <SidebarHeader className="p-2 pb-1 pr-11 md:pr-2">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              render={
+                <Link
+                  to="/main/personal"
+                  onClick={() => {
+                    if (isMobile) {
+                      setOpenMobile(false);
+                    }
+                  }}
+                />
+              }
+              size="lg"
+              tooltip="Tailchat"
+              className="h-10"
+            >
+              <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-xs">
+                <MessageSquareMoreIcon className="size-4" />
+              </span>
+              <span className="min-w-0 flex-1 truncate text-sm font-semibold">
+                Tailchat
+              </span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
 
-      {/* Navbar */}
-      <div className="flex-1 w-full overflow-hidden flex flex-col">
-        <div className="space-y-2">
-          <PersonalNav />
+      <SidebarContent className="overflow-hidden">
+        <SidebarGroup>
+          <SidebarGroupLabel>
+            {localTrans({ 'zh-CN': '导航', 'en-US': 'Navigation' })}
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <PersonalNav />
+              <InboxNav />
+              <QuickSwitcherNav />
 
-          <InboxNav />
+              {pluginCustomPanel
+                .filter((p) => p.position === 'navbar-personal')
+                .map((p) => (
+                  <NavbarCustomNavItem
+                    key={p.name}
+                    panelInfo={p}
+                    withBg={true}
+                  />
+                ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
 
-          <QuickSwitcherNav />
+        <SidebarSeparator />
 
+        <SidebarGroup className="min-h-0 flex-1">
+          <SidebarGroupLabel>
+            {localTrans({ 'zh-CN': '群组', 'en-US': 'Groups' })}
+          </SidebarGroupLabel>
+          <SidebarGroupContent className="min-h-0 overflow-y-auto thin-scrollbar">
+            <GroupNav />
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarFooter data-tc-role="navbar-settings" className="p-2 pt-1">
+        {/* React Query's floating flower control is intentionally kept out of
+            the product navigation. It remains available to developers through
+            React Query tooling without reintroducing legacy sidebar chrome. */}
+        <SidebarMenu>
           {pluginCustomPanel
-            .filter((p) => p.position === 'navbar-personal')
+            .filter((p) => p.position === 'navbar-more')
             .map((p) => (
-              <NavbarCustomNavItem key={p.name} panelInfo={p} withBg={true} />
+              <NavbarCustomNavItem key={p.name} panelInfo={p} withBg={false} />
             ))}
-        </div>
 
-        <div className="px-3">
-          <Divider />
-        </div>
-
-        {/* 如果导航栏高度不够就缩减群组列表的高度 */}
-        <div className="overflow-y-hidden hover:overflow-y-smart scroll overflow-x-hidden thin-scrollbar">
-          <GroupNav />
-        </div>
-      </div>
-
-      <div
-        data-tc-role="navbar-settings"
-        className="flex flex-col items-center space-y-2 pt-3"
-      >
-        {pluginCustomPanel
-          .filter((p) => p.position === 'navbar-more')
-          .map((p) => (
-            <NavbarCustomNavItem key={p.name} panelInfo={p} withBg={false} />
-          ))}
-
-        {/* React Query 的调试面板 */}
-        <ReactQueryDevBtn />
-
-        {/* 应用(PWA)安装按钮 */}
-        <InstallBtn />
-
-        {/* 设置按钮 */}
-        <SettingBtn />
-      </div>
-    </div>
+          <InstallBtn />
+          <SettingBtn />
+        </SidebarMenu>
+      </SidebarFooter>
+      <SidebarRail
+        label={localTrans({
+          'zh-CN': '切换应用导航',
+          'en-US': 'Toggle app navigation',
+        })}
+      />
+    </Sidebar>
   );
 });
 Navbar.displayName = 'Navbar';

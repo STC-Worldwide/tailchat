@@ -35,7 +35,7 @@ router.post('/login', (req, res) => {
     const token = jwt.sign(
       {
         username,
-        platform: 'admin-next',
+        platform: 'admin',
       },
       authSecret,
       {

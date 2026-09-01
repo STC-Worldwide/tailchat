@@ -5,9 +5,29 @@ import {
   type ResourceQuery,
 } from './core';
 
-export const API_BASE = '/admin-next/api';
-export const AUTH_STORAGE_KEY = 'tailchat:admin-next:auth';
-export const UNAUTHORIZED_EVENT = 'tailchat:admin-next:unauthorized';
+export const API_BASE = '/admin/api';
+export const AUTH_STORAGE_KEY = 'tailchat:admin:auth';
+export const LEGACY_AUTH_STORAGE_KEY = 'tailchat:admin-next:auth';
+export const UNAUTHORIZED_EVENT = 'tailchat:admin:unauthorized';
+
+export function readStoredAuth() {
+  const current = readAuth(window.localStorage.getItem(AUTH_STORAGE_KEY));
+  if (current) return current;
+
+  const legacy = readAuth(
+    window.localStorage.getItem(LEGACY_AUTH_STORAGE_KEY)
+  );
+  if (legacy) {
+    window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(legacy));
+    window.localStorage.removeItem(LEGACY_AUTH_STORAGE_KEY);
+  }
+  return legacy;
+}
+
+export function clearStoredAuth() {
+  window.localStorage.removeItem(AUTH_STORAGE_KEY);
+  window.localStorage.removeItem(LEGACY_AUTH_STORAGE_KEY);
+}
 
 export class ApiError extends Error {
   constructor(message: string, public status: number) {
@@ -19,7 +39,7 @@ export async function api<T>(
   path: string,
   init: RequestInit & { auth?: boolean } = {}
 ): Promise<T> {
-  const session = readAuth(window.localStorage.getItem(AUTH_STORAGE_KEY));
+  const session = readStoredAuth();
   const needsAuth = init.auth !== false;
   const form = init.body instanceof FormData;
   const response = await fetch(`${API_BASE}${path}`, {
@@ -34,7 +54,7 @@ export async function api<T>(
   });
 
   if (response.status === 401 && needsAuth) {
-    window.localStorage.removeItem(AUTH_STORAGE_KEY);
+    clearStoredAuth();
     window.dispatchEvent(new Event(UNAUTHORIZED_EVENT));
   }
 
@@ -59,13 +79,13 @@ export async function listResource<T extends Record<string, unknown>>(
     `${API_BASE}/${resource}?${buildResourceQuery(options)}`,
     {
       headers: requestHeaders(
-        readAuth(window.localStorage.getItem(AUTH_STORAGE_KEY))?.token || '',
+        readStoredAuth()?.token || '',
         false
       ),
     }
   );
   if (response.status === 401) {
-    window.localStorage.removeItem(AUTH_STORAGE_KEY);
+    clearStoredAuth();
     window.dispatchEvent(new Event(UNAUTHORIZED_EVENT));
   }
   if (!response.ok)

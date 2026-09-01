@@ -1,7 +1,7 @@
-import React, { PropsWithChildren } from 'react';
-import { Icon } from 'tailchat-design';
+import React from 'react';
 import { SidebarItem } from '../SidebarItem';
 import {
+  localTrans,
   t,
   useDMConverseList,
   useUserInfo,
@@ -15,24 +15,15 @@ import { SectionHeader } from '@/components/SectionHeader';
 import { CommonSidebarWrapper } from '@/components/CommonSidebarWrapper';
 import { pluginCustomPanel } from '@/plugin/common';
 import { CustomSidebarItem } from '../CustomSidebarItem';
-
-const SidebarSection: React.FC<
-  PropsWithChildren<{
-    action: React.ReactNode;
-  }>
-> = React.memo((props) => {
-  return (
-    <div className="h-10 text-gray-900 dark:text-white flex pt-4 px-2">
-      <span className="flex-1 overflow-hidden overflow-ellipsis text-xs text-gray-700 dark:text-gray-300">
-        {props.children}
-      </span>
-      <div className="text-base opacity-70 hover:opacity-100 cursor-pointer">
-        {props.action}
-      </div>
-    </div>
-  );
-});
-SidebarSection.displayName = 'SidebarSection';
+import { PuzzleIcon, UserRoundPlusIcon, UsersIcon } from 'lucide-react';
+import {
+  SidebarGroup,
+  SidebarGroupAction,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarContent,
+} from '@/components/ui/official/sidebar';
 
 /**
  * 个人面板侧边栏组件
@@ -54,44 +45,54 @@ export const PersonalSidebar: React.FC = React.memo(() => {
     <CommonSidebarWrapper data-tc-role="sidebar-personal">
       <SectionHeader>{userInfo?.nickname}</SectionHeader>
 
-      <div className="p-2 overflow-auto">
-        <SidebarItem
-          name={t('好友')}
-          icon={<Icon icon="mdi:account-multiple" />}
-          to="/main/personal/friends"
-          badge={hasFriendRequest}
-        />
+      <SidebarContent className="gap-0">
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarItem
+                name={t('好友')}
+                icon={<UsersIcon />}
+                to="/main/personal/friends"
+                badge={hasFriendRequest}
+              />
 
-        {!disablePluginStore && (
-          <SidebarItem
-            name={t('插件中心')}
-            icon={<Icon icon="mdi:puzzle" />}
-            to="/main/personal/plugins"
-          />
-        )}
+              {!disablePluginStore && (
+                <SidebarItem
+                  name={t('插件中心')}
+                  icon={<PuzzleIcon />}
+                  to="/main/personal/plugins"
+                />
+              )}
 
-        {/* 插件自定义面板 */}
-        {pluginCustomPanel
-          .filter((p) => p.position === 'personal')
-          .map((p) => (
-            <CustomSidebarItem key={p.name} panelInfo={p} />
-          ))}
+              {pluginCustomPanel
+                .filter((p) => p.position === 'personal')
+                .map((p) => (
+                  <CustomSidebarItem key={p.name} panelInfo={p} />
+                ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
 
-        <SidebarSection
-          action={
-            <Icon
-              icon="mdi:plus"
-              onClick={() => openModal(<CreateDMConverse />)}
-            />
-          }
-        >
-          {t('私信')}
-        </SidebarSection>
-
-        {converseList.map((converse) => {
-          return <SidebarDMItem key={converse._id} converse={converse} />;
-        })}
-      </div>
+        <SidebarGroup>
+          <SidebarGroupLabel>{t('私信')}</SidebarGroupLabel>
+          <SidebarGroupAction
+            aria-label={localTrans({
+              'zh-CN': '创建群聊',
+              'en-US': 'Create group chat',
+            })}
+            onClick={() => openModal(<CreateDMConverse />, { closable: true })}
+          >
+            <UserRoundPlusIcon />
+          </SidebarGroupAction>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {converseList.map((converse) => (
+                <SidebarDMItem key={converse._id} converse={converse} />
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
     </CommonSidebarWrapper>
   );
 });

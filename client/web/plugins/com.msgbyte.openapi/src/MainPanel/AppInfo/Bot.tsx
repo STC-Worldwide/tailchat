@@ -19,6 +19,7 @@ const Bot: React.FC = React.memo(() => {
         title={Translate.enableBotCapability}
         content={
           <Switch
+            aria-label={Translate.enableBotCapability}
             disabled={loading}
             checked={capability.includes('bot')}
             onChange={(checked) => handleChangeAppCapability('bot', checked)}

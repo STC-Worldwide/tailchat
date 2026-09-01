@@ -14,9 +14,10 @@ import { Problem } from '@/components/Problem';
 import { ErrorView } from '@/components/ErrorView';
 import { Loading } from '@/components/Loading';
 import { GroupPanelContainer } from './shared/GroupPanelContainer';
-import { IconBtn } from '@/components/IconBtn';
 import { openModal } from '@/components/Modal';
 import _isEqual from 'lodash/isEqual';
+import { PanelActionButton } from '../common/PanelActionButton';
+import { SquarePenIcon } from 'lucide-react';
 
 type GroupExtraDataPanelRenderInfo = Record<string, string>; // <name, value>
 
@@ -90,6 +91,7 @@ const GroupExtraDataPanelInner: React.FC<GroupExtraDataPanelInnerProps> =
       };
 
       openModal(props.renderEdit(dataMap), {
+        closable: true,
         onCloseModal: handleSave,
       });
     });
@@ -105,12 +107,10 @@ const GroupExtraDataPanelInner: React.FC<GroupExtraDataPanelInnerProps> =
         prefixActions={() =>
           hasPermission
             ? [
-                <IconBtn
+                <PanelActionButton
                   key="edit"
-                  title={t('编辑')}
-                  shape="square"
-                  icon="mdi:square-edit-outline"
-                  iconClassName="text-2xl"
+                  label={t('编辑')}
+                  icon={<SquarePenIcon />}
                   onClick={handleEdit}
                 />,
               ]

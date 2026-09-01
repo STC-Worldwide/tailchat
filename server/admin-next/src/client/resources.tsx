@@ -3,7 +3,6 @@ import {
   Alert,
   Checkbox,
   Dropdown,
-  Image,
   Input,
   Menu,
   Pagination,
@@ -13,7 +12,7 @@ import {
   Tag,
   Tooltip,
   type TableColumnProps,
-} from '@arco-design/web-react';
+} from './components/ui/admin';
 import filesize from 'filesize';
 import { api, callAction, listResource } from './api';
 import { downloadCSV, getValue, toCSV, type RouteId } from './core';
@@ -322,7 +321,7 @@ function formatValue(
   if (field.type === 'filesize') return filesize(Number(value || 0));
   if (field.type === 'image' && value)
     return (
-      <Image
+      <img
         className="table-image"
         src={String(value)}
         alt=""

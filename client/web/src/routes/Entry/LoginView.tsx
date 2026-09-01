@@ -1,6 +1,6 @@
-import { Icon } from 'tailchat-design';
 import {
   isValidStr,
+  localTrans,
   loginWithEmail,
   t,
   useAsyncFn,
@@ -13,14 +13,13 @@ import { setUserJWT } from '../../utils/jwt-helper';
 import { setGlobalUserLoginInfo, tryAutoLogin } from '../../utils/user-helper';
 import { useSearchParam } from '@/hooks/useSearchParam';
 import { useNavToView } from './utils';
-import { IconBtn } from '@/components/IconBtn';
-import { openModal } from '@/components/Modal';
-import { ServiceUrlSettings } from '@/components/modals/ServiceUrlSettings';
-import { LanguageSelect } from '@/components/LanguageSelect';
 import { EntryInput } from './components/Input';
 import { SecondaryBtn } from './components/SecondaryBtn';
 import { PrimaryBtn } from './components/PrimaryBtn';
 import { pluginLoginAction } from '@/plugin/common';
+import { EntryError, EntryField, EntryView } from './components/Form';
+import { Button } from '@/components/ui/official/button';
+import { ArrowRightIcon } from 'lucide-react';
 
 /**
  * 登录视图
@@ -73,88 +72,96 @@ export const LoginView: React.FC = React.memo(() => {
   const navToView = useNavToView();
 
   return (
-    <div className="w-96 text-white relative">
-      <div className="mb-4 text-2xl">
-        {t('登录 {{serverName}}', {
-          serverName: serverName || 'Tailchat',
-        })}
-      </div>
-
-      <div>
-        <div className="mb-4">
-          <div className="mb-2">{t('邮箱')}</div>
+    <EntryView
+      title={t('登录 {{serverName}}', {
+        serverName: serverName || 'Tailchat',
+      })}
+      description={localTrans({
+        'zh-CN': '使用你的邮箱和密码继续。',
+        'en-US': 'Use your email and password to continue.',
+      })}
+    >
+      <form
+        className="space-y-5"
+        onSubmit={(event) => {
+          event.preventDefault();
+          handleLogin();
+        }}
+      >
+        <EntryField id="login-email" label={t('邮箱')}>
           <EntryInput
+            id="login-email"
             name="login-email"
             placeholder="name@example.com"
-            type="text"
+            type="email"
+            autoComplete="email"
+            autoCapitalize="none"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-        </div>
-        <div className="mb-4">
-          <div className="mb-2">{t('密码')}</div>
-          <EntryInput
-            name="login-password"
-            type="password"
-            placeholder="******"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
+        </EntryField>
 
-        {loading === false && error && (
-          <div className="flex justify-between mb-4">
-            <p className="text-red-500 text-sm">{error.message}</p>
-            <div
-              className="text-gray-200 cursor-pointer"
+        <EntryField
+          id="login-password"
+          label={t('密码')}
+          hint={
+            <Button
+              type="button"
+              variant="link"
+              size="xs"
+              className="h-auto px-0"
               onClick={() => navToView('/entry/forget')}
             >
               {t('忘记密码？')}
-            </div>
-          </div>
-        )}
+            </Button>
+          }
+        >
+          <EntryInput
+            id="login-password"
+            name="login-password"
+            type="password"
+            placeholder="••••••••"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </EntryField>
 
-        <PrimaryBtn loading={loading} onClick={handleLogin}>
+        {loading === false && <EntryError error={error} />}
+
+        <PrimaryBtn type="submit" loading={loading}>
           {t('登录')}
         </PrimaryBtn>
 
-        {!disableUserRegister && (
-          <SecondaryBtn
-            disabled={loading}
-            onClick={() => navToView('/entry/register')}
-          >
-            {t('注册账号')}
-            <Icon icon="mdi:arrow-right" className="ml-1 inline" />
-          </SecondaryBtn>
-        )}
+        <div className="space-y-1 border-t border-border/70 pt-3">
+          {!disableUserRegister && (
+            <SecondaryBtn
+              disabled={loading}
+              onClick={() => navToView('/entry/register')}
+            >
+              {t('注册账号')}
+              <ArrowRightIcon />
+            </SecondaryBtn>
+          )}
 
-        {!disableGuestLogin && (
-          <SecondaryBtn
-            disabled={loading}
-            onClick={() => navToView('/entry/guest')}
-          >
-            {t('游客访问')}
-            <Icon icon="mdi:arrow-right" className="ml-1 inline" />
-          </SecondaryBtn>
-        )}
+          {!disableGuestLogin && (
+            <SecondaryBtn
+              disabled={loading}
+              onClick={() => navToView('/entry/guest')}
+            >
+              {t('游客访问')}
+              <ArrowRightIcon />
+            </SecondaryBtn>
+          )}
 
-        {pluginLoginAction.map((item) => {
-          const { name, component: Component } = item;
+          {pluginLoginAction.map((item) => {
+            const { name, component: Component } = item;
 
-          return <Component key={name} />;
-        })}
-      </div>
-
-      <div className="absolute bottom-4 left-0 space-x-2">
-        <IconBtn
-          icon="mdi:cog"
-          shape="square"
-          onClick={() => openModal(<ServiceUrlSettings />)}
-        />
-
-        <LanguageSelect size="middle" />
-      </div>
-    </div>
+            return <Component key={name} />;
+          })}
+        </div>
+      </form>
+    </EntryView>
   );
 });
 LoginView.displayName = 'LoginView';

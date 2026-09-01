@@ -13,6 +13,15 @@ import { SettingsDebug } from './Debug';
 import { SettingsPerformance } from './Performance';
 import { SettingsStatus } from './Status';
 import { SettingsSystem } from './System';
+import {
+  ActivityIcon,
+  BugIcon,
+  GaugeIcon,
+  InfoIcon,
+  PuzzleIcon,
+  Settings2Icon,
+  UserRoundIcon,
+} from 'lucide-react';
 
 interface SettingsViewProps {
   onClose: () => void;
@@ -35,26 +44,31 @@ export const SettingsView: React.FC<SettingsViewProps> = React.memo((props) => {
         {
           type: 'item',
           title: t('账户信息'),
+          icon: <UserRoundIcon />,
           content: <SettingsAccount />,
         },
         {
           type: 'item',
           title: t('系统设置'),
+          icon: <Settings2Icon />,
           content: <SettingsSystem />,
         },
         {
           type: 'item',
           title: t('服务状态'),
+          icon: <ActivityIcon />,
           content: <SettingsStatus />,
         },
         {
           type: 'item',
           title: t('性能统计'),
+          icon: <GaugeIcon />,
           content: <SettingsPerformance />,
         },
         {
           type: 'item',
           title: t('关于'),
+          icon: <InfoIcon />,
           content: <SettingsAbout />,
         },
       ],
@@ -64,6 +78,7 @@ export const SettingsView: React.FC<SettingsViewProps> = React.memo((props) => {
       common.children.push({
         type: 'item',
         title: t('调试'),
+        icon: <BugIcon />,
         content: <SettingsDebug />,
       });
     }
@@ -73,6 +88,7 @@ export const SettingsView: React.FC<SettingsViewProps> = React.memo((props) => {
       .map((p) => ({
         type: 'item',
         title: p.label,
+        icon: <PuzzleIcon />,
         content: React.createElement(p.render),
       }));
 

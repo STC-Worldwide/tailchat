@@ -19,6 +19,7 @@ const OAuth: React.FC = React.memo(() => {
         title={Translate.oauth.open}
         content={
           <Switch
+            aria-label={Translate.oauth.open}
             disabled={loading}
             checked={capability.includes('oauth')}
             onChange={(checked) => handleChangeAppCapability('oauth', checked)}

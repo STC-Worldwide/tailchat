@@ -60,6 +60,9 @@ module.exports = {
     // jest 27 cannot resolve package-exports subpaths (cmdk -> radix-ui)
     '^@radix-ui/primitive/is-development$':
       '@radix-ui/primitive/dist/internal/is-development.true.js',
+    // Jest 27 does not understand Base UI's package `imports` conditions.
+    '^#prehydration/tabs/indicator$':
+      '@base-ui/react/internals/prehydrationScript.stub.js',
     ...pathsToModuleNameMapper(webCompilerOptions.paths, {
       prefix: '<rootDir>/',
     }),

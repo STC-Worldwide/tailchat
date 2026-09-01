@@ -1,39 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { Translate } from '../translate';
-import { FilterXSS, getDefaultWhiteList } from 'xss';
 import { useWatch } from '@capital/common';
-import { GroupExtraDataPanel, NoData, TextArea } from '@capital/component';
-import styled from 'styled-components';
-
-const EditModalContent = styled.div`
-  padding: 10px;
-  width: 80vw;
-  height: 80vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-
-  .main {
-    flex: 1;
-    overflow: hidden;
-
-    > textarea {
-      height: 100%;
-      resize: none;
-    }
-  }
-`;
-
-const xss = new FilterXSS({
-  css: false,
-  whiteList: { ...getDefaultWhiteList(), iframe: ['src', 'style', 'class'] },
-  onIgnoreTag: function (tag, html, options) {
-    if (['html', 'body', 'head', 'meta', 'style', 'div'].includes(tag)) {
-      // 不对其属性列表进行过滤
-      return html;
-    }
-  },
-});
+import {
+  GroupExtraDataPanel,
+  ModalWrapper,
+  NoData,
+  TextArea,
+} from '@capital/component';
+import { sanitizeCustomWebPanelHtml } from './sanitizeCustomWebPanelHtml';
 
 function getInjectedStyle() {
   try {
@@ -49,25 +23,20 @@ function getInjectedStyle() {
 }
 
 const GroupCustomWebPanelRender: React.FC<{ html: string }> = (props) => {
-  const ref = useRef<HTMLIFrameElement>(null);
   const html = props.html;
-
-  useEffect(() => {
-    if (!ref.current || !html) {
-      return;
-    }
-
-    const doc = ref.current.contentWindow.document;
-    doc.open();
-    doc.writeln(getInjectedStyle(), xss.process(html));
-    doc.close();
-  }, [html]);
 
   if (!html) {
     return <NoData />;
   }
 
-  return <iframe ref={ref} className="w-full h-full" />;
+  return (
+    <iframe
+      title={Translate.customwebpanel}
+      sandbox=""
+      srcDoc={`${getInjectedStyle()}${sanitizeCustomWebPanelHtml(html)}`}
+      className="h-full w-full bg-background"
+    />
+  );
 };
 GroupCustomWebPanelRender.displayName = 'GroupCustomWebPanelRender';
 
@@ -81,7 +50,14 @@ const GroupCustomWebPanelEditor: React.FC<{
     props.onChange(html);
   });
 
-  return <TextArea value={html} onChange={(e) => setHtml(e.target.value)} />;
+  return (
+    <TextArea
+      aria-label={Translate.editTip}
+      className="h-full resize-none font-mono text-sm"
+      value={html}
+      onChange={(e) => setHtml(e.target.value)}
+    />
+  );
 });
 GroupCustomWebPanelEditor.displayName = 'GroupCustomWebPanelEditor';
 
@@ -98,16 +74,21 @@ const GroupCustomWebPanel: React.FC<{ panelInfo: any }> = (props) => {
       }}
       renderEdit={(dataMap: Record<string, string>) => {
         return (
-          <EditModalContent>
-            <div>{Translate.editTip}</div>
+          <ModalWrapper
+            title={Translate.customwebpanel}
+            className="flex h-[80vh] w-[min(80vw,1200px)] flex-col gap-2 overflow-hidden p-3 max-md:h-[calc(100dvh-1rem)] max-md:w-[calc(100vw-1rem)] max-md:p-2"
+          >
+            <p className="pr-10 text-[13px] leading-5 text-muted-foreground">
+              {Translate.editTip}
+            </p>
 
-            <div className="main">
+            <div className="min-h-0 flex-1 overflow-hidden">
               <GroupCustomWebPanelEditor
                 initValue={dataMap['html'] ?? props.panelInfo?.meta?.html ?? ''}
                 onChange={(html) => (dataMap['html'] = html)}
               />
             </div>
-          </EditModalContent>
+          </ModalWrapper>
         );
       }}
     />

@@ -1,10 +1,17 @@
-import { Select, Switch } from 'antd';
 import React from 'react';
 import {
   DefaultFullModalInputEditorRender,
   DefaultFullModalTextAreaEditorRender,
   FullModalField,
 } from './Field';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/official/select';
+import { Switch } from '@/components/ui/official/switch';
 
 export type FullModalFactoryConfig = {
   name: string;
@@ -69,8 +76,9 @@ export const FullModalFactory: React.FC<FullModalFactoryProps> = React.memo(
           tip={config.desc}
           content={
             <Switch
+              aria-label={config.label}
               checked={value ?? false}
-              onChange={(checked) => onChange(checked)}
+              onCheckedChange={(checked) => onChange(checked)}
             />
           }
         />
@@ -84,16 +92,23 @@ export const FullModalFactory: React.FC<FullModalFactoryProps> = React.memo(
           tip={config.desc}
           content={
             <Select
-              style={{ width: 280 }}
-              size="large"
-              value={value}
-              onChange={(val) => onChange(val)}
+              value={value ?? config.options[0]?.value ?? ''}
+              onValueChange={(val) => val !== null && onChange(val)}
+              items={config.options}
             >
-              {config.options.map((opt) => (
-                <Select.Option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </Select.Option>
-              ))}
+              <SelectTrigger
+                aria-label={config.label}
+                className="w-full sm:w-[280px]"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {config.options.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
             </Select>
           }
         />

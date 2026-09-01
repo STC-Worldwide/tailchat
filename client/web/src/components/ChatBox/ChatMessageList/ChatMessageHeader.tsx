@@ -1,17 +1,17 @@
 import React from 'react';
-import { Icon } from 'tailchat-design';
 import { t } from 'tailchat-shared';
+import { HashIcon } from 'lucide-react';
 
 export const ChatMessageHeader: React.FC<{
   title: React.ReactNode;
 }> = React.memo((props) => {
   return (
-    <div className="px-5 pb-4 pt-8">
-      <div className="font-extrabold mb-2 text-2xl flex items-center space-x-1">
-        <Icon icon="mdi:pound" />
-        <div>{props.title}</div>
+    <div className="px-5 pt-10 pb-5">
+      <div className="mb-2 flex items-center gap-2 text-2xl font-bold tracking-tight text-foreground">
+        <HashIcon className="size-6 text-muted-foreground" aria-hidden="true" />
+        <h2>{props.title}</h2>
       </div>
-      <div className="text-base opacity-80">
+      <div className="max-w-[65ch] text-sm text-muted-foreground">
         {t('这里是所有消息的开始，请畅所欲言。')}
       </div>
     </div>

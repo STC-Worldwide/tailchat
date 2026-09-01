@@ -1,7 +1,6 @@
 import type { PluginCustomPanel } from '@/plugin/common';
-import clsx from 'clsx';
 import React, { useMemo } from 'react';
-import { Icon } from 'tailchat-design';
+import { Icon } from '@iconify/react';
 import { NavbarNavItem } from './NavItem';
 
 const defaultUseIsShow = () => true;
@@ -28,10 +27,8 @@ export const NavbarCustomNavItem: React.FC<{
     <NavbarNavItem
       key={panelInfo.name}
       name={panelInfo.label}
-      className={clsx('text-3xl  cursor-pointer', {
-        'bg-gray-700 text-white': withBg,
-        'text-gray-600 dark:text-white': !withBg,
-      })}
+      label={panelInfo.label}
+      className={withBg ? undefined : 'text-muted-foreground'}
       to={`/main/custom/${panelInfo.name}`}
       data-testid={`navbar-custom-${panelInfo.name}`}
     >

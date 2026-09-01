@@ -1,7 +1,10 @@
 import React, { PropsWithChildren } from 'react';
-import styles from './index.module.less';
 
 export const Highlight: React.FC<PropsWithChildren> = React.memo((props) => {
-  return <span className={styles.highLight}>{props.children}</span>;
+  return (
+    <span className="rounded-md bg-black/10 px-2 py-1 dark:bg-white/10">
+      {props.children}
+    </span>
+  );
 });
 Highlight.displayName = 'Highlight';

@@ -2,6 +2,7 @@ import React, {
   PropsWithChildren,
   useCallback,
   useContext,
+  useEffect,
   useState,
 } from 'react';
 import _isFunction from 'lodash/isFunction';
@@ -11,19 +12,19 @@ import _pull from 'lodash/pull';
 import _isString from 'lodash/isString';
 import _noop from 'lodash/noop';
 import { PortalAdd, PortalRemove } from './Portal';
-import { Button, Typography } from 'antd';
-import { Icon } from 'tailchat-design';
-import { CSSTransition } from 'react-transition-group';
 import clsx from 'clsx';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { stopPropagation } from '@/utils/dom-helper';
 import { ErrorBoundary } from './ErrorBoundary';
 import { t } from 'tailchat-shared';
-
-import './Modal.less';
-
-const transitionEndListener = (node: HTMLElement, done: () => void) =>
-  node.addEventListener('transitionend', done, false);
+import { Button } from '@/components/ui/official/button';
+import { XIcon } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/official/dialog';
+import { useAppPortalContainer } from '@/hooks/useAppPortalContainer';
 
 /**
  * 模态框
@@ -31,8 +32,10 @@ const transitionEndListener = (node: HTMLElement, done: () => void) =>
 
 const ModalContext = React.createContext<{
   closeModal: () => void;
+  insideModal: boolean;
 }>({
   closeModal: _noop,
+  insideModal: false,
 });
 
 interface ModalProps extends PropsWithChildren {
@@ -58,6 +61,7 @@ export const Modal: React.FC<ModalProps> = React.memo((props) => {
     maskClosable = true,
   } = props;
   const [showing, setShowing] = useState(true);
+  const portalContainer = useAppPortalContainer();
 
   const closeModal = useCallback(() => {
     setShowing(false);
@@ -71,49 +75,45 @@ export const Modal: React.FC<ModalProps> = React.memo((props) => {
     closeModal();
   }, [maskClosable, closeModal]);
 
+  useEffect(() => {
+    if (showing || !_isFunction(onChangeVisible)) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => onChangeVisible(false), 150);
+    return () => window.clearTimeout(timer);
+  }, [onChangeVisible, showing]);
+
   if (visible === false) {
     return null;
   }
 
   return (
-    <CSSTransition
-      in={showing}
-      classNames="modal-anim"
-      timeout={200}
-      addEndListener={transitionEndListener}
-      onExited={() => {
-        if (showing === false && _isFunction(onChangeVisible)) {
-          onChangeVisible(false);
-        }
-      }}
-      appear={true}
-    >
-      <div
-        className="absolute left-0 right-0 top-0 bottom-0 bg-black/60 flex justify-center items-center z-10"
-        onClick={handleClose}
-        data-tc-role="modal-mask"
+    <Dialog open={showing} onOpenChange={(open) => !open && handleClose()}>
+      <DialogContent
+        portalContainer={portalContainer}
+        overlayClassName="bg-black/60 supports-backdrop-filter:backdrop-blur-none"
+        showCloseButton={false}
+        className="max-h-[calc(100dvh-1rem)] w-auto max-w-[calc(100vw-1rem)] overflow-y-auto overflow-x-hidden p-0 sm:max-h-[80vh] sm:max-w-[80vw]"
+        data-tc-role="modal"
       >
-        <ModalContext.Provider value={{ closeModal }}>
-          {/* Inner */}
-          <div
-            className="modal-inner bg-content-light dark:bg-content-dark rounded overflow-auto relative z-10"
-            style={{ maxHeight: '80vh', maxWidth: '80vw' }}
-            onClick={stopPropagation}
-            data-tc-role="modal"
-          >
-            {closable === true && (
-              <Icon
-                className="absolute right-2.5 top-3.5 text-xl z-10 cursor-pointer"
-                icon="mdi:close"
-                onClick={closeModal}
-              />
-            )}
+        <ModalContext.Provider value={{ closeModal, insideModal: true }}>
+          <ErrorBoundary>{props.children}</ErrorBoundary>
 
-            <ErrorBoundary>{props.children}</ErrorBoundary>
-          </div>
+          {closable === true && (
+            <Button
+              variant="ghost"
+              size="icon-lg"
+              className="absolute right-2 top-2 z-10"
+              aria-label={t('关闭')}
+              onClick={closeModal}
+            >
+              <XIcon className="size-4" />
+            </Button>
+          )}
         </ModalContext.Provider>
-      </div>
-    </CSSTransition>
+      </DialogContent>
+    </Dialog>
   );
 });
 Modal.displayName = 'Modal';
@@ -179,6 +179,7 @@ export function openConfirmModal(props: OpenConfirmModalProps) {
       <h3 className="text-center pb-6">{props.content}</h3>
       <div className="space-x-2 text-right">
         <Button
+          variant="secondary"
           onClick={() => {
             props.onCancel?.();
             closeModal(key);
@@ -187,7 +188,6 @@ export function openConfirmModal(props: OpenConfirmModalProps) {
           {t('取消')}
         </Button>
         <Button
-          type="primary"
           onClick={() => {
             props.onConfirm();
             closeModal(key);
@@ -241,9 +241,9 @@ export function openReconfirmModalP(
  * 获取modal上下文
  */
 export function useModalContext() {
-  const { closeModal } = useContext(ModalContext);
+  const { closeModal, insideModal } = useContext(ModalContext);
 
-  return { closeModal };
+  return { closeModal, insideModal };
 }
 
 /**
@@ -259,9 +259,11 @@ export const ModalWrapper: React.FC<
   const isMobile = useIsMobile();
 
   const title = _isString(props.title) ? (
-    <Typography.Title level={4} className="text-center mb-4">
-      {props.title}
-    </Typography.Title>
+    <DialogHeader className="mb-4 pr-10 text-left">
+      <DialogTitle className="text-lg leading-6 font-semibold">
+        {props.title}
+      </DialogTitle>
+    </DialogHeader>
   ) : null;
 
   return (

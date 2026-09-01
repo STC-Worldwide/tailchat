@@ -14,7 +14,6 @@ import {
 } from 'tailchat-shared';
 import { useRenderPluginMessageInterpreter } from './useRenderPluginMessageInterpreter';
 import { getMessageRender, pluginMessageExtraParsers } from '@/plugin/common';
-import { Divider, Dropdown, Popover } from 'antd';
 import { UserName } from '@/components/UserName';
 import clsx from 'clsx';
 import { useChatMessageItemAction } from './useChatMessageItemAction';
@@ -22,13 +21,24 @@ import { useChatMessageReactionAction } from './useChatMessageReaction';
 import { TcPopover } from '@/components/TcPopover';
 import { useMessageReactions } from './useMessageReactions';
 import { stopPropagation } from '@/utils/dom-helper';
-import { AutoFolder, Avatar, Icon } from 'tailchat-design';
 import { MessageAckContainer } from './MessageAckContainer';
 import { UserPopover } from '@/components/popover/UserPopover';
-import { TcTooltip } from '@/components/ui/tooltip';
+import {
+  TcDropdown,
+  TcContextMenu,
+  type TcDropdownMenu,
+} from '@/components/ui/dropdown';
+import { TcSeparator } from '@/components/ui/separator';
 import _isEmpty from 'lodash/isEmpty';
 import type { LocalChatMessage } from 'tailchat-shared/model/message';
-import './Item.less';
+import { Button } from '@/components/ui/official/button';
+import { CircleXIcon, EllipsisIcon, SmilePlusIcon } from 'lucide-react';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/components/ui/official/avatar';
+import { ExpandableMessage } from './ExpandableMessage';
 
 /**
  * 消息引用
@@ -45,7 +55,7 @@ const MessageQuote: React.FC<{ payload: ChatMessage }> = React.memo(
     }
 
     return (
-      <div className="chat-message-item_quote border-l-2 border-black/20 dark:border-white/25 pl-2 text-muted">
+      <div className="chat-message-item_quote border-l border-border pl-2 text-muted-foreground [&_img]:max-h-15 [&_img]:w-auto!">
         {t('回复')} <UserName userId={String(quote.author)} />:{' '}
         <span>{getMessageRender(quote.content)}</span>
       </div>
@@ -54,15 +64,27 @@ const MessageQuote: React.FC<{ payload: ChatMessage }> = React.memo(
 );
 MessageQuote.displayName = 'MessageQuote';
 
-const MessageActionIcon: React.FC<{ icon: string; label: string }> = (
-  props
-) => (
-  <TcTooltip label={props.label}>
-    <div className="px-0.5 w-6 h-6 flex justify-center items-center opacity-60 hover:opacity-100">
-      <Icon icon={props.icon} />
-    </div>
-  </TcTooltip>
-);
+const MessageActionIcon = React.forwardRef<
+  HTMLButtonElement,
+  {
+    icon: React.ReactNode;
+    label: string;
+  } & Omit<React.ComponentPropsWithoutRef<typeof Button>, 'children'>
+>(({ icon, label, ...buttonProps }, ref) => (
+  <Button
+    ref={ref}
+    type="button"
+    variant="ghost"
+    size="icon-xs"
+    aria-label={label}
+    title={label}
+    className="text-muted-foreground hover:text-foreground mobile:size-11"
+    {...buttonProps}
+  >
+    {icon}
+  </Button>
+));
+MessageActionIcon.displayName = 'MessageActionIcon';
 
 /**
  * 普通消息
@@ -92,13 +114,14 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
     return (
       <div
         className={clsx(
-          'chat-message-item flex px-2 mobile:px-0 group relative select-text py-[var(--tc-msg-row-pad)]',
+          'chat-message-item group relative flex select-text px-2 py-[var(--tc-msg-row-pad)] text-[length:var(--tc-msg-font-size)] leading-[var(--tc-msg-line-height)] mobile:px-0',
           // 分组首条消息与上一组拉开间距; 间距值由密度设置驱动
           // min-h-11 (44px) 锁定头像行节奏, 避免短消息挤压
           showAvatar && 'mt-[var(--tc-msg-group-gap)] min-h-11',
+          !disableOperate && 'mobile:pb-12',
           {
-            'bg-black/10 dark:bg-white/10': isActionBtnActive,
-            'hover:bg-black/5 dark:hover:bg-white/5': !isActionBtnActive,
+            'bg-accent/60': isActionBtnActive,
+            'hover:bg-accent/35': !isActionBtnActive,
           }
         )}
         data-message-id={payload._id}
@@ -106,79 +129,80 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
         {/* 头像 */}
         <div className="w-18 mobile:w-14 flex items-start justify-center pt-0.5">
           {showAvatar ? (
-            <Popover
+            <TcPopover
+              nativeButton={true}
               content={
                 !_isEmpty(userInfo) && (
                   <UserPopover userInfo={userInfo as UserBaseInfo} />
                 )
               }
               placement="top"
-              trigger="click"
             >
-              <Avatar
-                className="cursor-pointer"
-                size={40}
-                src={userInfo.avatar}
-                name={userInfo.nickname}
-              />
-            </Popover>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                aria-label={userInfo.nickname || t('查看用户信息')}
+                className="size-10 rounded-full p-0"
+              >
+                <Avatar size="lg">
+                  <AvatarImage
+                    src={userInfo.avatar || undefined}
+                    alt={userInfo.nickname || ''}
+                  />
+                  <AvatarFallback className="font-medium">
+                    {userInfo.nickname?.slice(0, 1).toUpperCase() || '?'}
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
+            </TcPopover>
           ) : (
-            <div className="hidden group-hover:block text-xs text-muted leading-[var(--tc-msg-line-height)]">
+            <div className="hidden group-hover:block text-xs text-muted-foreground leading-[var(--tc-msg-line-height)]">
               {formatShortTime(payload.createdAt)}
             </div>
           )}
         </div>
 
         {/* 主体 */}
-        <Dropdown
-          menu={moreActions}
-          placement="bottomLeft"
-          trigger={['contextMenu']}
+        <TcContextMenu
+          menu={moreActions as unknown as TcDropdownMenu}
           disabled={settings['disableMessageContextMenu']}
           onOpenChange={setIsActionBtnActive}
         >
           <div
-            className="flex flex-col flex-1 overflow-auto group"
+            className="group flex min-w-0 flex-1 flex-col overflow-visible"
             onContextMenu={stopPropagation}
           >
             {showAvatar && (
-              <div className="flex items-center">
-                <div className="font-semibold">
+              <div className="flex min-w-0 items-baseline gap-2">
+                <div className="truncate font-semibold text-foreground">
                   {userInfo.nickname || <span>&nbsp;</span>}
                 </div>
                 {/* 分组首条的时间常显, 不再只在 hover 时出现 */}
-                <div className="text-xs text-muted ml-2">
+                <div className="shrink-0 text-xs text-muted-foreground">
                   {formatShortTime(payload.createdAt)}
                 </div>
               </div>
             )}
 
             {/* 消息内容 */}
-            <AutoFolder
-              maxHeight={340}
-              backgroundColor="var(--tc-content-background-color)"
-              showFullText={
-                <div className="inline-block rounded-full bg-white dark:bg-black opacity-80 py-2 px-3 hover:opacity-100">
-                  {t('点击展开更多')}
-                </div>
-              }
-            >
-              <div className="chat-message-item_body break-words">
+            <ExpandableMessage maxHeight={340} expandLabel={t('点击展开更多')}>
+              <div className="chat-message-item_body break-words font-sans text-foreground [&_code]:font-mono [&_pre]:font-mono [&_.emoji-mart-emoji]:mx-1 [&_.emoji-mart-emoji]:inline-block [&_.emoji-mart-emoji]:h-4 [&_.emoji-mart-emoji>span]:align-top">
                 <MessageQuote payload={payload} />
 
                 <span>{getMessageRender(payload.content)}</span>
 
                 {payload.sendFailed === true && (
-                  <Icon
-                    className="inline-block ml-1"
-                    icon="emojione:cross-mark-button"
+                  <CircleXIcon
+                    className="ml-1 inline-block size-4 text-destructive"
+                    aria-label={t('发送失败')}
                   />
                 )}
 
                 {/* 解释器按钮 */}
                 {useRenderPluginMessageInterpreter(payload.content)}
               </div>
-            </AutoFolder>
+            </ExpandableMessage>
 
             {/* 额外渲染 */}
             <div>
@@ -192,48 +216,38 @@ export const NormalMessage: React.FC<ChatMessageItemProps> = React.memo(
             {/* 消息反应 */}
             {reactions}
           </div>
-        </Dropdown>
+        </TcContextMenu>
 
         {/* 操作 */}
         {!disableOperate && (
           <div
             className={clsx(
-              'rounded-md border border-subtle overflow-hidden absolute right-2 cursor-pointer -top-3 shadow-sm flex',
+              'pointer-events-none absolute -top-3 right-2 flex overflow-hidden rounded-lg border border-border bg-popover p-0.5 text-popover-foreground opacity-0 shadow-md transition-opacity group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 mobile:top-auto mobile:right-2 mobile:bottom-1 mobile:border-0 mobile:bg-transparent mobile:p-0 mobile:opacity-100 mobile:shadow-none mobile:pointer-events-auto',
               {
-                'opacity-0 group-hover:opacity-100 bg-white/80 hover:bg-white dark:bg-black/80 dark:hover:bg-black':
-                  !isActionBtnActive,
-                'opacity-100 bg-white dark:bg-black': isActionBtnActive,
+                'pointer-events-auto opacity-100': isActionBtnActive,
               }
             )}
           >
             <TcPopover
-              overlayClassName="chat-message-item_action-popover"
+              nativeButton={true}
+              overlayClassName="chat-message-item_action-popover p-1"
               content={emojiAction}
               placement="bottomLeft"
-              trigger={['click']}
               onOpenChange={setIsActionBtnActive}
             >
-              <div>
-                <MessageActionIcon
-                  icon="mdi:emoticon-happy-outline"
-                  label={t('添加反应')}
-                />
-              </div>
+              <MessageActionIcon
+                icon={<SmilePlusIcon />}
+                label={t('添加反应')}
+              />
             </TcPopover>
 
-            <Dropdown
-              menu={moreActions}
-              placement="bottomRight"
-              trigger={['click']}
+            <TcDropdown
+              menu={moreActions as unknown as TcDropdownMenu}
+              placement="bottomEnd"
               onOpenChange={setIsActionBtnActive}
             >
-              <div>
-                <MessageActionIcon
-                  icon="mdi:dots-horizontal"
-                  label={t('更多')}
-                />
-              </div>
-            </Dropdown>
+              <MessageActionIcon icon={<EllipsisIcon />} label={t('更多')} />
+            </TcDropdown>
           </div>
         )}
       </div>
@@ -249,7 +263,7 @@ const SystemMessage: React.FC<ChatMessageItemProps> = React.memo(
   ({ payload }) => {
     return (
       <div className="text-center">
-        <div className="bg-black/10 dark:bg-white/10 text-muted rounded inline-block py-0.5 px-2 my-1 mx-2 text-sm">
+        <div className="mx-2 my-1 inline-block rounded-md bg-muted px-2 py-0.5 text-sm text-muted-foreground">
           {payload.content}
         </div>
       </div>
@@ -347,9 +361,9 @@ export function buildMessageItemRow(
   return (
     <div key={message._id}>
       {showDate && (
-        <Divider className="text-sm opacity-40 px-6 font-normal select-text">
+        <TcSeparator className="my-4 px-6 text-xs font-normal select-text">
           {showMessageTime(messageCreatedAt)}
-        </Divider>
+        </TcSeparator>
       )}
 
       {message.isLocal === true ? (
