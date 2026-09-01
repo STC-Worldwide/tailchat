@@ -21,7 +21,7 @@ import { Skeleton } from '@/components/ui/official/skeleton';
 import {
   RadioGroup,
   RadioGroupItem,
-} from '@/components/ui/radio-group';
+} from '@/components/ui/official/radio-group';
 import {
   Table as ShadcnTable,
   TableBody,
@@ -456,7 +456,9 @@ const PluginMenu: React.FC<PluginMenuProps> = React.memo(
       element.focus();
     };
 
-    const handleMenuKeyDown = (event: React.KeyboardEvent<HTMLUListElement>) => {
+    const handleMenuKeyDown = (
+      event: React.KeyboardEvent<HTMLUListElement>
+    ) => {
       onKeyDown?.(event);
       if (event.defaultPrevented) {
         return;
@@ -853,205 +855,215 @@ const PluginTable = <RecordType,>({
           onValueChange={selectRadioRow}
         >
           <ShadcnTable
-          className={cn(
-            scroll?.x && 'min-w-max',
-            isLoading && dataSource.length > 0 && 'opacity-60'
-          )}
-          style={{
-            minWidth: typeof scroll?.x === 'number' ? scroll.x : undefined,
-          }}
+            className={cn(
+              scroll?.x && 'min-w-max',
+              isLoading && dataSource.length > 0 && 'opacity-60'
+            )}
+            style={{
+              minWidth: typeof scroll?.x === 'number' ? scroll.x : undefined,
+            }}
           >
-          {showHeader && (
-            <TableHeader className="bg-muted/40">
-              <TableRow>
-                {rowSelection && (
-                  <TableHead className="w-10 px-3">
-                    {rowSelection.type === 'radio' ? null : (
-                      <Checkbox
-                        aria-label="Select all rows"
-                        checked={allCurrentSelected}
-                        indeterminate={someCurrentSelected}
-                        onCheckedChange={(checked) => {
-                          const currentKeys = enabledCurrentRows.map(
-                            ({ key }) => key
-                          );
-                          const nextKeys = checked
-                            ? Array.from(
-                                new Set([...selectedKeys, ...currentKeys])
-                              )
-                            : selectedKeys.filter(
-                                (key) =>
-                                  !currentKeys.map(String).includes(String(key))
-                              );
-                          emitSelection(nextKeys);
-                        }}
-                      />
-                    )}
-                  </TableHead>
-                )}
-                {resolvedColumns.map((column, index) => {
-                  const headerProps = column.onHeaderCell?.() ?? {};
-                  return (
-                    <TableHead
-                      key={String(column.key ?? column.dataIndex ?? index)}
-                      {...headerProps}
-                      className={cn(
-                        size === 'small'
-                          ? 'h-8 px-2'
-                          : size === 'large'
-                          ? 'h-12 px-3'
-                          : 'h-10 px-3',
-                        column.align === 'center' && 'text-center',
-                        column.align === 'right' && 'text-right',
-                        headerProps.className
+            {showHeader && (
+              <TableHeader className="bg-muted/40">
+                <TableRow>
+                  {rowSelection && (
+                    <TableHead className="w-10 px-3">
+                      {rowSelection.type === 'radio' ? null : (
+                        <Checkbox
+                          aria-label="Select all rows"
+                          checked={allCurrentSelected}
+                          indeterminate={someCurrentSelected}
+                          onCheckedChange={(checked) => {
+                            const currentKeys = enabledCurrentRows.map(
+                              ({ key }) => key
+                            );
+                            const nextKeys = checked
+                              ? Array.from(
+                                  new Set([...selectedKeys, ...currentKeys])
+                                )
+                              : selectedKeys.filter(
+                                  (key) =>
+                                    !currentKeys
+                                      .map(String)
+                                      .includes(String(key))
+                                );
+                            emitSelection(nextKeys);
+                          }}
+                        />
                       )}
-                      style={{ width: column.width, ...headerProps.style }}
-                    >
-                      {typeof column.title === 'function'
-                        ? column.title()
-                        : column.title}
                     </TableHead>
-                  );
-                })}
-              </TableRow>
-            </TableHeader>
-          )}
-          <TableBody>
-            {isLoading && currentData.length === 0
-              ? Array.from({ length: 3 }).map((_, rowIndex) => (
-                  <TableRow key={`loading-${rowIndex}`}>
-                    {rowSelection && (
-                      <TableCell className="px-3">
-                        <Skeleton className="size-4" />
-                      </TableCell>
-                    )}
-                    {resolvedColumns.map((column, columnIndex) => (
-                      <TableCell
-                        key={String(
-                          column.key ?? column.dataIndex ?? columnIndex
+                  )}
+                  {resolvedColumns.map((column, index) => {
+                    const headerProps = column.onHeaderCell?.() ?? {};
+                    return (
+                      <TableHead
+                        key={String(column.key ?? column.dataIndex ?? index)}
+                        {...headerProps}
+                        className={cn(
+                          size === 'small'
+                            ? 'h-8 px-2'
+                            : size === 'large'
+                            ? 'h-12 px-3'
+                            : 'h-10 px-3',
+                          column.align === 'center' && 'text-center',
+                          column.align === 'right' && 'text-right',
+                          headerProps.className
                         )}
-                        className="px-3 py-3"
+                        style={{ width: column.width, ...headerProps.style }}
                       >
-                        <Skeleton className="h-4 w-full max-w-40" />
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              : currentData.map((record, rowIndex) => {
-                  const key = resolveRowKey(record, rowIndex, rowKey);
-                  const rowProps = onRow?.(record, rowIndex) ?? {};
-                  const resolvedRowClassName =
-                    typeof rowClassName === 'function'
-                      ? rowClassName(record, rowIndex)
-                      : rowClassName;
-                  const rowSelected = selectedKeyStrings.includes(String(key));
-                  const selectionProps =
-                    rowSelection?.getCheckboxProps?.(record) ?? {};
-                  return (
-                    <TableRow
-                      key={String(key)}
-                      data-state={rowSelected ? 'selected' : undefined}
-                      {...rowProps}
-                      className={cn(resolvedRowClassName, rowProps.className)}
-                    >
+                        {typeof column.title === 'function'
+                          ? column.title()
+                          : column.title}
+                      </TableHead>
+                    );
+                  })}
+                </TableRow>
+              </TableHeader>
+            )}
+            <TableBody>
+              {isLoading && currentData.length === 0
+                ? Array.from({ length: 3 }).map((_, rowIndex) => (
+                    <TableRow key={`loading-${rowIndex}`}>
                       {rowSelection && (
                         <TableCell className="px-3">
-                          {rowSelection.type === 'radio' ? (
-                            <RadioGroupItem
-                              aria-label={`Select row ${rowIndex + 1}`}
-                              value={String(key)}
-                              disabled={selectionProps.disabled}
-                            />
-                          ) : (
-                            <Checkbox
-                              aria-label={`Select row ${rowIndex + 1}`}
-                              checked={rowSelected}
-                              disabled={selectionProps.disabled}
-                              onCheckedChange={(checked) => {
-                                const nextKeys = checked
-                                  ? Array.from(
-                                      new Set([...selectedKeys, key])
-                                    )
-                                  : selectedKeys.filter(
-                                      (candidate) =>
-                                        String(candidate) !== String(key)
-                                    );
-                                emitSelection(nextKeys, record);
-                              }}
-                            />
-                          )}
+                          <Skeleton className="size-4" />
                         </TableCell>
                       )}
-                      {resolvedColumns.map((column, columnIndex) => {
-                        const value = getRecordValue(record, column.dataIndex);
-                        const rendered =
-                          column.render?.(value, record, rowIndex) ??
-                          (value as React.ReactNode);
-                        const renderResult: {
-                          children?: React.ReactNode;
-                          props?: React.TdHTMLAttributes<HTMLTableCellElement>;
-                        } | null =
-                          rendered &&
-                          typeof rendered === 'object' &&
-                          !React.isValidElement(rendered) &&
-                          'props' in rendered
-                            ? (rendered as {
-                                children?: React.ReactNode;
-                                props?: React.TdHTMLAttributes<HTMLTableCellElement>;
-                              })
-                            : null;
-                        const cellProps = {
-                          ...(column.onCell?.(record, rowIndex) ?? {}),
-                          ...(renderResult?.props ?? {}),
-                        };
-                        const cellContent: React.ReactNode = renderResult
-                          ? renderResult.children
-                          : (rendered as React.ReactNode);
-                        return (
-                          <TableCell
-                            key={String(
-                              column.key ?? column.dataIndex ?? columnIndex
-                            )}
-                            {...cellProps}
-                            className={cn(
-                              size === 'small'
-                                ? 'px-2 py-1.5'
-                                : size === 'large'
-                                ? 'px-3 py-3'
-                                : 'px-3 py-2',
-                              bordered && 'border-r last:border-r-0',
-                              column.align === 'center' && 'text-center',
-                              column.align === 'right' && 'text-right',
-                              column.ellipsis && 'max-w-0 truncate',
-                              column.className,
-                              cellProps.className
-                            )}
-                            style={{ width: column.width, ...cellProps.style }}
-                          >
-                            {cellContent}
-                          </TableCell>
-                        );
-                      })}
+                      {resolvedColumns.map((column, columnIndex) => (
+                        <TableCell
+                          key={String(
+                            column.key ?? column.dataIndex ?? columnIndex
+                          )}
+                          className="px-3 py-3"
+                        >
+                          <Skeleton className="h-4 w-full max-w-40" />
+                        </TableCell>
+                      ))}
                     </TableRow>
-                  );
-                })}
-            {!isLoading && currentData.length === 0 && (
-              <TableRow>
-                <TableCell
-                  colSpan={resolvedColumns.length + (rowSelection ? 1 : 0)}
-                  className="h-28"
-                >
-                  <Empty className="min-h-24 border-0 p-3">
-                    <EmptyHeader>
-                      <EmptyDescription>
-                        {locale?.emptyText ?? 'No data'}
-                      </EmptyDescription>
-                    </EmptyHeader>
-                  </Empty>
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
+                  ))
+                : currentData.map((record, rowIndex) => {
+                    const key = resolveRowKey(record, rowIndex, rowKey);
+                    const rowProps = onRow?.(record, rowIndex) ?? {};
+                    const resolvedRowClassName =
+                      typeof rowClassName === 'function'
+                        ? rowClassName(record, rowIndex)
+                        : rowClassName;
+                    const rowSelected = selectedKeyStrings.includes(
+                      String(key)
+                    );
+                    const selectionProps =
+                      rowSelection?.getCheckboxProps?.(record) ?? {};
+                    return (
+                      <TableRow
+                        key={String(key)}
+                        data-state={rowSelected ? 'selected' : undefined}
+                        {...rowProps}
+                        className={cn(resolvedRowClassName, rowProps.className)}
+                      >
+                        {rowSelection && (
+                          <TableCell className="px-3">
+                            {rowSelection.type === 'radio' ? (
+                              <RadioGroupItem
+                                aria-label={`Select row ${rowIndex + 1}`}
+                                value={String(key)}
+                                disabled={selectionProps.disabled}
+                              />
+                            ) : (
+                              <Checkbox
+                                aria-label={`Select row ${rowIndex + 1}`}
+                                checked={rowSelected}
+                                disabled={selectionProps.disabled}
+                                onCheckedChange={(checked) => {
+                                  const nextKeys = checked
+                                    ? Array.from(
+                                        new Set([...selectedKeys, key])
+                                      )
+                                    : selectedKeys.filter(
+                                        (candidate) =>
+                                          String(candidate) !== String(key)
+                                      );
+                                  emitSelection(nextKeys, record);
+                                }}
+                              />
+                            )}
+                          </TableCell>
+                        )}
+                        {resolvedColumns.map((column, columnIndex) => {
+                          const value = getRecordValue(
+                            record,
+                            column.dataIndex
+                          );
+                          const rendered =
+                            column.render?.(value, record, rowIndex) ??
+                            (value as React.ReactNode);
+                          const renderResult: {
+                            children?: React.ReactNode;
+                            props?: React.TdHTMLAttributes<HTMLTableCellElement>;
+                          } | null =
+                            rendered &&
+                            typeof rendered === 'object' &&
+                            !React.isValidElement(rendered) &&
+                            'props' in rendered
+                              ? (rendered as {
+                                  children?: React.ReactNode;
+                                  props?: React.TdHTMLAttributes<HTMLTableCellElement>;
+                                })
+                              : null;
+                          const cellProps = {
+                            ...(column.onCell?.(record, rowIndex) ?? {}),
+                            ...(renderResult?.props ?? {}),
+                          };
+                          const cellContent: React.ReactNode = renderResult
+                            ? renderResult.children
+                            : (rendered as React.ReactNode);
+                          return (
+                            <TableCell
+                              key={String(
+                                column.key ?? column.dataIndex ?? columnIndex
+                              )}
+                              {...cellProps}
+                              className={cn(
+                                size === 'small'
+                                  ? 'px-2 py-1.5'
+                                  : size === 'large'
+                                  ? 'px-3 py-3'
+                                  : 'px-3 py-2',
+                                bordered && 'border-r last:border-r-0',
+                                column.align === 'center' && 'text-center',
+                                column.align === 'right' && 'text-right',
+                                column.ellipsis && 'max-w-0 truncate',
+                                column.className,
+                                cellProps.className
+                              )}
+                              style={{
+                                width: column.width,
+                                ...cellProps.style,
+                              }}
+                            >
+                              {cellContent}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    );
+                  })}
+              {!isLoading && currentData.length === 0 && (
+                <TableRow>
+                  <TableCell
+                    colSpan={resolvedColumns.length + (rowSelection ? 1 : 0)}
+                    className="h-28"
+                  >
+                    <Empty className="min-h-24 border-0 p-3">
+                      <EmptyHeader>
+                        <EmptyDescription>
+                          {locale?.emptyText ?? 'No data'}
+                        </EmptyDescription>
+                      </EmptyHeader>
+                    </Empty>
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
           </ShadcnTable>
         </TableSelectionWrapper>
       </div>
