@@ -1,5 +1,6 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { Skeleton } from './official/skeleton';
 
 export interface TcSkeletonProps {
   loading?: boolean;
@@ -10,9 +11,21 @@ export interface TcSkeletonProps {
   children?: React.ReactNode;
 }
 
-/** Small tokenized loading placeholder for repeated list and panel layouts. */
+/**
+ * 头像 + 标题 + 若干行的列表占位骨架, 每一块都是 shadcn Skeleton。
+ *
+ * 这里只负责排版; animate-pulse / rounded / bg-muted 全部来自 primitive,
+ * 所以不再有 bg-black/10 dark:bg-white/10 这种脱离 token 的写法。
+ */
 export const TcSkeleton: React.FC<TcSkeletonProps> = React.memo(
-  ({ loading = true, avatar = false, title = true, lines = 2, className, children }) => {
+  ({
+    loading = true,
+    avatar = false,
+    title = true,
+    lines = 2,
+    className,
+    children,
+  }) => {
     if (!loading) {
       return <>{children}</>;
     }
@@ -23,16 +36,13 @@ export const TcSkeleton: React.FC<TcSkeletonProps> = React.memo(
         role="status"
         aria-label="Loading"
       >
-        {avatar && <div className="h-10 w-10 shrink-0 animate-pulse rounded-full bg-black/10 dark:bg-white/10" />}
+        {avatar && <Skeleton className="h-10 w-10 shrink-0 rounded-full" />}
         <div className="min-w-0 flex-1 space-y-2">
-          {title && <div className="h-4 w-2/5 animate-pulse rounded bg-black/10 dark:bg-white/10" />}
+          {title && <Skeleton className="h-4 w-2/5" />}
           {Array.from({ length: lines }).map((_, index) => (
-            <div
+            <Skeleton
               key={index}
-              className={cn(
-                'h-3 animate-pulse rounded bg-black/10 dark:bg-white/10',
-                index === lines - 1 ? 'w-3/5' : 'w-full'
-              )}
+              className={cn('h-3', index === lines - 1 ? 'w-3/5' : 'w-full')}
             />
           ))}
         </div>
@@ -41,5 +51,3 @@ export const TcSkeleton: React.FC<TcSkeletonProps> = React.memo(
   }
 );
 TcSkeleton.displayName = 'TcSkeleton';
-
-export { TcSkeleton as Skeleton };

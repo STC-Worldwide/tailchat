@@ -114,3 +114,6 @@ dist
 
 # local env overlays (per-machine secrets)
 .env.local
+
+# UI-review scratch (screenshots from the impeccable skill) — never committed
+.impeccable/

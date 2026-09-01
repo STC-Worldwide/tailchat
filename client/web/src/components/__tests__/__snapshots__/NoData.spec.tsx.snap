@@ -3,10 +3,16 @@
 exports[`NoData render 1`] = `
 <div>
   <div
-    class="flex min-h-24 items-center justify-center p-6 text-center text-sm text-muted-foreground"
+    class="flex w-full min-w-0 flex-col items-center justify-center gap-4 rounded-xl border-dashed p-6 text-center text-balance min-h-24 flex-none"
+    data-slot="empty"
     role="status"
   >
-    没有数据
+    <div
+      class="text-sm/relaxed text-muted-foreground [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary"
+      data-slot="empty-description"
+    >
+      没有数据
+    </div>
   </div>
 </div>
 `;
@@ -14,10 +20,16 @@ exports[`NoData render 1`] = `
 exports[`NoData render with text 1`] = `
 <div>
   <div
-    class="flex min-h-24 items-center justify-center p-6 text-center text-sm text-muted-foreground"
+    class="flex w-full min-w-0 flex-col items-center justify-center gap-4 rounded-xl border-dashed p-6 text-center text-balance min-h-24 flex-none"
+    data-slot="empty"
     role="status"
   >
-    无数据
+    <div
+      class="text-sm/relaxed text-muted-foreground [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary"
+      data-slot="empty-description"
+    >
+      无数据
+    </div>
   </div>
 </div>
 `;

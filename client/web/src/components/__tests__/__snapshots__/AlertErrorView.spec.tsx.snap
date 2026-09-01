@@ -3,16 +3,19 @@
 exports[`AlertErrorView render 1`] = `
 <div>
   <div
-    class="rounded-lg border px-4 py-3 text-sm border-danger/30 bg-danger/10 text-danger w-full h-full select-text"
+    class="group/alert relative grid gap-0.5 rounded-lg border text-left text-sm has-data-[slot=alert-action]:relative has-data-[slot=alert-action]:pr-18 has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-2 *:[svg]:row-span-2 *:[svg]:translate-y-0.5 *:[svg]:text-current *:[svg:not([class*='size-'])]:size-4 text-card-foreground px-4 py-3 border-danger/30 bg-danger/10 w-full h-full select-text"
+    data-slot="alert"
     role="alert"
   >
     <div
-      class="font-semibold"
+      class="group-has-[>svg]/alert:col-start-2 [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground font-semibold text-danger"
+      data-slot="alert-title"
     >
       Error
     </div>
     <div
-      class="mt-1"
+      class="text-sm text-balance md:text-pretty [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4 mt-1 text-danger/90"
+      data-slot="alert-description"
     >
       <div>
         <span>

@@ -39,6 +39,8 @@
   --color-primary-hover: var(--tc-primary-hover-color);
   --color-danger: var(--tc-dangerous-color);
   --color-danger-hover: var(--tc-dangerous-hover-color);
+  --color-warning: var(--tc-warning-color);
+  --color-success: var(--tc-success-color);
 
   /* Shadcn semantic aliases. Keep the existing Tailchat tokens as the source
      of truth so the app's light/dark theme continues to switch at runtime. */
@@ -125,6 +127,11 @@
     --tc-primary-hover-color: #095aa6;
     --tc-dangerous-color: #d92d3a;
     --tc-dangerous-hover-color: #b4232f;
+    /* Advisory tones, same shape as dangerous: one token drives text,
+       border/30 and bg/10. Light values are the amber-700 / green-700 the
+       facelift used inline — 5.0:1 on raised, 4.6:1 on content (WCAG 1.4.3). */
+    --tc-warning-color: #b45309;
+    --tc-success-color: #15803d;
 
     /* 消息密度 (舒适模式默认值; .density-compact 收紧)
        舒适值对齐实测的 Discord cozy: 组间距 ~16px, 正文 15px/22px */
@@ -168,6 +175,9 @@
     /* 3.33:1 against slate-700 raised surfaces; higher on slate-800 content. */
     --tc-control-border: oklch(66% 0.02 257);
     --tc-control-track: var(--tc-control-border);
+    /* amber-400 / green-400 — 6.2:1 and 5.9:1 on slate-700 raised. */
+    --tc-warning-color: #fbbf24;
+    --tc-success-color: #4ade80;
   }
 
   body,
@@ -267,14 +277,8 @@
   }
 }
 
-/* Ant Design ships its heading color outside a cascade layer, which otherwise
-   wins over Tailwind's layered base and utility rules. Keep this compatibility
-   bridge unlayered until the public AntD plugin surface can be retired. */
-#tailchat-app h1,
-#tailchat-app h2,
-#tailchat-app h3,
-#tailchat-app h4,
-#tailchat-app h5,
-#tailchat-app h6 {
-  color: var(--tc-text-body);
-}
+/* The unlayered `#tailchat-app h1..h6 { color }` bridge that used to live here
+   existed only to outrank Ant Design's heading color, which shipped outside a
+   cascade layer. antd is gone from every package.json and every import, and no
+   remaining stylesheet (plugin .less included) sets a heading color — headings
+   now inherit --tc-text-body from #tailchat-app like everything else. */
