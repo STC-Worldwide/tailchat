@@ -55,7 +55,7 @@ even when local development uses a single process.
 - `server/models`: Typegoose persistence models.
 - `server/packages/sdk`: `TcService`, gateway, permission, runner, and SDK contracts.
 - `server/plugins`: backend or full-stack plugins, sometimes with embedded web UI.
-- `server/admin`: separate Vite/React frontend and Express admin service.
+- `server/admin-next`: Vite/React frontend and Express admin service; serves `/admin` in production as of v1.17.0 (the older `server/admin` was deleted).
 - `packages/types`: published structures shared across package boundaries.
 - `client/desktop`: current Electron shell; it loads a Tailchat web deployment.
   (The former `client/mobile` RN shell and `client/desktop-old` were removed

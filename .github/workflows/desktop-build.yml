@@ -19,17 +19,24 @@ jobs:
           - windows-latest
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v7
 
       - name: Install Node.js, NPM and Yarn
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v7
         with:
-          node-version: 16
+          # was 16, EOL since 2023-09. Matches the Dockerfile and the other
+          # workflows, which have been on 22 since the v1.13.0 unfreeze.
+          node-version: 22.x
+          # See ci.yaml: pnpm/action-setup runs after this step, so
+          # setup-node's >=v5 auto package-manager cache cannot find pnpm.
+          package-manager-cache: false
 
       - name: Install global dependencies
-        uses: pnpm/action-setup@v2.0.1
+        # pinned to the same major the other workflows use rather than
+        # `latest`, so a pnpm release cannot change this build under us
+        uses: pnpm/action-setup@v4
         with:
-          version: latest
+          version: 8.15.8
           run_install: true
 
       - name: Install npm dependencies
@@ -37,6 +44,12 @@ jobs:
         working-directory: ./client/desktop
 
       - name: Build/release Electron app
+        # NOTE: unmaintained third-party action (last release v1.8.1) and it
+        # still declares `runs: using: node16`, so the runner force-runs it on
+        # a newer Node. Left as-is here because replacing how desktop builds
+        # work is a bigger decision than this hygiene pass — but it is the
+        # most likely thing to break the first time this workflow actually
+        # fires, and it has never run on this fork.
         uses: paneron/action-electron-builder@v1.8.1
         with:
           package_root: ./client/desktop
@@ -51,7 +64,11 @@ jobs:
           # release: ${{ startsWith(github.ref, 'refs/tags/v') }}
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        # v2 is switched off by GitHub entirely (v3 followed in Jan 2025), so
+        # this step could not have succeeded as written. v4+ also requires
+        # artifact names to be UNIQUE — the old name was shared by both matrix
+        # legs, which would fail on the second uploader — hence the os suffix.
+        uses: actions/upload-artifact@v7
         with:
-          name: desktop-client-artifacts
+          name: desktop-client-artifacts-${{ matrix.os }}
           path: ./client/desktop/release/build/*

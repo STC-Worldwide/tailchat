@@ -23,7 +23,7 @@ jobs:
     runs-on: [self-hosted, stc-vps]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Docker meta
         # inline shell instead of docker/metadata-action: 2026-08-31 codeload
         # 400'd that action's archive for hours and blocked the release; this
@@ -41,7 +41,7 @@ jobs:
           fi
           echo "tags=$TAGS" >> "$GITHUB_OUTPUT"
       - name: Login to GHCR
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -49,7 +49,7 @@ jobs:
       - name: Build and push
         # docker driver (no buildx container builder): the daemon's local
         # layer cache persists between runs on this host.
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           push: true
@@ -62,20 +62,38 @@ jobs:
     runs-on: [self-hosted, stc-vps]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Login to GHCR
         # each job logs in itself: login-action logs out again in its
         # post-step, so nothing persists on the host between jobs
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Verify compose pin matches tag
+        # The pin is duplicated across four services and bumped by hand. A
+        # `grep -q` is satisfied by ONE matching line, so a partial bump (or a
+        # rebase that drops a hunk) used to pass this gate and deploy a
+        # mixed-version stack — e.g. a stale service-core serving the old web
+        # bundle against a new admin, which no later step would catch. Assert
+        # that EVERY pin matches and that there are exactly four of them.
         run: |
           TAG="${GITHUB_REF_NAME#v}"
-          grep -q "ghcr.io/stc-worldwide/tailchat:${TAG}" deploy/stc/docker-compose.yml \
-            || { echo "compose pin does not match tag ${TAG} — update deploy/stc/docker-compose.yml first"; exit 1; }
+          if stale=$(grep -n 'image: ghcr.io/stc-worldwide/tailchat:' deploy/stc/docker-compose.yml \
+                     | grep -v ":${TAG}\$"); then
+            echo "::error::compose pins do not all match tag ${TAG}:"
+            echo "$stale"
+            exit 1
+          fi
+          # `|| true`: the step runs under `bash -e`, and grep -c exits 1 on
+          # zero matches, which would abort before the message below prints.
+          n=$(grep -c "image: ghcr.io/stc-worldwide/tailchat:${TAG}\$" deploy/stc/docker-compose.yml || true)
+          if [ "$n" != 4 ]; then
+            echo "::error::expected 4 pinned services at ${TAG}, found ${n}"
+            exit 1
+          fi
+          echo "all 4 compose pins match ${TAG}"
       - name: Canary boot check
         # Boots the new image's gateway against the LIVE backends before any
         # traffic moves — catches runtime-only failures (the v1.13.0 moleculer
@@ -96,7 +114,7 @@ jobs:
             -e PORT=3000 \
             "$IMG"
           ok=0
-          for i in $(seq 1 12); do
+          for _ in $(seq 1 12); do
             if docker exec tailchat-canary wget -q -O /dev/null http://127.0.0.1:3000/health; then ok=1; break; fi
             sleep 10
           done
@@ -128,14 +146,14 @@ jobs:
           sleep 30
           docker compose -f /opt/tailchat/docker-compose.yml ps --format '{{.Name}} {{.Image}} {{.Status}}'
           ok=0
-          for i in $(seq 1 10); do
+          for _ in $(seq 1 10); do
             if wget -q -O /dev/null http://127.0.0.1:11000/health; then ok=1; break; fi
             sleep 10
           done
           if [ "$ok" != 1 ]; then echo "::error::health endpoint never came up"; exit 1; fi
           echo "health OK"
           admin_ok=0
-          for i in $(seq 1 10); do
+          for _ in $(seq 1 10); do
             if wget -q -O /dev/null http://127.0.0.1:11000/admin/; then admin_ok=1; break; fi
             sleep 10
           done
