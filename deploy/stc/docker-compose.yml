@@ -5,7 +5,8 @@
 #     on version tags; the GHCR package must be public or the VPS needs a pull token)
 #   - Caddy terminates public TLS (80/443); traefik stays internal (loopback debug bind only)
 #   - MinIO root credentials come from .env (symlink to docker-compose.env), not hard-coded
-#   - legacy admin only; admin-next postdates the 1.11.12 image and is not in it
+#   - /admin is served by server/admin-next as of v1.17.0 (the legacy react-admin app
+#     was deleted; `command: pnpm start:admin` below now resolves to admin-next)
 #
 # The ONLY publicly exposed ports are Caddy's 80/443. Docker published ports
 # bypass the host's default-deny nftables, so every other service must stay
@@ -13,7 +14,7 @@
 
 services:
   service-core:
-    image: ghcr.io/stc-worldwide/tailchat:1.16.0
+    image: ghcr.io/stc-worldwide/tailchat:1.17.0
     restart: unless-stopped
     env_file: docker-compose.env
     environment:
@@ -40,7 +41,7 @@ services:
       - internal
 
   service-openapi:
-    image: ghcr.io/stc-worldwide/tailchat:1.16.0
+    image: ghcr.io/stc-worldwide/tailchat:1.17.0
     restart: unless-stopped
     env_file: docker-compose.env
     environment:
@@ -59,7 +60,7 @@ services:
       - internal
 
   service-all-plugins:
-    image: ghcr.io/stc-worldwide/tailchat:1.16.0
+    image: ghcr.io/stc-worldwide/tailchat:1.17.0
     restart: unless-stopped
     env_file: docker-compose.env
     environment:
@@ -72,7 +73,7 @@ services:
       - internal
 
   tailchat-admin:
-    image: ghcr.io/stc-worldwide/tailchat:1.16.0
+    image: ghcr.io/stc-worldwide/tailchat:1.17.0
     restart: unless-stopped
     env_file: docker-compose.env
     depends_on:
