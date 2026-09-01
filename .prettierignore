@@ -1,1 +1,6 @@
 apps/cli/templates/
+
+# Vendored shadcn source of truth. Kept byte-identical to upstream
+# output so it can be diffed and re-vendored; the formatter must not
+# rewrite it (lint-staged would otherwise reformat any file touched here).
+client/web/src/components/ui/official/
