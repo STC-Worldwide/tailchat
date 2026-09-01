@@ -8,6 +8,9 @@ on:
       - "client/web/**"
       - "client/shared/**"
       - "client/packages/design/**"
+      # self: a change to this workflow must be exercised by this workflow,
+      # otherwise workflow edits merge with no validation at all
+      - ".github/workflows/ci.yaml"
   pull_request:
     branches:
       - master
@@ -15,6 +18,9 @@ on:
       - "client/web/**"
       - "client/shared/**"
       - "client/packages/design/**"
+      # self: a change to this workflow must be exercised by this workflow,
+      # otherwise workflow edits merge with no validation at all
+      - ".github/workflows/ci.yaml"
   workflow_dispatch:
 
 jobs:

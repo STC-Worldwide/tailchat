@@ -9,6 +9,8 @@ on:
       - "package.json"
       - "pnpm-lock.yaml"
       - "pnpm-workspace.yaml"
+      # self — see ci.yaml
+      - ".github/workflows/admin.yaml"
   pull_request:
     branches:
       - master
@@ -17,6 +19,8 @@ on:
       - "package.json"
       - "pnpm-lock.yaml"
       - "pnpm-workspace.yaml"
+      # self — see ci.yaml
+      - ".github/workflows/admin.yaml"
   workflow_dispatch:
 
 jobs:

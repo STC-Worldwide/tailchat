@@ -13,6 +13,8 @@ on:
       - "server/**"
       - "pnpm-lock.yaml"
       - "package.json"
+      # self — see ci.yaml
+      - ".github/workflows/server-ci.yaml"
   pull_request:
     branches:
       - master
@@ -20,6 +22,8 @@ on:
       - "server/**"
       - "pnpm-lock.yaml"
       - "package.json"
+      # self — see ci.yaml
+      - ".github/workflows/server-ci.yaml"
   workflow_dispatch:
 
 jobs:

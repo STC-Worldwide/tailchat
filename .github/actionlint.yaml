@@ -1,0 +1,6 @@
+# Declares the custom labels of our self-hosted runner so actionlint does not
+# report `label "stc-vps" is unknown`. netcup-vps-01 carries the labels
+# self-hosted / Linux / X64 / stc-vps; only the custom one needs listing here.
+self-hosted-runner:
+  labels:
+    - stc-vps

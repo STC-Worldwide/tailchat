@@ -114,7 +114,7 @@ jobs:
             -e PORT=3000 \
             "$IMG"
           ok=0
-          for i in $(seq 1 12); do
+          for _ in $(seq 1 12); do
             if docker exec tailchat-canary wget -q -O /dev/null http://127.0.0.1:3000/health; then ok=1; break; fi
             sleep 10
           done
@@ -146,14 +146,14 @@ jobs:
           sleep 30
           docker compose -f /opt/tailchat/docker-compose.yml ps --format '{{.Name}} {{.Image}} {{.Status}}'
           ok=0
-          for i in $(seq 1 10); do
+          for _ in $(seq 1 10); do
             if wget -q -O /dev/null http://127.0.0.1:11000/health; then ok=1; break; fi
             sleep 10
           done
           if [ "$ok" != 1 ]; then echo "::error::health endpoint never came up"; exit 1; fi
           echo "health OK"
           admin_ok=0
-          for i in $(seq 1 10); do
+          for _ in $(seq 1 10); do
             if wget -q -O /dev/null http://127.0.0.1:11000/admin/; then admin_ok=1; break; fi
             sleep 10
           done

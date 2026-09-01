@@ -1,0 +1,45 @@
+name: "Workflows Lint"
+
+# Self-triggering paths get each of ci/admin/server-ci re-run when its OWN file
+# changes, but three workflows can never validate themselves that way:
+# docker-publish.yml and deploy.yml only run on master pushes and v*.*.* tags,
+# and desktop-build.yml only fires on a desktop version bump. docker-publish.yml
+# is the one that rolls production, so "no validation until it deploys" is the
+# worst place to have this gap. actionlint covers all of them statically: YAML
+# and expression syntax, `uses:` shapes, action input names against its own
+# database (it would have caught a misspelled package-manager-cache), and
+# shellcheck over every `run:` block.
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - ".github/workflows/**"
+      - ".github/actionlint.yaml"
+  pull_request:
+    branches:
+      - master
+    paths:
+      - ".github/workflows/**"
+      - ".github/actionlint.yaml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  actionlint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: actionlint
+        # Pinned image rather than a marketplace action: one less third-party
+        # action in the supply chain, and the image bundles shellcheck so the
+        # `run:` blocks are linted too. Custom runner labels (stc-vps) are
+        # declared in .github/actionlint.yaml.
+        run: |
+          docker run --rm \
+            -v "$PWD:/repo" --workdir /repo \
+            rhysd/actionlint:1.7.12 -color
