@@ -29,11 +29,14 @@ jobs:
     runs-on: [self-hosted, stc-vps]
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Use Node.js 22.x
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22.x
+          # See ci.yaml: pnpm/action-setup runs after this step, so
+          # setup-node's >=v5 auto package-manager cache cannot find pnpm.
+          package-manager-cache: false
       - uses: pnpm/action-setup@v4
       - name: install
         run: pnpm install --frozen-lockfile

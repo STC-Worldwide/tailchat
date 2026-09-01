@@ -1,2 +1,6 @@
-# Deploy files run on Linux; a stray CR breaks env parsing and Caddyfile directives
-deploy/stc/** text eol=lf
+# Deploy files run on Linux; a stray CR breaks env parsing and Caddyfile directives.
+# Patterns in a .gitattributes are relative to ITS OWN directory, so the previous
+# `deploy/stc/**` resolved to deploy/stc/deploy/stc/** and matched nothing —
+# `git check-attr eol -- deploy/stc/Caddyfile` reported "unspecified". LF was
+# holding only because this workstation happens to set core.autocrlf=true.
+* text eol=lf

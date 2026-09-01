@@ -25,13 +25,20 @@ jobs:
         node-version: [22.x]
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node-version }}
+          # setup-node >=v5 auto-enables package-manager caching when
+          # package.json has a "packageManager" field (ours is pnpm@8.15.8).
+          # It runs pnpm to locate the store — but pnpm/action-setup comes
+          # AFTER this step, so the auto-cache would fail with "Unable to
+          # locate executable file: pnpm". The explicit actions/cache step
+          # below already caches ~/.pnpm-store.
+          package-manager-cache: false
       - name: Cache pnpm modules
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.pnpm-store
           key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
