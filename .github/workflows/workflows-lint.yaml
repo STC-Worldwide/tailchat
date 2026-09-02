@@ -10,19 +10,27 @@ name: "Workflows Lint"
 # database (it would have caught a misspelled package-manager-cache), and
 # shellcheck over every `run:` block.
 
+# ── WHY THIS RUNS ON EVERY PR (do not add a `paths:` filter) ────────────────
+# A `paths:` filter makes this workflow UNREQUIRABLE. GitHub only creates a
+# check run for a workflow that actually triggers; when a path filter skips it,
+# the required check is never reported and the PR sits "Expected — Waiting for
+# status to be reported" forever. Adding a companion workflow with the inverse
+# `paths-ignore:` does not fix it either -- a PR touching both sides fires BOTH,
+# producing two check runs with the same name.
+#
+# actionlint is ~11 s on a hosted runner over the whole .github/workflows tree,
+# so filtering it was never worth anything. Running unconditionally means the
+# check is always present and always reports, which is what branch protection
+# needs. It also means this file and .github/actionlint.yaml are linted by the
+# thing they configure, without needing to be listed anywhere.
+
 on:
   push:
     branches:
       - master
-    paths:
-      - ".github/workflows/**"
-      - ".github/actionlint.yaml"
   pull_request:
     branches:
       - master
-    paths:
-      - ".github/workflows/**"
-      - ".github/actionlint.yaml"
   workflow_dispatch:
 
 permissions:
