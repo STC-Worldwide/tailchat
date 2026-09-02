@@ -1,30 +1,82 @@
 name: "Server Admin CI"
 
+# -- WHY THE FILTER IS A JOB CONDITION, NOT `paths:` (2026-09-02) ------------
+# A `paths:` filter makes a workflow impossible to require: GitHub only creates a
+# check run for a workflow that actually triggers, so on a PR the filter excludes,
+# the required context is never reported and the PR waits forever. A companion
+# workflow with the inverse `paths-ignore:` does not fix it -- a PR touching both
+# sides fires BOTH and emits two check runs with the same name.
+#
+# So this always triggers and the decision moved inside:
+#
+#   admin-changes   hosted, always runs, decides whether anything relevant changed
+#   ci   the real job -- skipped when nothing did
+#   admin-ci   hosted, `if: always()` -- THE JOB TO MAKE REQUIRED
+#
+# The expensive job is still skipped when nothing relevant changed. If the base
+# cannot be resolved, the changes job FAILS SAFE and runs it.
+
 on:
   push:
     branches:
       - master
-    paths:
-      - "server/admin-next/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
-      - "pnpm-workspace.yaml"
-      # self — see ci.yaml
-      - ".github/workflows/admin.yaml"
   pull_request:
     branches:
       - master
-    paths:
-      - "server/admin-next/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
-      - "pnpm-workspace.yaml"
-      # self — see ci.yaml
-      - ".github/workflows/admin.yaml"
   workflow_dispatch:
 
 jobs:
+  admin-changes:
+    name: admin-changes
+    runs-on: ubuntu-latest
+    outputs:
+      relevant: ${{ steps.f.outputs.relevant }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0   # need the merge base to diff against
+      - name: Did anything this gate covers change?
+        id: f
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "${{ github.event_name }}" in
+            pull_request) base='${{ github.event.pull_request.base.sha }}' ;;
+            push)         base='${{ github.event.before }}' ;;
+            *)            base='' ;;
+          esac
+
+          # FAIL SAFE: an unresolvable base means we cannot tell what changed,
+          # so run the job. Never skip on uncertainty.
+          if [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "${base}^{commit}" 2>/dev/null; then
+            echo "base unresolvable ('${base}') -- running"
+            echo "relevant=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          files=$(git diff --name-only "$base" HEAD)
+          echo "changed files:"; echo "$files"
+
+          relevant=false
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            case "$f" in
+              server/admin-next/*) relevant=true; break ;;
+              package.json) relevant=true; break ;;
+              pnpm-lock.yaml) relevant=true; break ;;
+              pnpm-workspace.yaml) relevant=true; break ;;
+              .github/workflows/admin.yaml) relevant=true; break ;;
+            esac
+          done <<< "$files"
+
+          echo "relevant=$relevant" >> "$GITHUB_OUTPUT"
+          echo "==> admin job needed: $relevant"
+
   ci:
+    name: admin
+    needs: admin-changes
+    if: needs.admin-changes.outputs.relevant == 'true'
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -61,3 +113,29 @@ jobs:
         run: cd server/admin-next && pnpm test
       - name: Check Build
         run: pnpm build:admin
+
+  # THE REQUIRED CHECK. Always reports, so it can never leave a required context
+  # unreported. `if: always()` is what makes that true -- without it this job
+  # would itself be skipped whenever ci was.
+  admin-ci:
+    name: admin-ci
+    if: always()
+    needs: [ admin-changes, ci ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report
+        shell: bash
+        run: |
+          echo "admin-changes = ${{ needs.admin-changes.result }} (relevant=${{ needs.admin-changes.outputs.relevant }})"
+          echo "ci = ${{ needs.ci.result }}"
+
+          if [ "${{ needs.admin-changes.result }}" != "success" ]; then
+            echo "::error::the changes job did not succeed, so nothing was decided"
+            exit 1
+          fi
+
+          case "${{ needs.ci.result }}" in
+            success) echo "ci passed." ;;
+            skipped) echo "Nothing relevant changed (or a fork PR); ci correctly skipped." ;;
+            *)       echo "::error::ci = ${{ needs.ci.result }}"; exit 1 ;;
+          esac

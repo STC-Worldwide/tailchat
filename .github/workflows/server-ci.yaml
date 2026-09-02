@@ -5,31 +5,85 @@ name: "Server CI"
 # the SDK + server workspaces on the VPS runner (fast persistent store)
 # before a server change can land.
 
+# -- WHY THE FILTER IS A JOB CONDITION, NOT `paths:` (2026-09-02) ------------
+# A `paths:` filter makes a workflow impossible to require: GitHub only creates a
+# check run for a workflow that actually triggers, so on a PR the filter excludes,
+# the required context is never reported and the PR waits forever. A companion
+# workflow with the inverse `paths-ignore:` does not fix it -- a PR touching both
+# sides fires BOTH and emits two check runs with the same name.
+#
+# So this always triggers and the decision moved inside:
+#
+#   server-changes   hosted, always runs, decides whether anything relevant changed
+#   typecheck   the real job -- skipped when nothing did
+#   server-ci   hosted, `if: always()` -- THE JOB TO MAKE REQUIRED
+#
+# The expensive job is still skipped when nothing relevant changed. If the base
+# cannot be resolved, the changes job FAILS SAFE and runs it.
+
 on:
   push:
     branches:
       - master
-    paths:
-      - "server/**"
-      - "pnpm-lock.yaml"
-      - "package.json"
-      # self — see ci.yaml
-      - ".github/workflows/server-ci.yaml"
   pull_request:
     branches:
       - master
-    paths:
-      - "server/**"
-      - "pnpm-lock.yaml"
-      - "package.json"
-      # self — see ci.yaml
-      - ".github/workflows/server-ci.yaml"
   workflow_dispatch:
 
 jobs:
+  server-changes:
+    name: server-changes
+    runs-on: ubuntu-latest
+    outputs:
+      relevant: ${{ steps.f.outputs.relevant }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0   # need the merge base to diff against
+      - name: Did anything this gate covers change?
+        id: f
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "${{ github.event_name }}" in
+            pull_request) base='${{ github.event.pull_request.base.sha }}' ;;
+            push)         base='${{ github.event.before }}' ;;
+            *)            base='' ;;
+          esac
+
+          # FAIL SAFE: an unresolvable base means we cannot tell what changed,
+          # so run the job. Never skip on uncertainty.
+          if [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "${base}^{commit}" 2>/dev/null; then
+            echo "base unresolvable ('${base}') -- running"
+            echo "relevant=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          files=$(git diff --name-only "$base" HEAD)
+          echo "changed files:"; echo "$files"
+
+          relevant=false
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            case "$f" in
+              server/*) relevant=true; break ;;
+              pnpm-lock.yaml) relevant=true; break ;;
+              package.json) relevant=true; break ;;
+              .github/workflows/server-ci.yaml) relevant=true; break ;;
+            esac
+          done <<< "$files"
+
+          echo "relevant=$relevant" >> "$GITHUB_OUTPUT"
+          echo "==> server job needed: $relevant"
+
   typecheck:
+    name: typecheck
+    needs: server-changes
     # never run fork PRs on the self-hosted runner
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    if: >-
+      needs.server-changes.outputs.relevant == 'true'
+      && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: [self-hosted, stc-vps]
     steps:
       - name: checkout
@@ -52,3 +106,29 @@ jobs:
         # The admin console has its own tsconfig and is not covered by the
         # server workspace typecheck.
         run: cd server/admin-next && pnpm check:type
+
+  # THE REQUIRED CHECK. Always reports, so it can never leave a required context
+  # unreported. `if: always()` is what makes that true -- without it this job
+  # would itself be skipped whenever typecheck was.
+  server-ci:
+    name: server-ci
+    if: always()
+    needs: [ server-changes, typecheck ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report
+        shell: bash
+        run: |
+          echo "server-changes = ${{ needs.server-changes.result }} (relevant=${{ needs.server-changes.outputs.relevant }})"
+          echo "typecheck = ${{ needs.typecheck.result }}"
+
+          if [ "${{ needs.server-changes.result }}" != "success" ]; then
+            echo "::error::the changes job did not succeed, so nothing was decided"
+            exit 1
+          fi
+
+          case "${{ needs.typecheck.result }}" in
+            success) echo "typecheck passed." ;;
+            skipped) echo "Nothing relevant changed (or a fork PR); typecheck correctly skipped." ;;
+            *)       echo "::error::typecheck = ${{ needs.typecheck.result }}"; exit 1 ;;
+          esac
