@@ -1,5 +1,8 @@
 productName: Tailchat
-appId: com.msgbyte.tailchat
+# appId keys code-signing identity and auto-update channels, so it is far
+# cheaper to correct now than after a signed artifact ships. This fork has
+# never produced one -- desktop-build.yml has not successfully run here.
+appId: com.stcworldwide.tailchat
 asar: true
 asarUnpack: '**\*.{node,dll}'
 files:

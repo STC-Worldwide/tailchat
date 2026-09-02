@@ -20,7 +20,6 @@
     "check:type": "tsc --noEmit --skipLibCheck",
     "test": "jest",
     "migrate:up": "migrate-mongo up -f ./scripts/migrate-mongo-config.js",
-    "docker:build": "node ./scripts/buildDocker.js",
     "dashboard": "ts-node ./scripts/dashboard.ts",
     "admin": "cd admin-next && pnpm run build && pnpm run start",
     "plugin:install": "node ./scripts/installPlugin.js",

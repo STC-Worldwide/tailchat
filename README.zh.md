@@ -1,14 +1,14 @@
 # Tailchat
 
-[![Docker Publish](https://github.com/msgbyte/tailchat/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/msgbyte/tailchat/actions/workflows/docker-publish.yml)
-![Docker Image Version (tag latest semver)](https://img.shields.io/docker/v/moonrailgun/tailchat/latest)
-![Docker Pulls](https://img.shields.io/docker/pulls/moonrailgun/tailchat)
-[![CI](https://github.com/msgbyte/tailchat/actions/workflows/ci.yaml/badge.svg)](https://github.com/msgbyte/tailchat/actions/workflows/ci.yaml)
-[![Codemagic build status](https://api.codemagic.io/apps/63e27be62b9d4ca848b5491d/android/status_badge.svg)](https://codemagic.io/apps/63e27be62b9d4ca848b5491d/android/latest_build)
-[![Desktop Build](https://github.com/msgbyte/tailchat/actions/workflows/desktop-build.yml/badge.svg)](https://github.com/msgbyte/tailchat/actions/workflows/desktop-build.yml)
-[![deploy nightly](https://github.com/msgbyte/tailchat/actions/workflows/vercel-nightly.yml/badge.svg)](https://github.com/msgbyte/tailchat/actions/workflows/vercel-nightly.yml)
+> STC Worldwide 对 [msgbyte/tailchat](https://github.com/msgbyte/tailchat) 的硬分叉，Apache-2.0。
+> 镜像发布到 `ghcr.io/stc-worldwide/tailchat`；本分叉的部署配置见
+> [`deploy/stc/`](./deploy/stc/README-STC.md)。下文指向 `tailchat.msgbyte.com`
+> 的链接属于上游文档，描述的是上游的构建。
 
-![tailchat](https://socialify.git.ci/msgbyte/tailchat/image?description=1&font=Inter&forks=1&issues=1&language=1&logo=https%3A%2F%2Favatars.githubusercontent.com%2Fu%2F86033898%3Fs%3D200%26v%3D4&name=1&owner=1&pattern=Circuit%20Board&stargazers=1&theme=Light)
+[![CI](https://github.com/STC-Worldwide/tailchat/actions/workflows/ci.yaml/badge.svg)](https://github.com/STC-Worldwide/tailchat/actions/workflows/ci.yaml)
+[![Server CI](https://github.com/STC-Worldwide/tailchat/actions/workflows/server-ci.yaml/badge.svg)](https://github.com/STC-Worldwide/tailchat/actions/workflows/server-ci.yaml)
+[![Server Admin CI](https://github.com/STC-Worldwide/tailchat/actions/workflows/admin.yaml/badge.svg)](https://github.com/STC-Worldwide/tailchat/actions/workflows/admin.yaml)
+[![Docker Publish](https://github.com/STC-Worldwide/tailchat/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/STC-Worldwide/tailchat/actions/workflows/docker-publish.yml)
 
 
 ## 在您自己工作区中的下一代 noIM 应用程序

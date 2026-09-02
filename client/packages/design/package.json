@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/msgbyte/tailchat.git"
+    "url": "git+https://github.com/STC-Worldwide/tailchat.git"
   },
   "keywords": [
     "design",
@@ -20,9 +20,9 @@
   "author": "moonrailgun <moonrailgun@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/msgbyte/tailchat/issues"
+    "url": "https://github.com/STC-Worldwide/tailchat/issues"
   },
-  "homepage": "https://github.com/msgbyte/tailchat#readme",
+  "homepage": "https://github.com/STC-Worldwide/tailchat#readme",
   "dependencies": {
     "@iconify/react": "^3.2.1",
     "@remirror/pm": "^2.0.0",

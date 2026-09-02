@@ -2,7 +2,10 @@
 
 ## Build development environment
 
-Checkout more detail in [https://tailchat.msgbyte.com/docs/deployment/dev](https://tailchat.msgbyte.com/docs/deployment/dev)
+For THIS fork, deployment lives in [`deploy/stc/README-STC.md`](../deploy/stc/README-STC.md).
+
+Upstream's dev-environment docs (they describe upstream's images and compose
+file, not this fork's): [https://tailchat.msgbyte.com/docs/deployment/dev](https://tailchat.msgbyte.com/docs/deployment/dev)
 
 #### 服务端插件安装方式
 
