@@ -2,6 +2,5 @@
 node_modules
 logs
 dist
-website
 client/desktop
 apps

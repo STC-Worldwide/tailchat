@@ -181,10 +181,12 @@ Generated artifacts must follow their source and owning command:
 Review generated diffs and commit them only when their source contract changed.
 Do not hand-edit generated output into disagreement with its generator.
 
-Update `website/docs` when changing public commands, environment behavior,
-deployment, plugin APIs, OpenAPI behavior, or other user-facing contracts.
-Keep English source docs and existing Chinese translations consistent when both
-versions cover the changed material.
+Document user-facing contract changes -- public commands, environment behavior,
+deployment, plugin APIs, OpenAPI behavior -- in the doc that owns them:
+`deploy/stc/README-STC.md` for deployment and release, `docs/` for design notes,
+the relevant package README otherwise. The upstream Docusaurus site under
+`website/` was removed -- it was never built or published by this fork, and its
+deployment pages described upstream's images rather than ours.
 
 ## Verification by scope
 

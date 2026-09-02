@@ -57,11 +57,11 @@ The front end empowers the application through the plugin system, which is very 
 
 ## Preview
 
-![](./website/static/img/intro/hello.png)
+![](./docs/img/hello.png)
 
-![](./website/static/img/intro/plugins.png)
+![](./docs/img/plugins.png)
 
-![](./website/static/img/intro/roles.png)
+![](./docs/img/roles.png)
 
 Visit the official website to learn more: [https://tailchat.msgbyte.com/](https://tailchat.msgbyte.com/)
 
