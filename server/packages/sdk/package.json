@@ -1,6 +1,7 @@
 {
   "name": "tailchat-server-sdk",
   "version": "0.0.18",
+  "private": true,
   "description": "",
   "main": "dist/index.js",
   "bin": {
