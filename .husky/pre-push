@@ -1,0 +1,26 @@
+#!/bin/sh
+# Hand this push back to the workstation org-boundary gate.
+#
+# WHY THIS FILE EXISTS
+# `husky install` (root package.json "prepare") sets a repo-local
+# core.hooksPath=.husky, and git honours exactly ONE hooksPath. That silently
+# overrides the global core.hooksPath=~/.githooks, so the workstation gate at
+# ~/.githooks/pre-push (PUSH-BLOCKED-ORG v6 -- org-folder/remote match, plus
+# force-push and delete protection on main/master) stops running in this repo.
+# Nothing announces it; the setup looks identical to a working one. The tell is
+# silence in ~/.githooks/push.log, which logs every attempt.
+#
+# Deleting the git config does not stick -- "prepare" re-applies it on every
+# `pnpm install`. Delegating from inside .husky/ is what survives.
+#
+# NOTE: deliberately does NOT source _/husky.sh, unlike the sibling hooks.
+# That wrapper exits 0 when HUSKY=0 is set, which would make this gate
+# bypassable by an env var. A plain sh script is a valid git hook.
+#
+# The gate reads the remote name and URL from argv and the refspec list from
+# stdin; exec preserves both. On a clone without the gate installed -- anyone
+# else working on this fork -- there is nothing to enforce, so the push runs.
+
+gate="$HOME/.githooks/pre-push"
+[ -f "$gate" ] || exit 0
+exec sh "$gate" "$@"
