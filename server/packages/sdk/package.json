@@ -10,8 +10,7 @@
     "build": "tsc",
     "watch": "tsc --watch",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare": "tsc",
-    "release": "npm version patch && npm publish --registry https://registry.npmjs.com/"
+    "prepare": "tsc"
   },
   "repository": {
     "type": "git",

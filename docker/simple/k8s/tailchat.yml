@@ -16,7 +16,9 @@ spec:
     spec:
       containers:
         - name: tailchat
-          image: moonrailgun/tailchat
+          # docker-publish.yml publishes <version>, <major.minor> and
+          # sha-<sha>; there is no `latest`. major.minor tracks patches.
+          image: ghcr.io/stc-worldwide/tailchat:1.17
           # imagePullPolicy: Always
           env:
             - name: SERVICEDIR

@@ -5,7 +5,6 @@
   "main": "lib/index.js",
   "scripts": {
     "prepare": "tsc",
-    "release": "npm publish --registry https://registry.npmjs.com/",
     "test": "jest"
   },
   "keywords": [],

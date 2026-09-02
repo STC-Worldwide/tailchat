@@ -6,7 +6,7 @@ import ora from 'ora';
 import got from 'got';
 
 const onlineDeclarationUrl =
-  'https://raw.githubusercontent.com/msgbyte/tailchat/master/client/web/tailchat.d.ts';
+  'https://raw.githubusercontent.com/STC-Worldwide/tailchat/master/client/web/tailchat.d.ts';
 export const declarationCommand: CommandModule = {
   command: 'declaration <source>',
   describe: 'Tailchat plugin type declaration',
