@@ -1,15 +1,14 @@
 # Tailchat
 
-[![Docker Publish](https://github.com/msgbyte/tailchat/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/msgbyte/tailchat/actions/workflows/docker-publish.yml)
-![Docker Image Version (tag latest semver)](https://img.shields.io/docker/v/moonrailgun/tailchat/latest)
-![Docker Pulls](https://img.shields.io/docker/pulls/moonrailgun/tailchat)
-[![CI](https://github.com/msgbyte/tailchat/actions/workflows/ci.yaml/badge.svg)](https://github.com/msgbyte/tailchat/actions/workflows/ci.yaml)
-[![Codemagic build status](https://api.codemagic.io/apps/63e27be62b9d4ca848b5491d/android/status_badge.svg)](https://codemagic.io/apps/63e27be62b9d4ca848b5491d/android/latest_build)
-[![Desktop Build](https://github.com/msgbyte/tailchat/actions/workflows/desktop-build.yml/badge.svg)](https://github.com/msgbyte/tailchat/actions/workflows/desktop-build.yml)
-[![deploy nightly](https://github.com/msgbyte/tailchat/actions/workflows/vercel-nightly.yml/badge.svg)](https://github.com/msgbyte/tailchat/actions/workflows/vercel-nightly.yml)
-![Tailchat Nightly](https://tianji.moonrailgun.com/monitor/clnzoxcy10001vy2ohi4obbi0/clo1oiwbp001dof5e76cmkzj9/badge.svg)
+> STC Worldwide's hard fork of [msgbyte/tailchat](https://github.com/msgbyte/tailchat),
+> Apache-2.0. Images publish to `ghcr.io/stc-worldwide/tailchat`; deployment for
+> this fork lives in [`deploy/stc/`](./deploy/stc/README-STC.md). Links below to
+> `tailchat.msgbyte.com` are upstream's docs and describe upstream's builds.
 
-![tailchat](https://socialify.git.ci/msgbyte/tailchat/image?description=1&font=Inter&forks=1&issues=1&language=1&logo=https%3A%2F%2Favatars.githubusercontent.com%2Fu%2F86033898%3Fs%3D200%26v%3D4&name=1&owner=1&pattern=Circuit%20Board&stargazers=1&theme=Light)
+[![CI](https://github.com/STC-Worldwide/tailchat/actions/workflows/ci.yaml/badge.svg)](https://github.com/STC-Worldwide/tailchat/actions/workflows/ci.yaml)
+[![Server CI](https://github.com/STC-Worldwide/tailchat/actions/workflows/server-ci.yaml/badge.svg)](https://github.com/STC-Worldwide/tailchat/actions/workflows/server-ci.yaml)
+[![Server Admin CI](https://github.com/STC-Worldwide/tailchat/actions/workflows/admin.yaml/badge.svg)](https://github.com/STC-Worldwide/tailchat/actions/workflows/admin.yaml)
+[![Docker Publish](https://github.com/STC-Worldwide/tailchat/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/STC-Worldwide/tailchat/actions/workflows/docker-publish.yml)
 
 [简体中文](./README.zh.md)
 

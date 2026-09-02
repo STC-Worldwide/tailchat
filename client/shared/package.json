@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "main": "index.tsx",
-  "repository": "https://github.com/msgbyte/tailchat.git",
+  "repository": "https://github.com/STC-Worldwide/tailchat.git",
   "author": "moonrailgun <moonrailgun@gmail.com>",
   "license": "GPLv3",
   "dependencies": {
