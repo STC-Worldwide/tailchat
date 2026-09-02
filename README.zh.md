@@ -54,11 +54,11 @@
 
 ## 预览
 
-![](./website/static/img/intro/hello.png)
+![](./docs/img/hello.png)
 
-![](./website/static/img/intro/plugins.png)
+![](./docs/img/plugins.png)
 
-![](./website/static/img/intro/roles.png)
+![](./docs/img/roles.png)
 
 访问官方网站了解更多: [https://tailchat.msgbyte.com/](https://tailchat.msgbyte.com/)
 
@@ -85,7 +85,7 @@
 
 ### 微信
 
-<img width="360" src="./website/static/img/wechat.jpg" />
+<img width="360" src="./docs/img/wechat.jpg" />
 
 ## 项目活动
 
