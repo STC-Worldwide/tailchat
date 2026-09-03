@@ -11,7 +11,7 @@ export interface ActionInfo {
   required: string[];
 }
 
-export const SPEC_VERSION = '1.19.0';
+export const SPEC_VERSION = '1.19.1';
 
 export const ACTIONS: ActionInfo[] = [
   {
