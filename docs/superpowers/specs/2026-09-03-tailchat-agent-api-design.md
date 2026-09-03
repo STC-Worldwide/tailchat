@@ -15,7 +15,8 @@ This is the "server PR" of the three-step plan agreed on 2026-09-03:
 1. use the existing OpenApp bot login as-is;
 2. **this document** -- API keys, a gateway-reachable add-member action, a small
    admin surface, rate limiting, a regenerated OpenAPI spec;
-3. an MCP server wrapping the resulting surface (separate work).
+3. an MCP server wrapping the resulting surface -- `apps/tailchat-mcp`, see
+   "Step 3" below.
 
 ## What already existed
 
@@ -138,7 +139,27 @@ second, stale contract.
   email).
 - A Redis-backed rate-limit store.
 - Banning a bot user directly (revoke its keys or remove the capability).
-- The MCP server (step 3).
+
+## Step 3: the MCP server (`apps/tailchat-mcp`)
+
+A stdio MCP server, TypeScript on `@modelcontextprotocol/sdk`, configured by
+`TAILCHAT_URL` and `TAILCHAT_API_KEY`. It acts as the app's bot user and is
+bounded by the key's scopes and the bot's group permissions; nothing is
+filtered client-side and a 403 is relayed as-is.
+
+Twenty-two tools: dedicated ones for groups, channels, members, roles,
+invites, messages, DMs and the inbox (each carrying the domain facts a model
+gets wrong -- a text channel's id is its converseId, mentions are `[at=id][/at]`
+plus `meta.mentions`, replies are `meta.reply` plus an @-tag, a group is only
+visible once the bot is a member); `tailchat_admin_*` for the admin scope;
+and `tailchat_call` over a catalog (`tailchat_actions`) generated from
+`server/openapi.json` by `pnpm --dir apps/tailchat-mcp sync:actions`.
+
+Results are capped at 24 KB with an explicit `_truncated` note rather than a
+silent cut. Tests drive the real tool surface through an in-memory MCP client
+against a fake gateway and run in the server CI gate. The trust boundary is
+the process spawner: there is no inbound authentication, so each agent gets
+its own narrowly scoped, revocable key.
 
 ## Verification
 

@@ -1,0 +1,34 @@
+{
+  "name": "tailchat-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MCP server that lets an AI agent act inside Tailchat through a scoped OpenApp API key",
+  "type": "module",
+  "bin": {
+    "tailchat-mcp": "dist/src/index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check:type": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run build && node --test dist/test/client.test.js dist/test/render.test.js dist/test/tools.test.js",
+    "start": "node dist/src/index.js",
+    "sync:actions": "node scripts/sync-actions.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/STC-Worldwide/tailchat.git",
+    "directory": "apps/tailchat-mcp"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.0",
+    "typescript": "^5.4.5"
+  }
+}
