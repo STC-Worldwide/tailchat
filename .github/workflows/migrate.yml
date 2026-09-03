@@ -1,0 +1,56 @@
+name: "DB Migrate"
+
+# Migrations have no automatic channel: the deploy job in docker-publish.yml
+# rolls the stack but never runs migrate-mongo, so a migration that ships with
+# a release sits unapplied until someone runs it by hand. Doing that by hand
+# means an interactive shell on the production VPS, which is exactly what we do
+# not want to normalise. This gives it an audited, repeatable channel on the
+# same self-hosted runner the deploy already uses.
+#
+# Defaults to `status`, which only reads the changelog, so the safe thing is
+# also the default thing. `up` has to be asked for explicitly.
+
+on:
+  workflow_dispatch:
+    inputs:
+      direction:
+        description: "status (read-only, default) or up (apply pending migrations)"
+        required: true
+        default: "status"
+        type: choice
+        options:
+          - status
+          - up
+
+permissions:
+  contents: read
+
+jobs:
+  migrate:
+    runs-on: [self-hosted, stc-vps]
+    steps:
+      - name: Run migrate-mongo
+        env:
+          DIRECTION: ${{ inputs.direction }}
+        run: |
+          set -euo pipefail
+
+          # Resolve the running core container from its compose labels rather
+          # than by name, so a project rename fails loudly instead of silently
+          # targeting nothing.
+          CID=$(docker ps -q \
+            --filter 'label=com.docker.compose.project=tailchat' \
+            --filter 'label=com.docker.compose.service=service-core')
+
+          if [ -z "$CID" ]; then
+            echo "::error::no running tailchat service-core container found"
+            docker ps --format '{{.Names}}\t{{.Image}}'
+            exit 1
+          fi
+
+          echo "==> service-core container:"
+          docker inspect --format '{{.Name}} {{.Config.Image}}' "$CID"
+
+          echo "==> migrate-mongo $DIRECTION"
+          docker exec -w /app/tailchat/server "$CID" \
+            npx migrate-mongo "$DIRECTION" -f ./scripts/migrate-mongo-config.js
