@@ -225,6 +225,12 @@ class GroupService extends TcService {
         muteMs: 'number',
       },
     });
+    this.registerAction('addGroupMember', this.addGroupMember, {
+      params: {
+        groupId: 'string',
+        userId: 'string',
+      },
+    });
     this.registerAction('deleteGroupMember', this.deleteGroupMember, {
       params: {
         groupId: 'string',
@@ -1229,6 +1235,52 @@ class GroupService extends TcService {
           .humanize()}`
       );
     }
+  }
+
+  /**
+   * Add a user to a group directly.
+   *
+   * The published counterpart of the internal `addMember`: the caller needs
+   * the manageUser permission in the group (owners always have it), and the
+   * target must be an existing user. Invite codes remain the self-service
+   * path; this is for administrators and agents.
+   */
+  async addGroupMember(
+    ctx: TcContext<{
+      groupId: string;
+      userId: string;
+    }>
+  ) {
+    const { groupId, userId: memberId } = ctx.params;
+    const userId = ctx.meta.userId;
+    const t = ctx.meta.t;
+
+    const [hasPermission] = await call(ctx).checkUserPermissions(
+      groupId,
+      userId,
+      [PERMISSION.core.manageUser]
+    );
+    if (!hasPermission) {
+      throw new NoPermissionError(t('没有操作权限'));
+    }
+
+    const memberInfo = await call(ctx).getUserInfo(memberId);
+    if (!memberInfo) {
+      throw new DataNotFoundError(t('用户不存在'));
+    }
+
+    const group: Group = await this.localCall(
+      'addMember',
+      { groupId, userId: memberId },
+      { parentCtx: ctx }
+    );
+
+    await call(ctx).addGroupSystemMessage(
+      String(groupId),
+      `${ctx.meta.user.nickname} 邀请 ${memberInfo.nickname} 加入群组`
+    );
+
+    return group;
   }
 
   async deleteGroupMember(

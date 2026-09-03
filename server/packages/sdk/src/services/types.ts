@@ -1,5 +1,6 @@
 import type { Context } from 'moleculer';
 import type { TFunction } from 'i18next';
+import type { ApiKeyMeta } from './lib/apikey';
 import type { GroupStruct } from '../structs/group';
 import type { BuiltinEventMap } from '../structs/events';
 
@@ -51,6 +52,12 @@ export type TcContext<P = {}, M = {}> = TcPureContext<
      * 仅在 afterActionHook 请求中会出现
      */
     actionResult?: any;
+
+    /**
+     * Present when the request was authenticated with an OpenApp API key
+     * instead of a user JWT. `user`/`userId` are then the app's bot user.
+     */
+    apiKey?: ApiKeyMeta;
   } & M
 >;
 

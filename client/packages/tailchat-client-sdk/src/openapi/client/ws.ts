@@ -1,4 +1,4 @@
-import { TailchatBaseClient } from './base';
+import { TailchatBaseClient, TailchatApiKeyOptions } from './base';
 import io, { Socket } from 'socket.io-client';
 import * as msgpackParser from 'socket.io-msgpack-parser';
 import type { ChatMessage } from 'tailchat-types';
@@ -6,20 +6,39 @@ import type { ChatMessage } from 'tailchat-types';
 export class TailchatWsClient extends TailchatBaseClient {
   public socket: Socket | null = null;
 
+  public disableMsgpack: boolean;
+
   constructor(
-    public url: string,
-    public appId: string,
-    public appSecret: string,
-    public disableMsgpack: boolean = false
+    url: string,
+    options: TailchatApiKeyOptions,
+    disableMsgpack?: boolean
+  );
+  constructor(
+    url: string,
+    appId: string,
+    appSecret: string,
+    disableMsgpack?: boolean
+  );
+  constructor(
+    url: string,
+    appIdOrOptions: string | TailchatApiKeyOptions,
+    appSecretOrDisableMsgpack?: string | boolean,
+    disableMsgpack: boolean = false
   ) {
-    super(url, appId, appSecret);
+    if (typeof appIdOrOptions === 'object') {
+      super(url, appIdOrOptions);
+      this.disableMsgpack = Boolean(appSecretOrDisableMsgpack);
+    } else {
+      super(url, appIdOrOptions, String(appSecretOrDisableMsgpack));
+      this.disableMsgpack = disableMsgpack;
+    }
   }
 
   connect(): Promise<Socket> {
     return new Promise<Socket>(async (resolve, reject) => {
       await this.waitingForLogin();
 
-      const token = this.jwt;
+      const token = this.credential;
       const socket = (this.socket = io(this.url, {
         transports: ['websocket'],
         auth: {

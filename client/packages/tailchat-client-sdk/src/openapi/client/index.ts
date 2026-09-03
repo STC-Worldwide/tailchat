@@ -6,3 +6,4 @@ export {
   TailchatHTTPClient,
 } from './http';
 export { TailchatWsClient } from './ws';
+export type { TailchatApiKeyOptions } from './base';

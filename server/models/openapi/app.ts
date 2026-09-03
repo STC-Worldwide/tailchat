@@ -14,9 +14,10 @@ const openAppCapability = [
   'bot', // 机器人
   'webpage', // 网页
   'oauth', // 第三方登录
+  'admin', // server administration via API keys; only a server admin can grant it
 ] as const;
 
-type OpenAppCapability = typeof openAppCapability[number];
+type OpenAppCapability = (typeof openAppCapability)[number];
 
 /**
  * 确保输出类型为应用能力

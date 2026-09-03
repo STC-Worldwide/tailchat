@@ -14,6 +14,24 @@ const requestTimeout = process.env.REQUEST_TIMEOUT
   ? Number(process.env.REQUEST_TIMEOUT)
   : 10 * 1000; // default 0 (unit: milliseconds)
 
+/**
+ * Gateway rate limit: requests per minute per credential (or per IP when
+ * unauthenticated). 0 disables the limiter. Default 600.
+ */
+const apiRateLimit =
+  process.env.API_RATE_LIMIT !== undefined && process.env.API_RATE_LIMIT !== ''
+    ? Number(process.env.API_RATE_LIMIT)
+    : 600;
+
+/**
+ * User ids allowed to grant the `admin` OpenApp capability, comma-separated.
+ * The admin panel's SYSTEM_USERID is always allowed.
+ */
+const adminUserIds = (process.env.ADMIN_USER_IDS ?? '')
+  .split(',')
+  .map((id) => id.trim())
+  .filter((id) => id.length > 0);
+
 export const config = {
   port,
   secret: process.env.SECRET || 'tailchat',
@@ -45,6 +63,9 @@ export const config = {
   apiUrl,
   staticUrl,
   enableOpenapi: true, // 是否开始openapi
+  apiRateLimit:
+    Number.isFinite(apiRateLimit) && apiRateLimit > 0 ? apiRateLimit : 0,
+  adminUserIds,
 
   emailVerification: checkEnvTrusty(process.env.EMAIL_VERIFY) || false, // 是否在注册后验证邮箱可用性
   smtp: {

@@ -38,7 +38,7 @@ function createTestRole(
 }
 
 describe('Test "group" service', () => {
-  const { broker, service, insertTestData } =
+  const { broker, service, insertTestData, contextCallMock } =
     createTestServiceBroker<GroupService>(GroupService, {
       contextCallMockFn(actionName) {
         if (actionName === 'group.getUserAllPermissions') {
@@ -596,5 +596,119 @@ describe('Test "group" service', () => {
     expect(finalGroup.members.map((m) => String(m.userId))).toEqual([
       String(userId),
     ]);
+  });
+
+  describe('group.addGroupMember', () => {
+    test('a member with manageUser adds another user', async () => {
+      const userId = new Types.ObjectId();
+      const userId2 = new Types.ObjectId();
+      const testGroup = await insertTestData(createTestGroup(userId));
+
+      const res: Group = await broker.call(
+        'group.addGroupMember',
+        {
+          groupId: String(testGroup._id),
+          userId: String(userId2),
+        },
+        {
+          meta: {
+            userId: String(userId),
+            user: { nickname: 'foo' },
+          },
+        }
+      );
+
+      expect(res.members.map((m) => String(m.userId))).toEqual([
+        String(userId),
+        String(userId2),
+      ]);
+
+      const finalGroup = await service.adapter.model.findById(testGroup._id);
+      expect(finalGroup.members.map((m) => String(m.userId))).toEqual([
+        String(userId),
+        String(userId2),
+      ]);
+    });
+
+    test('is refused without the manageUser permission', async () => {
+      const userId = new Types.ObjectId();
+      const userId2 = new Types.ObjectId();
+      const testGroup = await insertTestData(createTestGroup(userId));
+
+      contextCallMock.mockImplementationOnce((actionName: string) => {
+        if (actionName === 'group.getUserAllPermissions') {
+          return [PERMISSION.core.message];
+        }
+      });
+
+      await expect(
+        broker.call(
+          'group.addGroupMember',
+          {
+            groupId: String(testGroup._id),
+            userId: String(userId2),
+          },
+          {
+            meta: {
+              userId: String(userId),
+              user: { nickname: 'foo' },
+            },
+          }
+        )
+      ).rejects.toThrow();
+
+      const finalGroup = await service.adapter.model.findById(testGroup._id);
+      expect(finalGroup.members).toHaveLength(1);
+    });
+
+    test('is refused for an unknown user', async () => {
+      const userId = new Types.ObjectId();
+      const testGroup = await insertTestData(createTestGroup(userId));
+
+      contextCallMock
+        .mockImplementationOnce((actionName: string) =>
+          actionName === 'group.getUserAllPermissions'
+            ? [PERMISSION.core.owner]
+            : undefined
+        )
+        .mockImplementationOnce(() => null);
+
+      await expect(
+        broker.call(
+          'group.addGroupMember',
+          {
+            groupId: String(testGroup._id),
+            userId: String(new Types.ObjectId()),
+          },
+          {
+            meta: {
+              userId: String(userId),
+              user: { nickname: 'foo' },
+            },
+          }
+        )
+      ).rejects.toThrow();
+    });
+
+    test('is refused when the user is already a member', async () => {
+      const userId = new Types.ObjectId();
+      const testGroup = await insertTestData(createTestGroup(userId));
+
+      await expect(
+        broker.call(
+          'group.addGroupMember',
+          {
+            groupId: String(testGroup._id),
+            userId: String(userId),
+          },
+          {
+            meta: {
+              userId: String(userId),
+              user: { nickname: 'foo' },
+            },
+          }
+        )
+      ).rejects.toThrow();
+    });
   });
 });

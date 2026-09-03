@@ -1,21 +1,50 @@
 import axios, { AxiosInstance } from 'axios';
 import crypto from 'crypto';
 
+export interface TailchatApiKeyOptions {
+  /**
+   * An OpenApp API key (`tck_...`) created in Open Api -> App -> API keys.
+   * The client then needs no login round-trip and is limited to the key's
+   * scopes.
+   */
+  apiKey: string;
+}
+
 export class TailchatBaseClient {
   request: AxiosInstance;
   jwt: string | null = null;
   userId: string | null = null;
   loginP: Promise<void>;
+  readonly apiKey: string | null = null;
+  readonly appId: string;
+  readonly appSecret: string;
 
+  /**
+   * `new Client(url, { apiKey })` for API keys (recommended), or the legacy
+   * `new Client(url, appId, appSecret)` which logs in with the app secret.
+   */
+  constructor(url: string, options: TailchatApiKeyOptions);
+  constructor(url: string, appId: string, appSecret: string);
   constructor(
     public url: string,
-    public appId: string,
-    public appSecret: string
+    appIdOrOptions: string | TailchatApiKeyOptions,
+    appSecret?: string
   ) {
-    if (!url || !appId || !appSecret) {
-      throw new Error(
-        'Require params: apiUrl, appId, appSecret. You can set it with env'
-      );
+    if (typeof appIdOrOptions === 'object' && appIdOrOptions !== null) {
+      if (!url || !appIdOrOptions.apiKey) {
+        throw new Error('Require params: apiUrl, apiKey');
+      }
+      this.apiKey = appIdOrOptions.apiKey;
+      this.appId = '';
+      this.appSecret = '';
+    } else {
+      if (!url || !appIdOrOptions || !appSecret) {
+        throw new Error(
+          'Require params: apiUrl, appId, appSecret. You can set it with env'
+        );
+      }
+      this.appId = appIdOrOptions;
+      this.appSecret = appSecret;
     }
 
     this.request = axios.create({
@@ -23,12 +52,16 @@ export class TailchatBaseClient {
     });
     this.request.interceptors.request.use(async (val) => {
       if (
-        this.jwt &&
         ['post', 'get'].includes(String(val.method).toLowerCase()) &&
-        !val.headers['X-Token']
+        !val.headers['X-Token'] &&
+        !val.headers['Authorization']
       ) {
-        // 任何请求都尝试增加token
-        val.headers['X-Token'] = this.jwt;
+        // 任何请求都尝试增加凭证
+        if (this.apiKey) {
+          val.headers['Authorization'] = `Bearer ${this.apiKey}`;
+        } else if (this.jwt) {
+          val.headers['X-Token'] = this.jwt;
+        }
       }
 
       return val;
@@ -36,7 +69,31 @@ export class TailchatBaseClient {
     this.loginP = this.login();
   }
 
+  /**
+   * The value to present as the socket handshake token.
+   */
+  get credential(): string | null {
+    return this.apiKey ?? this.jwt;
+  }
+
   async login() {
+    if (this.apiKey) {
+      // Nothing to exchange: the key authenticates every request directly.
+      // whoami both validates it and tells us which bot user we are.
+      try {
+        const { userId } = await this.whoami();
+        this.userId = userId;
+      } catch (err) {
+        console.error(err);
+        throw new Error(
+          `API key rejected, check the key and its scopes (whoami needs user:read)(Error: ${String(
+            err
+          )})`
+        );
+      }
+      return;
+    }
+
     try {
       console.log('Login...');
       const { data } = await this.request.post('/api/openapi/bot/login', {
@@ -69,7 +126,9 @@ export class TailchatBaseClient {
 
   async call(action: string, params = {}) {
     try {
-      await this.waitingForLogin();
+      if (!(this.apiKey && action === 'user.whoami')) {
+        await this.waitingForLogin();
+      }
       console.log('Calling:', action);
       const { data } = await this.request.post(
         '/api/' + action.replace(/\./g, '/'),
