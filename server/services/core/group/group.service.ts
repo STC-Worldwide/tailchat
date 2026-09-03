@@ -172,7 +172,12 @@ class GroupService extends TcService {
       params: {
         groupId: 'string',
         roleName: 'string',
-        permissions: { type: 'array', items: 'string' },
+        permissions: {
+          type: 'array',
+          items: 'string',
+          optional: true,
+          default: [],
+        },
       },
     });
     this.registerAction('deleteGroupRole', this.deleteGroupRole, {
@@ -1013,9 +1018,14 @@ class GroupService extends TcService {
    * 创建群组角色
    */
   async createGroupRole(
-    ctx: TcContext<{ groupId: string; roleName: string; permissions: string[] }>
+    ctx: TcContext<{
+      groupId: string;
+      roleName: string;
+      permissions?: string[];
+    }>
   ) {
-    const { groupId, roleName, permissions } = ctx.params;
+    const { groupId, roleName } = ctx.params;
+    const permissions = ctx.params.permissions ?? [];
     const { userId, t } = ctx.meta;
 
     const [hasPermission] = await call(ctx).checkUserPermissions(
@@ -1227,12 +1237,18 @@ class GroupService extends TcService {
         `${ctx.meta.user.nickname} 解除了 ${memberInfo.nickname} 的禁言`
       );
     } else {
+      // duration.locale() without an argument is a getter that returns a
+      // string, so guard it: gateway calls always carry a language, internal
+      // and test calls may not.
+      const duration = moment.duration(muteMs, 'ms');
+      if (isValidStr(language)) {
+        duration.locale(language);
+      }
       await call(ctx).addGroupSystemMessage(
         groupId,
-        `${ctx.meta.user.nickname} 禁言了 ${memberInfo.nickname} ${moment
-          .duration(muteMs, 'ms')
-          .locale(language)
-          .humanize()}`
+        `${ctx.meta.user.nickname} 禁言了 ${
+          memberInfo.nickname
+        } ${duration.humanize()}`
       );
     }
   }

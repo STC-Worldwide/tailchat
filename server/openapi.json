@@ -2949,2303 +2949,6 @@
         ]
       }
     },
-    "/group/createGroup": {
-      "post": {
-        "tags": [
-          "group"
-        ],
-        "operationId": "group.createGroup",
-        "summary": "group.createGroup",
-        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "panels": {
-                    "type": "array"
-                  }
-                },
-                "required": [
-                  "name",
-                  "panels"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/getUserGroups": {
-      "post": {
-        "tags": [
-          "group"
-        ],
-        "operationId": "group.getUserGroups",
-        "summary": "group.getUserGroups",
-        "description": "Requires a user token, or an API key with one of these scopes: group:read, group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {}
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:read",
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:read",
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:read",
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/getJoinedGroupAndPanelIds": {
-      "post": {
-        "tags": [
-          "group"
-        ],
-        "operationId": "group.getJoinedGroupAndPanelIds",
-        "summary": "group.getJoinedGroupAndPanelIds",
-        "description": "Requires a user token, or an API key with one of these scopes: group:read, group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {}
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:read",
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:read",
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:read",
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/getGroupBasicInfo": {
-      "post": {
-        "tags": [
-          "group"
-        ],
-        "operationId": "group.getGroupBasicInfo",
-        "summary": "group.getGroupBasicInfo",
-        "description": "No authentication required.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "groupId"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:read",
-          "group:manage"
-        ],
-        "security": []
-      }
-    },
-    "/group/updateGroupField": {
-      "post": {
-        "tags": [
-          "group"
-        ],
-        "operationId": "group.updateGroupField",
-        "summary": "group.updateGroupField",
-        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  },
-                  "fieldName": {
-                    "type": "string"
-                  },
-                  "fieldValue": {}
-                },
-                "required": [
-                  "groupId",
-                  "fieldName",
-                  "fieldValue"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/updateGroupConfig": {
-      "post": {
-        "tags": [
-          "group"
-        ],
-        "operationId": "group.updateGroupConfig",
-        "summary": "group.updateGroupConfig",
-        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  },
-                  "configName": {
-                    "type": "string"
-                  },
-                  "configValue": {}
-                },
-                "required": [
-                  "groupId",
-                  "configName",
-                  "configValue"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/isGroupOwner": {
-      "post": {
-        "tags": [
-          "group"
-        ],
-        "operationId": "group.isGroupOwner",
-        "summary": "group.isGroupOwner",
-        "description": "Requires a user token, or an API key with one of these scopes: group:read, group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "groupId"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:read",
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:read",
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:read",
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/quitGroup": {
-      "post": {
-        "tags": [
-          "group"
-        ],
-        "operationId": "group.quitGroup",
-        "summary": "group.quitGroup",
-        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "groupId"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/isMember": {
-      "post": {
-        "tags": [
-          "group"
-        ],
-        "operationId": "group.isMember",
-        "summary": "group.isMember",
-        "description": "Requires a user token, or an API key with one of these scopes: group:read, group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "groupId"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:read",
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:read",
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:read",
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/appendGroupMemberRoles": {
-      "post": {
-        "tags": [
-          "group"
-        ],
-        "operationId": "group.appendGroupMemberRoles",
-        "summary": "group.appendGroupMemberRoles",
-        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  },
-                  "memberIds": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "roles": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "required": [
-                  "groupId",
-                  "memberIds",
-                  "roles"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/removeGroupMemberRoles": {
-      "post": {
-        "tags": [
-          "group"
-        ],
-        "operationId": "group.removeGroupMemberRoles",
-        "summary": "group.removeGroupMemberRoles",
-        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  },
-                  "memberIds": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "roles": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "required": [
-                  "groupId",
-                  "memberIds",
-                  "roles"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/createGroupPanel": {
-      "post": {
-        "tags": [
-          "group"
-        ],
-        "operationId": "group.createGroupPanel",
-        "summary": "group.createGroupPanel",
-        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "type": {
-                    "type": "number"
-                  },
-                  "parentId": {
-                    "type": "string"
-                  },
-                  "provider": {
-                    "type": "string"
-                  },
-                  "pluginPanelName": {
-                    "type": "string"
-                  },
-                  "meta": {
-                    "type": "object"
-                  }
-                },
-                "required": [
-                  "groupId",
-                  "name",
-                  "type"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/modifyGroupPanel": {
-      "post": {
-        "tags": [
-          "group"
-        ],
-        "operationId": "group.modifyGroupPanel",
-        "summary": "group.modifyGroupPanel",
-        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  },
-                  "panelId": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "type": {
-                    "type": "number"
-                  },
-                  "provider": {
-                    "type": "string"
-                  },
-                  "pluginPanelName": {
-                    "type": "string"
-                  },
-                  "meta": {
-                    "type": "object"
-                  },
-                  "permissionMap": {
-                    "type": "object"
-                  },
-                  "fallbackPermissions": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "required": [
-                  "groupId",
-                  "panelId",
-                  "name",
-                  "type"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/deleteGroupPanel": {
-      "post": {
-        "tags": [
-          "group"
-        ],
-        "operationId": "group.deleteGroupPanel",
-        "summary": "group.deleteGroupPanel",
-        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  },
-                  "panelId": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "groupId",
-                  "panelId"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/getGroupLobbyConverseId": {
-      "post": {
-        "tags": [
-          "group"
-        ],
-        "operationId": "group.getGroupLobbyConverseId",
-        "summary": "group.getGroupLobbyConverseId",
-        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "groupId"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/createGroupRole": {
-      "post": {
-        "tags": [
-          "group"
-        ],
-        "operationId": "group.createGroupRole",
-        "summary": "group.createGroupRole",
-        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  },
-                  "roleName": {
-                    "type": "string"
-                  },
-                  "permissions": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "required": [
-                  "groupId",
-                  "roleName",
-                  "permissions"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/deleteGroupRole": {
-      "post": {
-        "tags": [
-          "group"
-        ],
-        "operationId": "group.deleteGroupRole",
-        "summary": "group.deleteGroupRole",
-        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  },
-                  "roleId": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "groupId",
-                  "roleId"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/updateGroupRoleName": {
-      "post": {
-        "tags": [
-          "group"
-        ],
-        "operationId": "group.updateGroupRoleName",
-        "summary": "group.updateGroupRoleName",
-        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  },
-                  "roleId": {
-                    "type": "string"
-                  },
-                  "roleName": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "groupId",
-                  "roleId",
-                  "roleName"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/updateGroupRolePermission": {
-      "post": {
-        "tags": [
-          "group"
-        ],
-        "operationId": "group.updateGroupRolePermission",
-        "summary": "group.updateGroupRolePermission",
-        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  },
-                  "roleId": {
-                    "type": "string"
-                  },
-                  "permissions": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "required": [
-                  "groupId",
-                  "roleId",
-                  "permissions"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/getPermissions": {
-      "post": {
-        "tags": [
-          "group"
-        ],
-        "operationId": "group.getPermissions",
-        "summary": "group.getPermissions",
-        "description": "Requires a user token, or an API key with one of these scopes: group:read, group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "groupId"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:read",
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:read",
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:read",
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/muteGroupMember": {
-      "post": {
-        "tags": [
-          "group"
-        ],
-        "operationId": "group.muteGroupMember",
-        "summary": "group.muteGroupMember",
-        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  },
-                  "memberId": {
-                    "type": "string"
-                  },
-                  "muteMs": {
-                    "type": "number"
-                  }
-                },
-                "required": [
-                  "groupId",
-                  "memberId",
-                  "muteMs"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/addGroupMember": {
-      "post": {
-        "tags": [
-          "group"
-        ],
-        "operationId": "group.addGroupMember",
-        "summary": "group.addGroupMember",
-        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  },
-                  "userId": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "groupId",
-                  "userId"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/deleteGroupMember": {
-      "post": {
-        "tags": [
-          "group"
-        ],
-        "operationId": "group.deleteGroupMember",
-        "summary": "group.deleteGroupMember",
-        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  },
-                  "memberId": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "groupId",
-                  "memberId"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/extra/getGroupData": {
-      "post": {
-        "tags": [
-          "group.extra"
-        ],
-        "operationId": "group.extra.getGroupData",
-        "summary": "group.extra.getGroupData",
-        "description": "Requires a user token, or an API key with one of these scopes: group:read, group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "groupId",
-                  "name"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:read",
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:read",
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:read",
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/extra/saveGroupData": {
-      "post": {
-        "tags": [
-          "group.extra"
-        ],
-        "operationId": "group.extra.saveGroupData",
-        "summary": "group.extra.saveGroupData",
-        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "data": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "groupId",
-                  "name",
-                  "data"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/extra/getPanelData": {
-      "post": {
-        "tags": [
-          "group.extra"
-        ],
-        "operationId": "group.extra.getPanelData",
-        "summary": "group.extra.getPanelData",
-        "description": "Requires a user token, or an API key with one of these scopes: group:read, group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  },
-                  "panelId": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "groupId",
-                  "panelId",
-                  "name"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:read",
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:read",
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:read",
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/extra/savePanelData": {
-      "post": {
-        "tags": [
-          "group.extra"
-        ],
-        "operationId": "group.extra.savePanelData",
-        "summary": "group.extra.savePanelData",
-        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  },
-                  "panelId": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "data": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "groupId",
-                  "panelId",
-                  "name",
-                  "data"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/invite/createGroupInvite": {
-      "post": {
-        "tags": [
-          "group.invite"
-        ],
-        "operationId": "group.invite.createGroupInvite",
-        "summary": "group.invite.createGroupInvite",
-        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  },
-                  "inviteType": {
-                    "enum": [
-                      "normal",
-                      "permanent"
-                    ]
-                  }
-                },
-                "required": [
-                  "groupId",
-                  "inviteType"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/invite/editGroupInvite": {
-      "post": {
-        "tags": [
-          "group.invite"
-        ],
-        "operationId": "group.invite.editGroupInvite",
-        "summary": "group.invite.editGroupInvite",
-        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "code": {
-                    "type": "string"
-                  },
-                  "groupId": {
-                    "type": "string"
-                  },
-                  "expiredAt": {
-                    "type": "number"
-                  },
-                  "usageLimit": {
-                    "type": "number"
-                  }
-                },
-                "required": [
-                  "code",
-                  "groupId"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/invite/getAllGroupInviteCode": {
-      "post": {
-        "tags": [
-          "group.invite"
-        ],
-        "operationId": "group.invite.getAllGroupInviteCode",
-        "summary": "group.invite.getAllGroupInviteCode",
-        "description": "Requires a user token, or an API key with one of these scopes: group:read, group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "groupId"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:read",
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:read",
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:read",
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/invite/findInviteByCode": {
-      "post": {
-        "tags": [
-          "group.invite"
-        ],
-        "operationId": "group.invite.findInviteByCode",
-        "summary": "group.invite.findInviteByCode",
-        "description": "No authentication required.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "code": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "code"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:read",
-          "group:manage"
-        ],
-        "security": []
-      }
-    },
-    "/group/invite/applyInvite": {
-      "post": {
-        "tags": [
-          "group.invite"
-        ],
-        "operationId": "group.invite.applyInvite",
-        "summary": "group.invite.applyInvite",
-        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "code": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "code"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
-    "/group/invite/deleteInvite": {
-      "post": {
-        "tags": [
-          "group.invite"
-        ],
-        "operationId": "group.invite.deleteInvite",
-        "summary": "group.invite.deleteInvite",
-        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  },
-                  "inviteId": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "groupId",
-                  "inviteId"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "group:manage"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "group:manage"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "group:manage"
-            ]
-          }
-        ]
-      }
-    },
     "/user/dmlist/addConverse": {
       "post": {
         "tags": [
@@ -7336,6 +5039,2303 @@
         ]
       }
     },
+    "/group/createGroup": {
+      "post": {
+        "tags": [
+          "group"
+        ],
+        "operationId": "group.createGroup",
+        "summary": "group.createGroup",
+        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "panels": {
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "name",
+                  "panels"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/getUserGroups": {
+      "post": {
+        "tags": [
+          "group"
+        ],
+        "operationId": "group.getUserGroups",
+        "summary": "group.getUserGroups",
+        "description": "Requires a user token, or an API key with one of these scopes: group:read, group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:read",
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:read",
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:read",
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/getJoinedGroupAndPanelIds": {
+      "post": {
+        "tags": [
+          "group"
+        ],
+        "operationId": "group.getJoinedGroupAndPanelIds",
+        "summary": "group.getJoinedGroupAndPanelIds",
+        "description": "Requires a user token, or an API key with one of these scopes: group:read, group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:read",
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:read",
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:read",
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/getGroupBasicInfo": {
+      "post": {
+        "tags": [
+          "group"
+        ],
+        "operationId": "group.getGroupBasicInfo",
+        "summary": "group.getGroupBasicInfo",
+        "description": "No authentication required.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "groupId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:read",
+          "group:manage"
+        ],
+        "security": []
+      }
+    },
+    "/group/updateGroupField": {
+      "post": {
+        "tags": [
+          "group"
+        ],
+        "operationId": "group.updateGroupField",
+        "summary": "group.updateGroupField",
+        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  },
+                  "fieldName": {
+                    "type": "string"
+                  },
+                  "fieldValue": {}
+                },
+                "required": [
+                  "groupId",
+                  "fieldName",
+                  "fieldValue"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/updateGroupConfig": {
+      "post": {
+        "tags": [
+          "group"
+        ],
+        "operationId": "group.updateGroupConfig",
+        "summary": "group.updateGroupConfig",
+        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  },
+                  "configName": {
+                    "type": "string"
+                  },
+                  "configValue": {}
+                },
+                "required": [
+                  "groupId",
+                  "configName",
+                  "configValue"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/isGroupOwner": {
+      "post": {
+        "tags": [
+          "group"
+        ],
+        "operationId": "group.isGroupOwner",
+        "summary": "group.isGroupOwner",
+        "description": "Requires a user token, or an API key with one of these scopes: group:read, group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "groupId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:read",
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:read",
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:read",
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/quitGroup": {
+      "post": {
+        "tags": [
+          "group"
+        ],
+        "operationId": "group.quitGroup",
+        "summary": "group.quitGroup",
+        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "groupId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/isMember": {
+      "post": {
+        "tags": [
+          "group"
+        ],
+        "operationId": "group.isMember",
+        "summary": "group.isMember",
+        "description": "Requires a user token, or an API key with one of these scopes: group:read, group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "groupId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:read",
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:read",
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:read",
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/appendGroupMemberRoles": {
+      "post": {
+        "tags": [
+          "group"
+        ],
+        "operationId": "group.appendGroupMemberRoles",
+        "summary": "group.appendGroupMemberRoles",
+        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  },
+                  "memberIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "roles": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "groupId",
+                  "memberIds",
+                  "roles"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/removeGroupMemberRoles": {
+      "post": {
+        "tags": [
+          "group"
+        ],
+        "operationId": "group.removeGroupMemberRoles",
+        "summary": "group.removeGroupMemberRoles",
+        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  },
+                  "memberIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "roles": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "groupId",
+                  "memberIds",
+                  "roles"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/createGroupPanel": {
+      "post": {
+        "tags": [
+          "group"
+        ],
+        "operationId": "group.createGroupPanel",
+        "summary": "group.createGroupPanel",
+        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "number"
+                  },
+                  "parentId": {
+                    "type": "string"
+                  },
+                  "provider": {
+                    "type": "string"
+                  },
+                  "pluginPanelName": {
+                    "type": "string"
+                  },
+                  "meta": {
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "groupId",
+                  "name",
+                  "type"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/modifyGroupPanel": {
+      "post": {
+        "tags": [
+          "group"
+        ],
+        "operationId": "group.modifyGroupPanel",
+        "summary": "group.modifyGroupPanel",
+        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  },
+                  "panelId": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "number"
+                  },
+                  "provider": {
+                    "type": "string"
+                  },
+                  "pluginPanelName": {
+                    "type": "string"
+                  },
+                  "meta": {
+                    "type": "object"
+                  },
+                  "permissionMap": {
+                    "type": "object"
+                  },
+                  "fallbackPermissions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "groupId",
+                  "panelId",
+                  "name",
+                  "type"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/deleteGroupPanel": {
+      "post": {
+        "tags": [
+          "group"
+        ],
+        "operationId": "group.deleteGroupPanel",
+        "summary": "group.deleteGroupPanel",
+        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  },
+                  "panelId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "groupId",
+                  "panelId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/getGroupLobbyConverseId": {
+      "post": {
+        "tags": [
+          "group"
+        ],
+        "operationId": "group.getGroupLobbyConverseId",
+        "summary": "group.getGroupLobbyConverseId",
+        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "groupId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/createGroupRole": {
+      "post": {
+        "tags": [
+          "group"
+        ],
+        "operationId": "group.createGroupRole",
+        "summary": "group.createGroupRole",
+        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  },
+                  "roleName": {
+                    "type": "string"
+                  },
+                  "permissions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                },
+                "required": [
+                  "groupId",
+                  "roleName"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/deleteGroupRole": {
+      "post": {
+        "tags": [
+          "group"
+        ],
+        "operationId": "group.deleteGroupRole",
+        "summary": "group.deleteGroupRole",
+        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  },
+                  "roleId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "groupId",
+                  "roleId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/updateGroupRoleName": {
+      "post": {
+        "tags": [
+          "group"
+        ],
+        "operationId": "group.updateGroupRoleName",
+        "summary": "group.updateGroupRoleName",
+        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  },
+                  "roleId": {
+                    "type": "string"
+                  },
+                  "roleName": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "groupId",
+                  "roleId",
+                  "roleName"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/updateGroupRolePermission": {
+      "post": {
+        "tags": [
+          "group"
+        ],
+        "operationId": "group.updateGroupRolePermission",
+        "summary": "group.updateGroupRolePermission",
+        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  },
+                  "roleId": {
+                    "type": "string"
+                  },
+                  "permissions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "groupId",
+                  "roleId",
+                  "permissions"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/getPermissions": {
+      "post": {
+        "tags": [
+          "group"
+        ],
+        "operationId": "group.getPermissions",
+        "summary": "group.getPermissions",
+        "description": "Requires a user token, or an API key with one of these scopes: group:read, group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "groupId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:read",
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:read",
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:read",
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/muteGroupMember": {
+      "post": {
+        "tags": [
+          "group"
+        ],
+        "operationId": "group.muteGroupMember",
+        "summary": "group.muteGroupMember",
+        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  },
+                  "memberId": {
+                    "type": "string"
+                  },
+                  "muteMs": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "groupId",
+                  "memberId",
+                  "muteMs"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/addGroupMember": {
+      "post": {
+        "tags": [
+          "group"
+        ],
+        "operationId": "group.addGroupMember",
+        "summary": "group.addGroupMember",
+        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  },
+                  "userId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "groupId",
+                  "userId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/deleteGroupMember": {
+      "post": {
+        "tags": [
+          "group"
+        ],
+        "operationId": "group.deleteGroupMember",
+        "summary": "group.deleteGroupMember",
+        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  },
+                  "memberId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "groupId",
+                  "memberId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/extra/getGroupData": {
+      "post": {
+        "tags": [
+          "group.extra"
+        ],
+        "operationId": "group.extra.getGroupData",
+        "summary": "group.extra.getGroupData",
+        "description": "Requires a user token, or an API key with one of these scopes: group:read, group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "groupId",
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:read",
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:read",
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:read",
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/extra/saveGroupData": {
+      "post": {
+        "tags": [
+          "group.extra"
+        ],
+        "operationId": "group.extra.saveGroupData",
+        "summary": "group.extra.saveGroupData",
+        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "data": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "groupId",
+                  "name",
+                  "data"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/extra/getPanelData": {
+      "post": {
+        "tags": [
+          "group.extra"
+        ],
+        "operationId": "group.extra.getPanelData",
+        "summary": "group.extra.getPanelData",
+        "description": "Requires a user token, or an API key with one of these scopes: group:read, group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  },
+                  "panelId": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "groupId",
+                  "panelId",
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:read",
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:read",
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:read",
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/extra/savePanelData": {
+      "post": {
+        "tags": [
+          "group.extra"
+        ],
+        "operationId": "group.extra.savePanelData",
+        "summary": "group.extra.savePanelData",
+        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  },
+                  "panelId": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "data": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "groupId",
+                  "panelId",
+                  "name",
+                  "data"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/invite/createGroupInvite": {
+      "post": {
+        "tags": [
+          "group.invite"
+        ],
+        "operationId": "group.invite.createGroupInvite",
+        "summary": "group.invite.createGroupInvite",
+        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  },
+                  "inviteType": {
+                    "enum": [
+                      "normal",
+                      "permanent"
+                    ]
+                  }
+                },
+                "required": [
+                  "groupId",
+                  "inviteType"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/invite/editGroupInvite": {
+      "post": {
+        "tags": [
+          "group.invite"
+        ],
+        "operationId": "group.invite.editGroupInvite",
+        "summary": "group.invite.editGroupInvite",
+        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "groupId": {
+                    "type": "string"
+                  },
+                  "expiredAt": {
+                    "type": "number"
+                  },
+                  "usageLimit": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "code",
+                  "groupId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/invite/getAllGroupInviteCode": {
+      "post": {
+        "tags": [
+          "group.invite"
+        ],
+        "operationId": "group.invite.getAllGroupInviteCode",
+        "summary": "group.invite.getAllGroupInviteCode",
+        "description": "Requires a user token, or an API key with one of these scopes: group:read, group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "groupId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:read",
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:read",
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:read",
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/invite/findInviteByCode": {
+      "post": {
+        "tags": [
+          "group.invite"
+        ],
+        "operationId": "group.invite.findInviteByCode",
+        "summary": "group.invite.findInviteByCode",
+        "description": "No authentication required.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "code"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:read",
+          "group:manage"
+        ],
+        "security": []
+      }
+    },
+    "/group/invite/applyInvite": {
+      "post": {
+        "tags": [
+          "group.invite"
+        ],
+        "operationId": "group.invite.applyInvite",
+        "summary": "group.invite.applyInvite",
+        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "code"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/group/invite/deleteInvite": {
+      "post": {
+        "tags": [
+          "group.invite"
+        ],
+        "operationId": "group.invite.deleteInvite",
+        "summary": "group.invite.deleteInvite",
+        "description": "Requires a user token, or an API key with one of these scopes: group:manage.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  },
+                  "inviteId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "groupId",
+                  "inviteId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "group:manage"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "group:manage"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "group:manage"
+            ]
+          }
+        ]
+      }
+    },
     "/plugin:com.msgbyte.agora/available": {
       "post": {
         "tags": [
@@ -7845,6 +7845,63 @@
         ]
       }
     },
+    "/plugin:com.msgbyte.getui/available": {
+      "post": {
+        "tags": [
+          "plugin:com.msgbyte.getui"
+        ],
+        "operationId": "plugin:com.msgbyte.getui.available",
+        "summary": "plugin:com.msgbyte.getui.available",
+        "description": "Requires a user token, or an API key with one of these scopes: plugins.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "plugins"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "plugins"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "plugins"
+            ]
+          }
+        ]
+      }
+    },
     "/plugin:com.msgbyte.linkmeta/fetch": {
       "post": {
         "tags": [
@@ -7916,63 +7973,6 @@
         ],
         "operationId": "plugin:com.msgbyte.livekit.available",
         "summary": "plugin:com.msgbyte.livekit.available",
-        "description": "Requires a user token, or an API key with one of these scopes: plugins.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {}
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "plugins"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "plugins"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "plugins"
-            ]
-          }
-        ]
-      }
-    },
-    "/plugin:com.msgbyte.getui/available": {
-      "post": {
-        "tags": [
-          "plugin:com.msgbyte.getui"
-        ],
-        "operationId": "plugin:com.msgbyte.getui.available",
-        "summary": "plugin:com.msgbyte.getui.available",
         "description": "Requires a user token, or an API key with one of these scopes: plugins.",
         "requestBody": {
           "content": {
