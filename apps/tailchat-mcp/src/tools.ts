@@ -7,9 +7,10 @@
 // membership is what makes a group visible at all. `tailchat_call` reaches every other
 // published action and `tailchat_actions` is its map.
 //
-// Nothing is filtered here. Whether a call is allowed is decided by the gateway from the
-// API key's scopes and by the service from the bot user's group permissions; a 403 names
-// what was missing and is relayed as-is.
+// The token acts as the user who created it, so the reach here is exactly that user's.
+// Nothing is filtered client-side: whether a call is allowed is decided by the gateway
+// from the token's scopes and by the service from that user's own group permissions; a
+// 403 names what was missing and is relayed as-is.
 
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -156,7 +157,7 @@ async function getGroup(
   );
   if (!group) {
     throw new Error(
-      `group ${groupId} is not one the bot belongs to — it must be added to the group first (tailchat_add_member from a member with manageUser, or the app's owner in the Open Api panel)`
+      `group ${groupId} is not one you are a member of — join it in Tailchat, or have someone with the manageUser permission add you`
     );
   }
   return group;
@@ -190,7 +191,7 @@ const userSelector = {
   email: z
     .string()
     .optional()
-    .describe('Account email (needs the admin scope)'),
+    .describe('Account email (needs the admin scope and server-admin rights)'),
 };
 
 async function resolveUser(
@@ -220,7 +221,7 @@ async function resolveUser(
     return u;
   }
   if (sel.email) {
-    const u = await client.call<UserInfo | null>('openapi.admin.findUser', {
+    const u = await client.call<UserInfo | null>('admin.findUser', {
       email: sel.email,
     });
     if (!u) throw new Error(`no user with email ${sel.email}`);
@@ -241,7 +242,7 @@ export function registerTools(server: McpServer, client: TailchatClient): void {
     {
       title: 'Who am I',
       description:
-        'The bot user this API key acts as, and the scopes the key carries. Call first to learn what the key may do.',
+        'The user this token acts as, and the scopes it carries. Call first to learn what the token may do.',
       inputSchema: {},
     },
     () =>
@@ -267,7 +268,7 @@ export function registerTools(server: McpServer, client: TailchatClient): void {
     {
       title: 'List groups',
       description:
-        'Groups (servers/workspaces) the bot belongs to, with their channels and roles. A group the bot is not a member of is invisible; add the bot to it first.',
+        'Groups (servers/workspaces) you belong to, with their channels and roles. A group you are not a member of is invisible.',
       inputSchema: {},
     },
     () => run(async () => (await listGroups(client)).map(groupSummary))
@@ -278,7 +279,7 @@ export function registerTools(server: McpServer, client: TailchatClient): void {
     {
       title: 'Get group',
       description:
-        'One group in detail: channels, roles and members (with nicknames when the key has user:read).',
+        'One group in detail: channels, roles and members (with nicknames when the token has user:read).',
       inputSchema: {
         groupId: z.string(),
         includeMembers: z.boolean().default(true),
@@ -316,7 +317,7 @@ export function registerTools(server: McpServer, client: TailchatClient): void {
     {
       title: 'Create group',
       description:
-        'Create a group with an initial channel layout. The bot becomes its owner. Without `channels`, one text channel named "general" is created. Needs group:manage.',
+        'Create a group with an initial channel layout. You become its owner. Without `channels`, one text channel named "general" is created. Needs group:manage.',
       inputSchema: {
         name: z.string().min(1),
         channels: z
@@ -369,7 +370,7 @@ export function registerTools(server: McpServer, client: TailchatClient): void {
     {
       title: 'Create channel',
       description:
-        "Add a text channel or a category to a group. Needs the managePanel permission in the group (group:manage scope). A text channel's id is also its converseId for messages.",
+        "Add a text channel or a category to a group. Needs the managePanel permission in that group (group:manage scope). A text channel's id is also its converseId for messages.",
       inputSchema: {
         groupId: z.string(),
         name: z.string().min(1),
@@ -465,7 +466,7 @@ export function registerTools(server: McpServer, client: TailchatClient): void {
     {
       title: 'Add member',
       description:
-        'Add a user to a group directly (no invite code). Needs the manageUser permission in the group (group:manage), or `asAdmin` with the admin scope to bypass group permissions.',
+        'Add a user to a group directly (no invite code). Needs the manageUser permission in that group (group:manage), or `asAdmin` with the admin scope to bypass group permissions.',
       inputSchema: {
         groupId: z.string(),
         ...userSelector,
@@ -476,7 +477,7 @@ export function registerTools(server: McpServer, client: TailchatClient): void {
       run(async () => {
         const user = await resolveUser(client, sel);
         const action = asAdmin
-          ? 'openapi.admin.addGroupMember'
+          ? 'admin.addGroupMember'
           : 'group.addGroupMember';
         const g = await client.call<RawGroup>(action, {
           groupId,
@@ -772,7 +773,7 @@ export function registerTools(server: McpServer, client: TailchatClient): void {
     {
       title: 'Inbox',
       description:
-        "The bot's inbox: mentions and DMs addressed to it. Each item names the converse (and group) to answer in. Needs message:read.",
+        'Your inbox: mentions and DMs addressed to you. Each item names the converse (and group) to answer in. Needs message:read.',
       inputSchema: { unreadOnly: z.boolean().default(true) },
     },
     ({ unreadOnly }) =>
@@ -812,9 +813,7 @@ export function registerTools(server: McpServer, client: TailchatClient): void {
       },
     },
     ({ userIds, title, content }) =>
-      run(() =>
-        client.call('openapi.admin.notifyUsers', { userIds, title, content })
-      )
+      run(() => client.call('admin.notifyUsers', { userIds, title, content }))
   );
 
   server.registerTool(
@@ -827,12 +826,9 @@ export function registerTools(server: McpServer, client: TailchatClient): void {
     },
     ({ userId, banned }) =>
       run(async () => {
-        await client.call(
-          banned ? 'openapi.admin.banUser' : 'openapi.admin.unbanUser',
-          {
-            userId,
-          }
-        );
+        await client.call(banned ? 'admin.banUser' : 'admin.unbanUser', {
+          userId,
+        });
         return { userId, banned };
       })
   );
@@ -842,7 +838,7 @@ export function registerTools(server: McpServer, client: TailchatClient): void {
     {
       title: 'List actions',
       description:
-        'The catalog of every published gateway action with its parameters and the API-key scopes that permit it — the map for tailchat_call. Filter by a substring of the action name or by scope.',
+        'The catalog of every published gateway action with its parameters and the token scopes that permit it — the map for tailchat_call. Filter by a substring of the action name or by scope.',
       inputSchema: {
         filter: z.string().optional(),
         scope: z.string().optional(),
@@ -876,7 +872,7 @@ export function registerTools(server: McpServer, client: TailchatClient): void {
     {
       title: 'Call any action',
       description:
-        'Call any published gateway action by name (e.g. "group.updateGroupField") with a JSON params object. Use tailchat_actions to find names and parameters. The gateway enforces the key\'s scopes; the response is the action\'s raw data.',
+        'Call any published gateway action by name (e.g. "group.updateGroupField") with a JSON params object. Use tailchat_actions to find names and parameters. The gateway enforces the token\'s scopes; the response is the action\'s raw data.',
       inputSchema: {
         action: z.string().min(1),
         params: z.record(z.unknown()).default({}),

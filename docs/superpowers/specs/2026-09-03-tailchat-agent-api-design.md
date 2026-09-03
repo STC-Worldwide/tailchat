@@ -1,7 +1,10 @@
 # Tailchat Agent API Design
 
 Date: 2026-09-03
-Status: Approved
+Status: Approved, revised the same day -- see "Revision 2" at the end, which
+supersedes D1, D5 and the `admin` row of D2. Everything below the Revision
+heading is current; the decisions above it are kept as the record of how the
+first cut worked.
 
 ## Objective
 
@@ -169,3 +172,66 @@ its own narrowly scoped, revocable key.
   (needs `MONGO_URL`)
 - `pnpm --dir server gen:openapi` and review of the regenerated diff
 - `pnpm --dir client/web check:type` and the openapi plugin test
+
+
+## Revision 2 (2026-09-03): personal access tokens, not app bots
+
+**What was wrong.** In the first cut a key belonged to an OpenApp and resolved
+to that app's synthetic bot user. Every real task then needed a chain of setup
+that has nothing to do with the task: create an application, enable a Bot
+capability, install a frontend plugin to see any of it, then add the bot to
+each group and give it a role. And because the bot is a separate principal, it
+could not see anything its owner could see. Tim's verdict on trying it: "I
+don't want to use this bot mechanic. I want this to be a legit api that works
+natively with tailchat. No dependency on a bot framework."
+
+**What replaced it.** A key is now a **personal access token**: it belongs to a
+user and authenticates AS that user. There is no application, no bot account,
+and no membership setup — a token starts out seeing exactly the groups,
+channels, DMs and permissions its owner sees. Scopes narrow it from there, so
+a token is always a subset of its owner and never a new principal.
+
+This is the ordinary shape for this kind of API (a GitHub PAT, a Slack user
+token) and it fits Tailchat's authorization model, which is per-user
+everywhere: every action reads `ctx.meta.userId` and checks that user's group
+membership and permissions. The bot account was a way to manufacture a user id
+for a credential that had none; a token that carries its owner's id needs no
+such invention.
+
+### Changes
+
+| Before | After |
+| --- | --- |
+| `openapi.apikey.*`, key scoped to an `appId` | `user.apikey.*`, key scoped to a `userId` |
+| Resolved to `openapi.bot.getOrCreateBotAccount` | Resolves to the owning user, refused if banned |
+| `ApiKeyMeta.appId` | `ApiKeyMeta.userId` |
+| `openapi.admin.*` behind an app `admin` capability | `admin.*` behind `ADMIN_USER_IDS` |
+| Keys managed in the Open Api plugin (needs a per-browser install) | **Settings -> API keys**, core UI, no plugin |
+| Key service ran on the openapi node | Runs on the core node, so the gateway resolves credentials without a cross-node call |
+
+The OpenApp `admin` capability is gone: it existed only to gate app-scoped
+keys. OpenApps keep their `bot`, `webpage` and `oauth` capabilities and the
+legacy `openapi.bot.login` still works for existing bots — a bot is now one
+thing you may build ON the API, not the way the API authenticates.
+
+### Guarantees, and where they are enforced
+
+- **A token cannot exceed its owner.** Scopes only subtract. The service checks
+  the owner's rights at mint time and `resolve` re-checks them on every
+  request, so removing someone from `ADMIN_USER_IDS` disables the admin scope
+  on their existing tokens immediately.
+- **A token cannot mint or revoke tokens, including itself.** No scope maps to
+  `user.apikey.*`, and the gateway refuses any action outside a token's
+  scopes, so that surface requires a real login.
+- **Revocation, expiry and bans are immediate.** `resolve` is deliberately
+  uncached and reads the owner's live record.
+- **A token id cannot be probed across accounts.** Revoking a key owned by
+  someone else answers "not found", the same as a key that does not exist.
+
+### Verification
+
+`server`: 20 suites / 178 tests, including a rewritten `user.apikey` suite
+(hash at rest, scope filtering, the admin-scope refusal and its removal after
+the fact, banned owner, tampered secret, cross-account revoke) and an `admin`
+suite that proves an ordinary user is refused whether they present a login or
+a token claiming the admin scope. `apps/tailchat-mcp`: 17 tests.

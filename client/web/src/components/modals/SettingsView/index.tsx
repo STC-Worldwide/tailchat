@@ -9,6 +9,7 @@ import React, { useCallback, useMemo } from 'react';
 import { isDevelopment, t } from 'tailchat-shared';
 import { SettingsAbout } from './About';
 import { SettingsAccount } from './Account';
+import { SettingsApiKeys } from './ApiKeys';
 import { SettingsDebug } from './Debug';
 import { SettingsPerformance } from './Performance';
 import { SettingsStatus } from './Status';
@@ -18,6 +19,7 @@ import {
   BugIcon,
   GaugeIcon,
   InfoIcon,
+  KeyRoundIcon,
   PuzzleIcon,
   Settings2Icon,
   UserRoundIcon,
@@ -46,6 +48,12 @@ export const SettingsView: React.FC<SettingsViewProps> = React.memo((props) => {
           title: t('账户信息'),
           icon: <UserRoundIcon />,
           content: <SettingsAccount />,
+        },
+        {
+          type: 'item',
+          title: t('API 密钥'),
+          icon: <KeyRoundIcon />,
+          content: <SettingsApiKeys />,
         },
         {
           type: 'item',

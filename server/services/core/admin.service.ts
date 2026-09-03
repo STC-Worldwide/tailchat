@@ -1,35 +1,30 @@
 import {
   TcService,
   TcContext,
-  config,
   EntityError,
   NoPermissionError,
-  SYSTEM_USERID,
-  API_KEY_ADMIN_SCOPE,
+  isServerAdmin,
   UserStruct,
 } from 'tailchat-server-sdk';
 import { isValidStr } from '../../lib/utils';
 
 /**
- * Server administration for agents.
+ * Server administration.
  *
- * Every action requires either an API key carrying the `admin` scope (which
- * in turn requires the app to hold the `admin` capability, grantable only by
- * a server administrator) or the admin panel's SYSTEM_USERID. A human user's
- * JWT is never enough.
+ * The caller must be a server administrator: the admin panel's system
+ * identity, or a user id listed in ADMIN_USER_IDS. That holds whether the
+ * request arrives with a login or with a personal access token — a token acts
+ * as its owner and can never outrank them — and a token additionally needs the
+ * `admin` scope, which the gateway checks before the action runs.
  *
  * Design: docs/superpowers/specs/2026-09-03-tailchat-agent-api-design.md
  */
-class OpenAdminService extends TcService {
+class AdminService extends TcService {
   get serviceName(): string {
-    return 'openapi.admin';
+    return 'admin';
   }
 
   onInit(): void {
-    if (!config.enableOpenapi) {
-      return;
-    }
-
     this.registerAction('findUser', this.findUser, {
       params: {
         email: { type: 'string', optional: true },
@@ -90,7 +85,7 @@ class OpenAdminService extends TcService {
     }
 
     await ctx.call('user.banUser', { userId });
-    this.logger.info('[openapi.admin] banned', userId, 'by', this.actor(ctx));
+    this.logger.info('[admin] banned', userId, 'by', this.actor(ctx));
 
     return true;
   }
@@ -100,7 +95,7 @@ class OpenAdminService extends TcService {
     const { userId } = ctx.params;
 
     await ctx.call('user.unbanUser', { userId });
-    this.logger.info('[openapi.admin] unbanned', userId, 'by', this.actor(ctx));
+    this.logger.info('[admin] unbanned', userId, 'by', this.actor(ctx));
 
     return true;
   }
@@ -114,7 +109,7 @@ class OpenAdminService extends TcService {
 
     const group = await ctx.call('group.addMember', { groupId, userId });
     this.logger.info(
-      '[openapi.admin] added',
+      '[admin] added',
       userId,
       'to group',
       groupId,
@@ -144,24 +139,21 @@ class OpenAdminService extends TcService {
   }
 
   private assertAdmin(ctx: TcContext) {
-    if (ctx.meta.userId === SYSTEM_USERID) {
+    if (isServerAdmin(ctx.meta.userId)) {
       return;
     }
 
-    const scopes = ctx.meta.apiKey?.scopes;
-    if (Array.isArray(scopes) && scopes.includes(API_KEY_ADMIN_SCOPE)) {
-      return;
-    }
-
-    throw new NoPermissionError('An API key with the admin scope is required');
+    throw new NoPermissionError(
+      'Server administrator rights are required (ADMIN_USER_IDS)'
+    );
   }
 
   private actor(ctx: TcContext): string {
     if (ctx.meta.apiKey) {
-      return `key ${ctx.meta.apiKey.keyId} (app ${ctx.meta.apiKey.appId})`;
+      return `key ${ctx.meta.apiKey.keyId} (user ${ctx.meta.apiKey.userId})`;
     }
     return `user ${ctx.meta.userId}`;
   }
 }
 
-export default OpenAdminService;
+export default AdminService;

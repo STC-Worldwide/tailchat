@@ -77,11 +77,13 @@ Visit the official website to learn more: [https://tailchat.msgbyte.com/](https:
 ## Agents and the API
 
 Every published server action is reachable as `POST /api/<service>/<action>`
-with a scoped, revocable OpenApp API key (`Authorization: Bearer tck_...`);
-`server/openapi.json` is the generated contract and lists the scope each
-action needs. `apps/tailchat-mcp` is an MCP server over that surface so AI
-agents can manage groups, channels, members and messages -- see its
-[README](apps/tailchat-mcp/README.md) and the
+with a scoped, revocable **personal access token**
+(`Authorization: Bearer tck_...`), created from **Settings -> API keys**. A
+token acts as the user who made it, so it needs no bot account and no
+integration setup. `server/openapi.json` is the generated contract and lists
+the scope each action needs. `apps/tailchat-mcp` is an MCP server over that
+surface so AI agents can manage groups, channels, members and messages -- see
+its [README](apps/tailchat-mcp/README.md) and the
 [design note](docs/superpowers/specs/2026-09-03-tailchat-agent-api-design.md).
 
 ## Communication

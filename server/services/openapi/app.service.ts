@@ -5,7 +5,6 @@ import {
   TcContext,
   EntityError,
   NoPermissionError,
-  isServerAdmin,
 } from 'tailchat-server-sdk';
 import _ from 'lodash';
 import {
@@ -287,18 +286,6 @@ class OpenAppService extends TcService {
     }
 
     const nextCapability = filterAvailableAppCapability(_.uniq(capability));
-
-    // `admin` lets the app's API keys administer the server. Any user can
-    // create an app, so an owner must not be able to grant it to themselves.
-    if (
-      nextCapability.includes('admin') &&
-      !openapp.capability.includes('admin') &&
-      !isServerAdmin(userId)
-    ) {
-      throw new NoPermissionError(
-        'Only a server administrator can grant the admin capability'
-      );
-    }
 
     await openapp
       .updateOne({

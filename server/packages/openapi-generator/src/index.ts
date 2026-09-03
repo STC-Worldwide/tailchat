@@ -50,8 +50,8 @@ async function scanServices(): Promise<OpenAPIObject> {
         'Every published Moleculer action is reachable as `POST /api/<service>/<action>` with a JSON body.',
         'Paths below omit the `/api` prefix. The same actions are callable as socket.io events named `<service>.<action>`.',
         '',
-        'Authenticate with a user JWT in `X-Token`, or with an OpenApp API key in `Authorization: Bearer <key>` or `X-Api-Key`.',
-        "An API key acts as the app's bot user and may only call actions permitted by its scopes (`x-tailchat-scopes` on each operation):",
+        'Authenticate with a user JWT in `X-Token`, or with a personal access token in `Authorization: Bearer <key>` or `X-Api-Key`.',
+        'A token acts as the user who created it, so it reaches exactly what that user reaches, and may only call actions permitted by its scopes (`x-tailchat-scopes` on each operation):',
         '',
         scopeDescription,
         '',
@@ -75,14 +75,14 @@ async function scanServices(): Promise<OpenAPIObject> {
           type: 'http',
           scheme: 'bearer',
           description:
-            'OpenApp API key (tck_...) from /openapi/apikey/create. Scopes listed per operation.',
+            'Personal access token (tck_...) from /user/apikey/create. It acts as the user who created it; scopes listed per operation narrow it further.',
         },
         [SECURITY_API_KEY_HEADER]: {
           type: 'apiKey',
           in: 'header',
           name: 'X-Api-Key',
           description:
-            'OpenApp API key (tck_...), alternative to the bearer form.',
+            'Personal access token (tck_...), alternative to the bearer form.',
         },
       },
     },

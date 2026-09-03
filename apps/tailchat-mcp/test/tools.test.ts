@@ -141,7 +141,7 @@ test('whoami reports the bot and its scopes but never the token', async () => {
       userId: OWNER,
       apiKey: {
         keyId: 'k1',
-        appId: 'tc_1',
+        userId: OWNER,
         scopes: ['group:manage', 'message:write'],
       },
     }),
@@ -289,7 +289,7 @@ test('read_messages resolves nicknames and pages backwards', async () => {
   await h.close();
 });
 
-test('get_group names roles and members, and explains a group the bot is not in', async () => {
+test('get_group names roles and members, and explains a group you are not in', async () => {
   const h = await harness({
     '/group/getUserGroups': () => [group()],
     '/user/getUserInfoList': (body) =>
@@ -312,7 +312,7 @@ test('get_group names roles and members, and explains a group the bot is not in'
     groupId: 'ffffffffffffffffffffffff',
   });
   assert.equal(other.isError, true);
-  assert.match(other.text, /not one the bot belongs to/);
+  assert.match(other.text, /not one you are a member of/);
   await h.close();
 });
 
@@ -342,7 +342,7 @@ test('tailchat_call reaches any action and tailchat_actions maps it', async () =
 
   const admin = await h.call('tailchat_actions', { scope: 'admin' });
   assert.ok(
-    admin.json.actions.every((a: any) => a.action.startsWith('openapi.admin.'))
+    admin.json.actions.every((a: any) => a.action.startsWith('admin.'))
   );
   await h.close();
 });

@@ -2,26 +2,24 @@
 
 An [MCP](https://modelcontextprotocol.io) server that lets an AI agent act inside a
 Tailchat workspace: list and create groups and channels, add and manage members,
-read and post messages, send DMs, watch the bot's inbox, and (with an admin-scoped
-key) look up, notify and ban users. It talks to the gateway with an OpenApp API key,
-so everything it can do is bounded by that key's scopes and the bot's group
-permissions.
+read and post messages, send DMs, watch the inbox, and (with an admin-scoped token)
+look up, notify and ban users. It authenticates with a personal access token, so it
+acts as the user who created that token and everything it can do is bounded by the
+token's scopes and that user's own permissions.
 
 ## Setup
 
-1. In the Tailchat web client open **Open Api**, create an application, enable its
-   **Bot** capability, then under **API keys** create a key with the scopes the
-   agent needs. The key is shown once; copy it.
-2. Add the bot to the groups it should work in. A group owner (or anyone with the
-   manageUser permission) can do that from the group's integration panel, or with
-   `tailchat_add_member` from another key that has the permission.
-3. Build the server:
+1. In the Tailchat web client open **Settings -> API keys** and create a personal
+   access token with the scopes the agent needs. It is shown once; copy it. The
+   token acts as you, so it already sees your groups — there is no bot to create
+   and nothing to add to a group.
+2. Build the server:
 
    ```bash
    pnpm --dir apps/tailchat-mcp build
    ```
 
-4. Register it with your agent. For Claude Code:
+3. Register it with your agent. For Claude Code:
 
    ```bash
    claude mcp add tailchat -e TAILCHAT_URL=https://chat.example.com -e TAILCHAT_API_KEY=tck_... -- node /path/to/tailchat/apps/tailchat-mcp/dist/src/index.js
@@ -33,10 +31,10 @@ permissions.
 | Variable | Meaning |
 | --- | --- |
 | `TAILCHAT_URL` | Origin of the deployment, e.g. `https://chat.stc-worldwide.com` |
-| `TAILCHAT_API_KEY` | The `tck_...` key from the Open Api panel |
+| `TAILCHAT_API_KEY` | The `tck_...` token from **Settings -> API keys** |
 | `TAILCHAT_TIMEOUT_MS` | Per-request timeout, default 15000 |
 
-The key never travels as a tool argument and is never echoed in a result.
+The token never travels as a tool argument and is never echoed in a result.
 
 ## Tools
 
@@ -50,7 +48,7 @@ The key never travels as a tool argument and is never echoed in a result.
 | `tailchat_find_user` | user:read (by Nickname#0000) or admin (by email) |
 | `tailchat_send_message`, `tailchat_send_dm` | message:write |
 | `tailchat_read_messages`, `tailchat_search_messages`, `tailchat_inbox` | message:read |
-| `tailchat_admin_notify_users`, `tailchat_admin_set_banned` | admin |
+| `tailchat_admin_notify_users`, `tailchat_admin_set_banned` | admin (owner must be a server administrator) |
 | `tailchat_actions`, `tailchat_call` | whatever the called action needs |
 
 `tailchat_call` reaches every published gateway action by name, and
@@ -63,10 +61,11 @@ pnpm --dir server gen:openapi && pnpm --dir apps/tailchat-mcp sync:actions
 
 ## Trust boundary
 
-There is no inbound authentication: whoever can spawn the process holds the key.
-Give each agent its own key with the narrowest scopes that do the job, and revoke
-it from the Open Api panel when the agent is retired. The `admin` scope only works
-for an app that a server administrator has granted the admin capability.
+There is no inbound authentication: whoever can spawn the process holds the token,
+and the token acts as its owner. Give each agent its own token with the narrowest
+scopes that do the job, and revoke it from **Settings -> API keys** when the agent
+is retired. A token can never exceed its owner, and it cannot mint or revoke tokens.
+The `admin` scope is only issued to a user listed in the server's `ADMIN_USER_IDS`.
 
 ## Development
 
