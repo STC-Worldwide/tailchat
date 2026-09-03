@@ -164,6 +164,25 @@ default 600, `0` disables; the store is per gateway node) and
 The legacy `POST /api/openapi/bot/login` with `md5(appId + appSecret)` still
 works for old bots and logs a deprecation warning; do not build on it.
 
+**Hosted MCP.** `service-mcp` serves an MCP endpoint at
+`https://$CHAT_DOMAIN/mcp` (traefik `PathPrefix(/mcp)`, priority 50, container
+port 3010), so an agent needs no repo, no build and no Node — only the URL and
+its own token:
+
+```sh
+claude mcp add --transport http tailchat https://$CHAT_DOMAIN/mcp   --header "Authorization: Bearer tck_..."
+```
+
+It is stateless: each request builds its own MCP server from the token on that
+request and discards it with the response, so the process holds no credential
+and there is no session that could cross users. It calls the gateway over the
+internal network (`TAILCHAT_URL=http://service-core:3000`), not back out
+through Caddy. `GET /healthz` answers without a token; `GET` and `DELETE` on
+`/mcp` return 405, since a stateless endpoint has no stream to resume.
+
+**Settings -> MCP setup** in the web client shows per-client snippets with this
+deployment's origin already filled in.
+
 ## Deploy safety
 
 Tag deploys run a **canary boot check** first: the new image's gateway is

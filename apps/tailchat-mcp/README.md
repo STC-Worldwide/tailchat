@@ -7,7 +7,49 @@ look up, notify and ban users. It authenticates with a personal access token, so
 acts as the user who created that token and everything it can do is bounded by the
 token's scopes and that user's own permissions.
 
-## Setup
+It runs two ways from the same tools:
+
+| | Transport | What the agent needs |
+| --- | --- | --- |
+| **Hosted** (`src/http.ts`) | Streamable HTTP at `/mcp` | a URL and a token |
+| **Local** (`src/index.ts`) | stdio | this repo, a build, and Node |
+
+## Hosted
+
+The deployment serves the endpoint itself, so there is nothing to install. Create a
+token under **Settings -> API keys** and point a client at it:
+
+```bash
+claude mcp add --transport http tailchat https://chat.example.com/mcp   --header "Authorization: Bearer tck_..."
+```
+
+Any client that speaks remote MCP takes the same two things — a URL and an
+`Authorization: Bearer` header. **Settings -> MCP setup** in the web client has
+per-client snippets already filled in with that deployment's origin.
+
+The endpoint is **stateless by design**: every request builds its own MCP server and
+its own Tailchat client from the token on that request, and throws them away when the
+response ends. Nothing is kept between requests, so there is no session map that could
+hand one person's identity to another — the failure that matters most when one process
+serves many people's tokens. `X-Api-Key` works in place of the bearer header, matching
+what the gateway already accepts. A request with no token, or a token that is not
+shaped like `tck_` + 44 alphanumerics, is refused with 401 before anything reaches the
+gateway, and the rejection never echoes the credential.
+
+Being stateless also means no server-initiated streams: the endpoint answers `POST` and
+returns 405 for `GET` and `DELETE`. None of the tools need them. `GET /healthz` answers
+without a token.
+
+| Variable | Meaning |
+| --- | --- |
+| `TAILCHAT_URL` | Gateway origin this server calls, e.g. `http://service-core:3000` |
+| `MCP_HTTP_PORT` | Listen port, default 3010 |
+| `MCP_HTTP_PATH` | Endpoint path, default `/mcp` |
+| `TAILCHAT_TIMEOUT_MS` | Per-request timeout, default 15000 |
+
+## Local
+
+For a client that cannot reach a remote MCP server yet.
 
 1. In the Tailchat web client open **Settings -> API keys** and create a personal
    access token with the scopes the agent needs. It is shown once; copy it. The
