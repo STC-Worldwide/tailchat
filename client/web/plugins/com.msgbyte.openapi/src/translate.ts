@@ -93,6 +93,125 @@ export const Translate = {
       'zh-CN': '应用凭证',
       'en-US': 'Application Credentials',
     }),
+    apiKeys: localTrans({
+      'zh-CN': 'API 密钥',
+      'en-US': 'API keys',
+    }),
+  },
+  apiKeys: {
+    intro: localTrans({
+      'zh-CN':
+        'API 密钥以本应用的机器人身份调用接口，权限范围由所选作用域限制。密钥只在创建时显示一次。',
+      'en-US':
+        "API keys call the API as this app's bot user, limited to the selected scopes. A key is shown once, when it is created.",
+    }),
+    needBot: localTrans({
+      'zh-CN': '请先在“机器人”页开启机器人能力。',
+      'en-US': 'Enable the bot capability on the Bot page first.',
+    }),
+    create: localTrans({
+      'zh-CN': '创建密钥',
+      'en-US': 'Create key',
+    }),
+    keyName: localTrans({
+      'zh-CN': '名称',
+      'en-US': 'Name',
+    }),
+    keyNamePlaceholder: localTrans({
+      'zh-CN': '例如: ops agent',
+      'en-US': 'e.g. ops agent',
+    }),
+    scopes: localTrans({
+      'zh-CN': '作用域',
+      'en-US': 'Scopes',
+    }),
+    expiresInDays: localTrans({
+      'zh-CN': '有效期(天, 留空为永不过期)',
+      'en-US': 'Expires in days (blank = never)',
+    }),
+    adminNeedsCapability: localTrans({
+      'zh-CN': '需要服务器管理员为本应用开通 admin 能力',
+      'en-US':
+        'Requires the admin capability, granted by a server administrator',
+    }),
+    nameRequired: localTrans({
+      'zh-CN': '请输入名称',
+      'en-US': 'Name is required',
+    }),
+    scopeRequired: localTrans({
+      'zh-CN': '请至少选择一个作用域',
+      'en-US': 'Select at least one scope',
+    }),
+    created: localTrans({
+      'zh-CN': '密钥已创建，请立即复制，关闭后无法再次查看。',
+      'en-US':
+        'Key created. Copy it now; it cannot be shown again after this dialog closes.',
+    }),
+    copy: localTrans({
+      'zh-CN': '复制',
+      'en-US': 'Copy',
+    }),
+    copied: localTrans({
+      'zh-CN': '已复制',
+      'en-US': 'Copied',
+    }),
+    done: localTrans({
+      'zh-CN': '完成',
+      'en-US': 'Done',
+    }),
+    lastUsedAt: localTrans({
+      'zh-CN': '最近使用',
+      'en-US': 'Last used',
+    }),
+    expiresAt: localTrans({
+      'zh-CN': '过期时间',
+      'en-US': 'Expires',
+    }),
+    never: localTrans({
+      'zh-CN': '永不',
+      'en-US': 'Never',
+    }),
+    neverUsed: localTrans({
+      'zh-CN': '尚未使用',
+      'en-US': 'Not yet',
+    }),
+    status: localTrans({
+      'zh-CN': '状态',
+      'en-US': 'Status',
+    }),
+    active: localTrans({
+      'zh-CN': '有效',
+      'en-US': 'Active',
+    }),
+    revoked: localTrans({
+      'zh-CN': '已吊销',
+      'en-US': 'Revoked',
+    }),
+    expired: localTrans({
+      'zh-CN': '已过期',
+      'en-US': 'Expired',
+    }),
+    revoke: localTrans({
+      'zh-CN': '吊销',
+      'en-US': 'Revoke',
+    }),
+    revokeConfirm: localTrans({
+      'zh-CN': '吊销后使用此密钥的请求将立即失败，且不可恢复。',
+      'en-US':
+        'Requests using this key fail immediately after revocation. This cannot be undone.',
+    }),
+    revokedSuccess: localTrans({
+      'zh-CN': '密钥已吊销',
+      'en-US': 'Key revoked',
+    }),
+    noKeys: localTrans({
+      'zh-CN': '暂无密钥',
+      'en-US': 'No keys yet',
+    }),
+    usage: localTrans({
+      'zh-CN': '用法',
+      'en-US': 'Usage',
+    }),
   },
   bot: {
     callback: localTrans({

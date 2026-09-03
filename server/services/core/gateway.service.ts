@@ -11,10 +11,14 @@ import {
   PureContext,
   ApiGatewayMixin,
   ApiGatewayErrors,
+  ApiKeyMeta,
+  isApiKey,
+  matchActionScopes,
 } from 'tailchat-server-sdk';
 import { TcHealth } from '../../mixins/health.mixin';
 import type { Readable } from 'stream';
 import { checkPathMatch } from '../../lib/utils';
+import { buildRateLimitKey, extractCredential } from '../../lib/credential';
 import serve from 'serve-static';
 import accepts from 'accepts';
 import send from 'send';
@@ -48,14 +52,9 @@ export default class ApiService extends TcService {
     this.registerMixin(
       TcSocketIOService({
         userAuth: async (token) => {
-          const user: UserJWTPayload = await this.broker.call(
-            'user.resolveToken',
-            {
-              token,
-            }
-          );
+          const { user, apiKey } = await this.resolveCredential(token);
 
-          return user;
+          return { ...user, apiKey };
         },
         disableMsgpack: config.feature.disableMsgpack,
       })
@@ -91,27 +90,8 @@ export default class ApiService extends TcService {
       // Configures the Access-Control-Max-Age CORS header.
       maxAge: 3600,
     });
-    // this.registerSetting('rateLimit', {
-    //   // How long to keep record of requests in memory (in milliseconds).
-    //   // Defaults to 60000 (1 min)
-    //   window: 60 * 1000,
-
-    //   // Max number of requests during window. Defaults to 30
-    //   limit: 60,
-
-    //   // Set rate limit headers to response. Defaults to false
-    //   headers: true,
-
-    //   // Function used to generate keys. Defaults to:
-    //   key: (req) => {
-    //     return (
-    //       req.headers['x-forwarded-for'] ||
-    //       req.connection.remoteAddress ||
-    //       req.socket.remoteAddress ||
-    //       req.connection.socket.remoteAddress
-    //     );
-    //   },
-    // });
+    // Rate limiting is configured per route in getRoutes() (see the /api
+    // route) so the key function can use the presented credential.
 
     this.registerMethod('authorize', this.authorize);
 
@@ -143,6 +123,20 @@ export default class ApiService extends TcService {
 
         // Enable authorization. Implement the logic into `authorize` method. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Authorization
         authorization: true,
+
+        // Per-credential rate limit (per IP before login). The store is
+        // in-memory per gateway node: exact with one gateway, `limit x nodes`
+        // with several. Fails open. API_RATE_LIMIT=0 disables it.
+        rateLimit:
+          config.apiRateLimit > 0
+            ? {
+                window: 60 * 1000,
+                limit: config.apiRateLimit,
+                headers: true,
+                key: (req: IncomingMessage) =>
+                  buildRateLimitKey(req.headers, getRequestIp(req)),
+              }
+            : undefined,
 
         // The auto-alias feature allows you to declare your route alias directly in your services.
         // The gateway will dynamically build the full routes from service schema.
@@ -376,18 +370,48 @@ export default class ApiService extends TcService {
     return config.secret;
   }
 
+  /**
+   * Turn a presented credential into an identity.
+   *
+   * Something shaped like an OpenApp API key goes to `openapi.apikey.resolve`
+   * and comes back as the app's bot user plus the key's scopes; anything else
+   * is a user JWT. Shared by the HTTP route and the socket handshake.
+   */
+  async resolveCredential(
+    credential: string
+  ): Promise<{ user: UserJWTPayload; apiKey?: ApiKeyMeta }> {
+    if (isApiKey(credential)) {
+      if (!config.enableOpenapi) {
+        throw new Error('OpenAPI is disabled');
+      }
+
+      const resolved: { user: UserJWTPayload; apiKey: ApiKeyMeta } =
+        await this.broker.call('openapi.apikey.resolve', {
+          key: credential,
+        });
+
+      return { user: resolved.user, apiKey: resolved.apiKey };
+    }
+
+    const user: UserJWTPayload = await this.broker.call('user.resolveToken', {
+      token: credential,
+    });
+
+    return { user };
+  }
+
   async authorize(
     ctx: PureContext<{}, any>,
     route: unknown,
-    req: IncomingMessage
+    req: IncomingMessage & { $action?: { name?: string } }
   ) {
     if (checkPathMatch(this.getAuthWhitelist(), req.url)) {
       return null;
     }
 
-    const token = req.headers['x-token'] as string;
+    const credential = extractCredential(req.headers);
 
-    if (typeof token !== 'string') {
+    if (typeof credential !== 'string') {
       throw new ApiGatewayErrors.UnAuthorizedError(
         ApiGatewayErrors.ERR_NO_TOKEN,
         {
@@ -396,19 +420,12 @@ export default class ApiService extends TcService {
       );
     }
 
-    // Verify JWT token
+    let user: UserJWTPayload;
+    let apiKey: ApiKeyMeta | undefined;
     try {
-      const user: UserJWTPayload = await ctx.call('user.resolveToken', {
-        token,
-      });
+      ({ user, apiKey } = await this.resolveCredential(credential));
 
-      if (user && user._id) {
-        this.logger.info('[Web] Authenticated via JWT: ', user.nickname);
-        // Reduce user fields (it will be transferred to other nodes)
-        ctx.meta.user = _.pick(user, ['_id', 'nickname', 'email', 'avatar']);
-        ctx.meta.token = token;
-        ctx.meta.userId = user._id;
-      } else {
+      if (!(user && user._id)) {
         throw new Error(t('Token不合规'));
       }
     } catch (err) {
@@ -419,5 +436,34 @@ export default class ApiService extends TcService {
         }
       );
     }
+
+    // Reduce user fields (it will be transferred to other nodes)
+    ctx.meta.user = _.pick(user, ['_id', 'nickname', 'email', 'avatar']);
+    ctx.meta.token = credential;
+    ctx.meta.userId = user._id;
+
+    if (!apiKey) {
+      this.logger.info('[Web] Authenticated via JWT: ', user.nickname);
+      return;
+    }
+
+    ctx.meta.apiKey = apiKey;
+
+    // The gateway resolves the endpoint before authorize runs, so the action
+    // name is known here and an out-of-scope call never reaches the service.
+    const actionName = req.$action?.name;
+    if (!actionName || !matchActionScopes(actionName, apiKey.scopes)) {
+      throw new ApiGatewayErrors.ForbiddenError('API_KEY_SCOPE', {
+        error: `API key scopes [${apiKey.scopes.join(', ')}] do not permit ${
+          actionName ?? req.url
+        }`,
+      });
+    }
+
+    this.logger.info(
+      '[Web] Authenticated via API key:',
+      apiKey.keyId,
+      user.nickname
+    );
   }
 }

@@ -19,7 +19,33 @@ export { ApiGatewayMixin } from './services/lib/moleculer-web';
 export * as ApiGatewayErrors from './services/lib/moleculer-web/errors';
 export * from './services/lib/errors';
 export { PERMISSION, allPermission } from './services/lib/role';
+export {
+  API_KEY_PREFIX,
+  API_KEY_ID_LENGTH,
+  API_KEY_SECRET_LENGTH,
+  API_KEY_LENGTH,
+  API_KEY_ALPHABET,
+  API_KEY_ADMIN_SCOPE,
+  API_KEY_SCOPES,
+  apiKeyScopeNames,
+  isApiKeyScope,
+  filterApiKeyScopes,
+  expandApiKeyScopes,
+  matchActionScopes,
+  scopesForAction,
+  isApiKey,
+  parseApiKey,
+  formatApiKey,
+  hashApiKeySecret,
+  verifyApiKeySecret,
+} from './services/lib/apikey';
+export type {
+  ApiKeyScope,
+  ApiKeyScopeDefinition,
+  ApiKeyMeta,
+} from './services/lib/apikey';
 export { call } from './services/lib/call';
+export { isServerAdmin } from './services/lib/admin';
 export {
   config,
   buildUploadUrl,

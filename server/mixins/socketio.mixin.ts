@@ -13,6 +13,8 @@ import {
   PureServiceSchema,
   Utils,
   Errors,
+  ApiKeyMeta,
+  matchActionScopes,
 } from 'tailchat-server-sdk';
 import _ from 'lodash';
 import { ServiceUnavailableError } from 'tailchat-server-sdk';
@@ -58,7 +60,9 @@ interface TcSocketIOServiceOptions {
   /**
    * 用户token校验
    */
-  userAuth: (token: string) => Promise<UserJWTPayload>;
+  userAuth: (
+    token: string
+  ) => Promise<UserJWTPayload & { apiKey?: ApiKeyMeta }>;
 
   /**
    * 是否禁用msgpack
@@ -136,17 +140,29 @@ export const TcSocketIOService = (
             throw new Errors.MoleculerError('Token cannot be empty');
           }
 
-          const user: UserJWTPayload = await userAuth(token);
+          const { apiKey, ...user } = await userAuth(token);
 
           if (!(user && user._id)) {
             throw new Error('Token invalid');
           }
 
-          this.logger.info('[Socket] Authenticated via JWT: ', user.nickname);
+          if (apiKey) {
+            this.logger.info(
+              '[Socket] Authenticated via API key:',
+              apiKey.keyId,
+              user.nickname
+            );
+          } else {
+            this.logger.info('[Socket] Authenticated via JWT: ', user.nickname);
+          }
 
+          // socket.data is spread into ctx.meta for every call on this socket
           socket.data.user = user;
           socket.data.token = token;
           socket.data.userId = user._id;
+          if (apiKey) {
+            socket.data.apiKey = apiKey;
+          }
 
           next();
         } catch (e) {
@@ -224,6 +240,20 @@ export const TcSocketIOService = (
             // 检测是否允许调用
             if (checkBlacklist(eventName)) {
               const message = 'Not allowed request';
+              this.logger.warn('[SocketIO]', '=>', message);
+              cb({
+                result: false,
+                message,
+              });
+              return;
+            }
+
+            // API keys are limited to their scopes, same as over HTTP
+            const apiKey: ApiKeyMeta | undefined = socket.data.apiKey;
+            if (apiKey && !matchActionScopes(eventName, apiKey.scopes)) {
+              const message = `API key scopes [${apiKey.scopes.join(
+                ', '
+              )}] do not permit ${eventName}`;
               this.logger.warn('[SocketIO]', '=>', message);
               cb({
                 result: false,

@@ -102,6 +102,11 @@ jobs:
         run: pnpm --filter tailchat-server-sdk build
       - name: typecheck server
         run: cd server && NODE_OPTIONS=--max-old-space-size=8192 npx tsc --noEmit
+      - name: unit tests (no database needed)
+        # The integration suites under server/test/integration need MongoDB
+        # and are run locally; these three trees only import the SDK, lib
+        # helpers and model definitions.
+        run: cd server && npx jest --runInBand test/unit lib/__tests__ models/openapi
       - name: typecheck admin
         # The admin console has its own tsconfig and is not covered by the
         # server workspace typecheck.
