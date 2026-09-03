@@ -68,6 +68,7 @@ jobs:
             [ -z "$f" ] && continue
             case "$f" in
               server/*) relevant=true; break ;;
+              apps/tailchat-mcp/*) relevant=true; break ;;
               pnpm-lock.yaml) relevant=true; break ;;
               package.json) relevant=true; break ;;
               .github/workflows/server-ci.yaml) relevant=true; break ;;
@@ -111,6 +112,11 @@ jobs:
         # The admin console has its own tsconfig and is not covered by the
         # server workspace typecheck.
         run: cd server/admin-next && pnpm check:type
+      - name: build and test tailchat-mcp
+        # The MCP server over the gateway API. Its catalog is generated from
+        # server/openapi.json, so it belongs with the server gate. Tests run
+        # against an in-memory MCP client and a fake gateway.
+        run: cd apps/tailchat-mcp && pnpm test
 
   # THE REQUIRED CHECK. Always reports, so it can never leave a required context
   # unreported. `if: always()` is what makes that true -- without it this job
