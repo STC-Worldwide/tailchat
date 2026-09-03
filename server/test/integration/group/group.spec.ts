@@ -582,9 +582,12 @@ describe('Test "group" service', () => {
 
     const finalGroup = await service.adapter.model.findById(testGroup._id);
 
-    expect(new Date(finalGroup?.members[0].muteUntil ?? 0).valueOf()).toBe(
-      muteUntil
-    );
+    // the service stamps its own `now`, a few ms after the fixture's
+    const storedMuteUntil = new Date(
+      finalGroup?.members[0].muteUntil ?? 0
+    ).valueOf();
+    expect(storedMuteUntil).toBeGreaterThanOrEqual(muteUntil);
+    expect(storedMuteUntil).toBeLessThan(muteUntil + 5000);
   });
 
   test('Test "group.deleteGroupMember"', async () => {

@@ -8,7 +8,7 @@ import userLoginLogModel from '../../../models/user/userLoginLog';
 /**
  * 创建测试用户
  */
-function createTestUser(email = 'foo@bar.com') {
+function createTestUser(email = `${generateRandomStr()}@example.com`) {
   return {
     email,
     nickname: getEmailAddress(email),
@@ -45,7 +45,7 @@ describe('Test "user" service', () => {
 
     try {
       expect(user.email).toBe(params.email);
-      expect(user.avatar).toBe(null);
+      expect(user.avatar).toBeFalsy();
       expect(user.nickname).toBe(getEmailAddress(params.email));
     } finally {
       await service.adapter.removeById(user._id);

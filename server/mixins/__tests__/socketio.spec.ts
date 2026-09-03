@@ -11,7 +11,9 @@ async function createAndEmitMessage(
   eventName: string,
   eventData: unknown = {}
 ): Promise<any> {
-  const socket = io(`http://localhost:${PORT}/`, {
+  // 127.0.0.1, not localhost: the server listens on 0.0.0.0 and modern
+  // Node resolves localhost to ::1 first, which never connects
+  const socket = io(`http://127.0.0.1:${PORT}/`, {
     transports: ['websocket'],
     auth: {
       token: createTestUserToken(),
@@ -47,6 +49,10 @@ describe('Testing "socketio.mixin"', () => {
     mixins: [
       ApiGatewayMixin,
       TcSocketIOService({
+        // the server defaults to the msgpack parser; the plain socket.io
+        // client below speaks JSON, so the handshake silently never completes
+        // unless the parser matches
+        disableMsgpack: true,
         async userAuth(token): Promise<UserJWTPayload> {
           return {
             _id: 'any some',

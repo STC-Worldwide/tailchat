@@ -205,7 +205,14 @@ describe('RedisSlowModeCounter', () => {
     expect(result.accepted).toBe(true);
     expect(result.retryAfterMs).toBeGreaterThan(59000);
     expect(result.retryAfterMs).toBeLessThanOrEqual(60000);
-    expect(result.resetAt!.valueOf()).toBeGreaterThanOrEqual(before + 60000);
-    expect(result.resetAt!.valueOf()).toBeLessThanOrEqual(after + 60000);
+    // Redis TIME comes from the Redis host's clock (a container or VM here),
+    // which can differ from this process by a few milliseconds
+    const clockSkewMs = 1000;
+    expect(result.resetAt!.valueOf()).toBeGreaterThanOrEqual(
+      before + 60000 - clockSkewMs
+    );
+    expect(result.resetAt!.valueOf()).toBeLessThanOrEqual(
+      after + 60000 + clockSkewMs
+    );
   });
 });
