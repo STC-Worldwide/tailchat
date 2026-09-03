@@ -13,7 +13,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "check:type": "tsc -p tsconfig.json --noEmit",
-    "test": "npm run build && node --test dist/test/client.test.js dist/test/render.test.js dist/test/tools.test.js",
+    "test": "npm run build && node --test dist/test/client.test.js dist/test/render.test.js dist/test/tools.test.js dist/test/http.test.js",
     "start": "node dist/src/index.js",
     "sync:actions": "node scripts/sync-actions.mjs"
   },

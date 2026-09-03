@@ -72,12 +72,12 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Verify compose pin matches tag
-        # The pin is duplicated across four services and bumped by hand. A
+        # The pin is duplicated across five services and bumped by hand. A
         # `grep -q` is satisfied by ONE matching line, so a partial bump (or a
         # rebase that drops a hunk) used to pass this gate and deploy a
         # mixed-version stack — e.g. a stale service-core serving the old web
         # bundle against a new admin, which no later step would catch. Assert
-        # that EVERY pin matches and that there are exactly four of them.
+        # that EVERY pin matches and that there are exactly five of them.
         run: |
           TAG="${GITHUB_REF_NAME#v}"
           if stale=$(grep -n 'image: ghcr.io/stc-worldwide/tailchat:' deploy/stc/docker-compose.yml \
@@ -89,11 +89,11 @@ jobs:
           # `|| true`: the step runs under `bash -e`, and grep -c exits 1 on
           # zero matches, which would abort before the message below prints.
           n=$(grep -c "image: ghcr.io/stc-worldwide/tailchat:${TAG}\$" deploy/stc/docker-compose.yml || true)
-          if [ "$n" != 4 ]; then
-            echo "::error::expected 4 pinned services at ${TAG}, found ${n}"
+          if [ "$n" != 5 ]; then
+            echo "::error::expected 5 pinned services at ${TAG}, found ${n}"
             exit 1
           fi
-          echo "all 4 compose pins match ${TAG}"
+          echo "all 5 compose pins match ${TAG}"
       - name: Canary boot check
         # Boots the new image's gateway against the LIVE backends before any
         # traffic moves — catches runtime-only failures (the v1.13.0 moleculer

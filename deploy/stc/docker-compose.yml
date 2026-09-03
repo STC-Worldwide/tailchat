@@ -59,6 +59,39 @@ services:
     networks:
       - internal
 
+  # Hosted MCP endpoint, so an agent needs no repo, no build and no Node — a client
+  # points at https://<domain>/mcp and sends its own personal access token. The server
+  # is stateless: every request builds its own MCP server from the token on that
+  # request, so this process never holds anyone's credential between requests.
+  #
+  # Priority 50 like /admin, because api-gw claims PathPrefix(`/`).
+  service-mcp:
+    image: ghcr.io/stc-worldwide/tailchat:1.20.0
+    restart: unless-stopped
+    env_file: docker-compose.env
+    environment:
+      # The gateway, over the internal network — not the public origin, so this
+      # does not hairpin out through Caddy and back.
+      TAILCHAT_URL: http://service-core:3000
+      MCP_HTTP_PORT: 3010
+      MCP_HTTP_PATH: /mcp
+    depends_on:
+      - service-core
+    healthcheck:
+      test: ["CMD", "wget", "http://127.0.0.1:3010/healthz", "-q", "-O", "-"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mcp.rule=PathPrefix(`/mcp`)"
+      - "traefik.http.routers.mcp.priority=50"
+      - "traefik.http.services.mcp.loadbalancer.server.port=3010"
+    networks:
+      - internal
+    command: node apps/tailchat-mcp/dist/src/http.js
+
   service-all-plugins:
     image: ghcr.io/stc-worldwide/tailchat:1.20.0
     restart: unless-stopped
