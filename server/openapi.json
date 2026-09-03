@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Tailchat API",
-    "version": "1.19.1",
+    "version": "1.20.0",
     "description": "Every published Moleculer action is reachable as `POST /api/<service>/<action>` with a JSON body.\nPaths below omit the `/api` prefix. The same actions are callable as socket.io events named `<service>.<action>`.\n\nAuthenticate with a user JWT in `X-Token`, or with a personal access token in `Authorization: Bearer <key>` or `X-Api-Key`.\nA token acts as the user who created it, so it reaches exactly what that user reaches, and may only call actions permitted by its scopes (`x-tailchat-scopes` on each operation):\n\n- `message:read`: Read messages, converses, acks and the inbox\n- `message:write`: Send, recall and delete messages, react, open DMs\n- `group:read`: List groups, read group info, membership and invites\n- `group:manage`: Create and configure groups, panels, roles, members and invites (includes group:read)\n- `user:read`: Read the bot identity, user profiles, friends and DM list\n- `user:write`: Update the bot profile and settings, manage friends and DMs\n- `file`: Upload and read files\n- `plugins`: Call backend plugin services\n- `admin`: Server administration (owner must be a server administrator): find, ban and unban users, add members to any group, send system notifications\n\nRate limit: `API_RATE_LIMIT` requests per minute per credential (default 600), reported in `X-Rate-Limit-*` headers; HTTP 429 when exceeded.\nResponses are `{ \"code\": <http status>, \"data\": <result> }`."
   },
   "servers": [
@@ -1314,1358 +1314,6 @@
         "security": [
           {
             "UserToken": []
-          }
-        ]
-      }
-    },
-    "/chat/ack/update": {
-      "post": {
-        "tags": [
-          "chat.ack"
-        ],
-        "operationId": "chat.ack.update",
-        "summary": "chat.ack.update",
-        "description": "Requires a user token, or an API key with one of these scopes: message:write.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "converseId": {
-                    "type": "string"
-                  },
-                  "lastMessageId": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "converseId",
-                  "lastMessageId"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "message:write"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "message:write"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "message:write"
-            ]
-          }
-        ]
-      }
-    },
-    "/chat/ack/list": {
-      "post": {
-        "tags": [
-          "chat.ack"
-        ],
-        "operationId": "chat.ack.list",
-        "summary": "chat.ack.list",
-        "description": "Requires a user token, or an API key with one of these scopes: message:read.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "converseIds": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "required": [
-                  "converseIds"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "message:read"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "message:read"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "message:read"
-            ]
-          }
-        ]
-      }
-    },
-    "/chat/ack/all": {
-      "post": {
-        "tags": [
-          "chat.ack"
-        ],
-        "operationId": "chat.ack.all",
-        "summary": "chat.ack.all",
-        "description": "Requires a user token, or an API key with one of these scopes: message:read.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {}
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "message:read"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "message:read"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "message:read"
-            ]
-          }
-        ]
-      }
-    },
-    "/chat/converse/createDMConverse": {
-      "post": {
-        "tags": [
-          "chat.converse"
-        ],
-        "operationId": "chat.converse.createDMConverse",
-        "summary": "chat.converse.createDMConverse",
-        "description": "Requires a user token, or an API key with one of these scopes: message:write.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "memberIds": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "required": [
-                  "memberIds"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "message:write"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "message:write"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "message:write"
-            ]
-          }
-        ]
-      }
-    },
-    "/chat/converse/appendDMConverseMembers": {
-      "post": {
-        "tags": [
-          "chat.converse"
-        ],
-        "operationId": "chat.converse.appendDMConverseMembers",
-        "summary": "chat.converse.appendDMConverseMembers",
-        "description": "Requires a user token. Not available to API keys.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "converseId": {
-                    "type": "string"
-                  },
-                  "memberIds": {
-                    "type": "array"
-                  }
-                },
-                "required": [
-                  "converseId",
-                  "memberIds"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [],
-        "security": [
-          {
-            "UserToken": []
-          }
-        ]
-      }
-    },
-    "/chat/converse/findConverseInfo": {
-      "post": {
-        "tags": [
-          "chat.converse"
-        ],
-        "operationId": "chat.converse.findConverseInfo",
-        "summary": "chat.converse.findConverseInfo",
-        "description": "Requires a user token, or an API key with one of these scopes: message:read.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "converseId": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "converseId"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "message:read"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "message:read"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "message:read"
-            ]
-          }
-        ]
-      }
-    },
-    "/chat/converse/findAndJoinRoom": {
-      "post": {
-        "tags": [
-          "chat.converse"
-        ],
-        "operationId": "chat.converse.findAndJoinRoom",
-        "summary": "chat.converse.findAndJoinRoom",
-        "description": "Requires a user token, or an API key with one of these scopes: message:read.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {}
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "message:read"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "message:read"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "message:read"
-            ]
-          }
-        ]
-      }
-    },
-    "/chat/inbox/all": {
-      "post": {
-        "tags": [
-          "chat.inbox"
-        ],
-        "operationId": "chat.inbox.all",
-        "summary": "chat.inbox.all",
-        "description": "Requires a user token, or an API key with one of these scopes: message:read.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {}
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "message:read"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "message:read"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "message:read"
-            ]
-          }
-        ]
-      }
-    },
-    "/chat/inbox/ack": {
-      "post": {
-        "tags": [
-          "chat.inbox"
-        ],
-        "operationId": "chat.inbox.ack",
-        "summary": "chat.inbox.ack",
-        "description": "Requires a user token, or an API key with one of these scopes: message:write.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "inboxItemIds": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "required": [
-                  "inboxItemIds"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "message:write"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "message:write"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "message:write"
-            ]
-          }
-        ]
-      }
-    },
-    "/chat/inbox/clear": {
-      "post": {
-        "tags": [
-          "chat.inbox"
-        ],
-        "operationId": "chat.inbox.clear",
-        "summary": "chat.inbox.clear",
-        "description": "Requires a user token, or an API key with one of these scopes: message:write.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {}
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "message:write"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "message:write"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "message:write"
-            ]
-          }
-        ]
-      }
-    },
-    "/chat/message/fetchConverseMessage": {
-      "post": {
-        "tags": [
-          "chat.message"
-        ],
-        "operationId": "chat.message.fetchConverseMessage",
-        "summary": "chat.message.fetchConverseMessage",
-        "description": "Requires a user token, or an API key with one of these scopes: message:read.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "converseId": {
-                    "type": "string"
-                  },
-                  "startId": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "converseId"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "message:read"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "message:read"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "message:read"
-            ]
-          }
-        ]
-      }
-    },
-    "/chat/message/fetchNearbyMessage": {
-      "post": {
-        "tags": [
-          "chat.message"
-        ],
-        "operationId": "chat.message.fetchNearbyMessage",
-        "summary": "chat.message.fetchNearbyMessage",
-        "description": "Requires a user token, or an API key with one of these scopes: message:read.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  },
-                  "converseId": {
-                    "type": "string"
-                  },
-                  "messageId": {
-                    "type": "string"
-                  },
-                  "num": {
-                    "type": "number"
-                  }
-                },
-                "required": [
-                  "converseId",
-                  "messageId"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "message:read"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "message:read"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "message:read"
-            ]
-          }
-        ]
-      }
-    },
-    "/chat/message/sendMessage": {
-      "post": {
-        "tags": [
-          "chat.message"
-        ],
-        "operationId": "chat.message.sendMessage",
-        "summary": "chat.message.sendMessage",
-        "description": "Requires a user token, or an API key with one of these scopes: message:write.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "converseId": {
-                    "type": "string"
-                  },
-                  "groupId": {
-                    "type": "string"
-                  },
-                  "content": {
-                    "type": "string"
-                  },
-                  "plain": {
-                    "type": "string"
-                  },
-                  "meta": {}
-                },
-                "required": [
-                  "converseId",
-                  "content"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "message:write"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "message:write"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "message:write"
-            ]
-          }
-        ]
-      }
-    },
-    "/chat/message/getSlowModeStatus": {
-      "post": {
-        "tags": [
-          "chat.message"
-        ],
-        "operationId": "chat.message.getSlowModeStatus",
-        "summary": "chat.message.getSlowModeStatus",
-        "description": "Requires a user token, or an API key with one of these scopes: message:read.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "converseId": {
-                    "type": "string"
-                  },
-                  "groupId": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "converseId",
-                  "groupId"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "message:read"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "message:read"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "message:read"
-            ]
-          }
-        ]
-      }
-    },
-    "/chat/message/recallMessage": {
-      "post": {
-        "tags": [
-          "chat.message"
-        ],
-        "operationId": "chat.message.recallMessage",
-        "summary": "chat.message.recallMessage",
-        "description": "Requires a user token, or an API key with one of these scopes: message:write.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "messageId": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "messageId"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "message:write"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "message:write"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "message:write"
-            ]
-          }
-        ]
-      }
-    },
-    "/chat/message/getMessage": {
-      "post": {
-        "tags": [
-          "chat.message"
-        ],
-        "operationId": "chat.message.getMessage",
-        "summary": "chat.message.getMessage",
-        "description": "Requires a user token, or an API key with one of these scopes: message:read.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "messageId": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "messageId"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "message:read"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "message:read"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "message:read"
-            ]
-          }
-        ]
-      }
-    },
-    "/chat/message/deleteMessage": {
-      "post": {
-        "tags": [
-          "chat.message"
-        ],
-        "operationId": "chat.message.deleteMessage",
-        "summary": "chat.message.deleteMessage",
-        "description": "Requires a user token, or an API key with one of these scopes: message:write.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "messageId": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "messageId"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "message:write"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "message:write"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "message:write"
-            ]
-          }
-        ]
-      }
-    },
-    "/chat/message/searchMessage": {
-      "post": {
-        "tags": [
-          "chat.message"
-        ],
-        "operationId": "chat.message.searchMessage",
-        "summary": "chat.message.searchMessage",
-        "description": "Requires a user token, or an API key with one of these scopes: message:read.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
-                    "type": "string"
-                  },
-                  "converseId": {
-                    "type": "string"
-                  },
-                  "text": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "converseId",
-                  "text"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "message:read"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "message:read"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "message:read"
-            ]
-          }
-        ]
-      }
-    },
-    "/chat/message/fetchConverseLastMessages": {
-      "post": {
-        "tags": [
-          "chat.message"
-        ],
-        "operationId": "chat.message.fetchConverseLastMessages",
-        "summary": "chat.message.fetchConverseLastMessages",
-        "description": "Requires a user token. Not available to API keys.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "converseIds": {
-                    "type": "array"
-                  }
-                },
-                "required": [
-                  "converseIds"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [],
-        "security": [
-          {
-            "UserToken": []
-          }
-        ]
-      }
-    },
-    "/chat/message/addReaction": {
-      "post": {
-        "tags": [
-          "chat.message"
-        ],
-        "operationId": "chat.message.addReaction",
-        "summary": "chat.message.addReaction",
-        "description": "Requires a user token, or an API key with one of these scopes: message:write.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "messageId": {
-                    "type": "string"
-                  },
-                  "emoji": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "messageId",
-                  "emoji"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "message:write"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "message:write"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "message:write"
-            ]
-          }
-        ]
-      }
-    },
-    "/chat/message/removeReaction": {
-      "post": {
-        "tags": [
-          "chat.message"
-        ],
-        "operationId": "chat.message.removeReaction",
-        "summary": "chat.message.removeReaction",
-        "description": "Requires a user token, or an API key with one of these scopes: message:write.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "messageId": {
-                    "type": "string"
-                  },
-                  "emoji": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "messageId",
-                  "emoji"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "message:write"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "message:write"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "message:write"
-            ]
           }
         ]
       }
@@ -4962,6 +3610,1415 @@
           {
             "ApiKeyHeader": [
               "group:manage"
+            ]
+          }
+        ]
+      }
+    },
+    "/chat/ack/update": {
+      "post": {
+        "tags": [
+          "chat.ack"
+        ],
+        "operationId": "chat.ack.update",
+        "summary": "chat.ack.update",
+        "description": "Requires a user token, or an API key with one of these scopes: message:write.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "converseId": {
+                    "type": "string"
+                  },
+                  "lastMessageId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "converseId",
+                  "lastMessageId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "message:write"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "message:write"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "message:write"
+            ]
+          }
+        ]
+      }
+    },
+    "/chat/ack/list": {
+      "post": {
+        "tags": [
+          "chat.ack"
+        ],
+        "operationId": "chat.ack.list",
+        "summary": "chat.ack.list",
+        "description": "Requires a user token, or an API key with one of these scopes: message:read.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "converseIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "converseIds"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "message:read"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "message:read"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "message:read"
+            ]
+          }
+        ]
+      }
+    },
+    "/chat/ack/all": {
+      "post": {
+        "tags": [
+          "chat.ack"
+        ],
+        "operationId": "chat.ack.all",
+        "summary": "chat.ack.all",
+        "description": "Requires a user token, or an API key with one of these scopes: message:read.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "message:read"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "message:read"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "message:read"
+            ]
+          }
+        ]
+      }
+    },
+    "/chat/converse/createDMConverse": {
+      "post": {
+        "tags": [
+          "chat.converse"
+        ],
+        "operationId": "chat.converse.createDMConverse",
+        "summary": "chat.converse.createDMConverse",
+        "description": "Requires a user token, or an API key with one of these scopes: message:write.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "memberIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "memberIds"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "message:write"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "message:write"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "message:write"
+            ]
+          }
+        ]
+      }
+    },
+    "/chat/converse/appendDMConverseMembers": {
+      "post": {
+        "tags": [
+          "chat.converse"
+        ],
+        "operationId": "chat.converse.appendDMConverseMembers",
+        "summary": "chat.converse.appendDMConverseMembers",
+        "description": "Requires a user token. Not available to API keys.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "converseId": {
+                    "type": "string"
+                  },
+                  "memberIds": {
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "converseId",
+                  "memberIds"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [],
+        "security": [
+          {
+            "UserToken": []
+          }
+        ]
+      }
+    },
+    "/chat/converse/findConverseInfo": {
+      "post": {
+        "tags": [
+          "chat.converse"
+        ],
+        "operationId": "chat.converse.findConverseInfo",
+        "summary": "chat.converse.findConverseInfo",
+        "description": "Requires a user token, or an API key with one of these scopes: message:read.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "converseId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "converseId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "message:read"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "message:read"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "message:read"
+            ]
+          }
+        ]
+      }
+    },
+    "/chat/converse/findAndJoinRoom": {
+      "post": {
+        "tags": [
+          "chat.converse"
+        ],
+        "operationId": "chat.converse.findAndJoinRoom",
+        "summary": "chat.converse.findAndJoinRoom",
+        "description": "Requires a user token, or an API key with one of these scopes: message:read.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "message:read"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "message:read"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "message:read"
+            ]
+          }
+        ]
+      }
+    },
+    "/chat/inbox/all": {
+      "post": {
+        "tags": [
+          "chat.inbox"
+        ],
+        "operationId": "chat.inbox.all",
+        "summary": "chat.inbox.all",
+        "description": "Requires a user token, or an API key with one of these scopes: message:read.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "message:read"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "message:read"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "message:read"
+            ]
+          }
+        ]
+      }
+    },
+    "/chat/inbox/ack": {
+      "post": {
+        "tags": [
+          "chat.inbox"
+        ],
+        "operationId": "chat.inbox.ack",
+        "summary": "chat.inbox.ack",
+        "description": "Requires a user token, or an API key with one of these scopes: message:write.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "inboxItemIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "inboxItemIds"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "message:write"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "message:write"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "message:write"
+            ]
+          }
+        ]
+      }
+    },
+    "/chat/inbox/clear": {
+      "post": {
+        "tags": [
+          "chat.inbox"
+        ],
+        "operationId": "chat.inbox.clear",
+        "summary": "chat.inbox.clear",
+        "description": "Requires a user token, or an API key with one of these scopes: message:write.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "message:write"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "message:write"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "message:write"
+            ]
+          }
+        ]
+      }
+    },
+    "/chat/message/fetchConverseMessage": {
+      "post": {
+        "tags": [
+          "chat.message"
+        ],
+        "operationId": "chat.message.fetchConverseMessage",
+        "summary": "chat.message.fetchConverseMessage",
+        "description": "Requires a user token, or an API key with one of these scopes: message:read.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "converseId": {
+                    "type": "string"
+                  },
+                  "startId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "converseId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "message:read"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "message:read"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "message:read"
+            ]
+          }
+        ]
+      }
+    },
+    "/chat/message/fetchNearbyMessage": {
+      "post": {
+        "tags": [
+          "chat.message"
+        ],
+        "operationId": "chat.message.fetchNearbyMessage",
+        "summary": "chat.message.fetchNearbyMessage",
+        "description": "Requires a user token, or an API key with one of these scopes: message:read.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  },
+                  "converseId": {
+                    "type": "string"
+                  },
+                  "messageId": {
+                    "type": "string"
+                  },
+                  "num": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "converseId",
+                  "messageId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "message:read"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "message:read"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "message:read"
+            ]
+          }
+        ]
+      }
+    },
+    "/chat/message/sendMessage": {
+      "post": {
+        "tags": [
+          "chat.message"
+        ],
+        "operationId": "chat.message.sendMessage",
+        "summary": "chat.message.sendMessage",
+        "description": "Requires a user token, or an API key with one of these scopes: message:write.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "converseId": {
+                    "type": "string"
+                  },
+                  "groupId": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  },
+                  "plain": {
+                    "type": "string"
+                  },
+                  "meta": {}
+                },
+                "required": [
+                  "converseId",
+                  "content"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "message:write"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "message:write"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "message:write"
+            ]
+          }
+        ]
+      }
+    },
+    "/chat/message/getSlowModeStatus": {
+      "post": {
+        "tags": [
+          "chat.message"
+        ],
+        "operationId": "chat.message.getSlowModeStatus",
+        "summary": "chat.message.getSlowModeStatus",
+        "description": "Requires a user token, or an API key with one of these scopes: message:read.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "converseId": {
+                    "type": "string"
+                  },
+                  "groupId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "converseId",
+                  "groupId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "message:read"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "message:read"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "message:read"
+            ]
+          }
+        ]
+      }
+    },
+    "/chat/message/recallMessage": {
+      "post": {
+        "tags": [
+          "chat.message"
+        ],
+        "operationId": "chat.message.recallMessage",
+        "summary": "chat.message.recallMessage",
+        "description": "Requires a user token, or an API key with one of these scopes: message:write.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "messageId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "messageId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "message:write"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "message:write"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "message:write"
+            ]
+          }
+        ]
+      }
+    },
+    "/chat/message/getMessage": {
+      "post": {
+        "tags": [
+          "chat.message"
+        ],
+        "operationId": "chat.message.getMessage",
+        "summary": "chat.message.getMessage",
+        "description": "Requires a user token, or an API key with one of these scopes: message:read.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "messageId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "messageId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "message:read"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "message:read"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "message:read"
+            ]
+          }
+        ]
+      }
+    },
+    "/chat/message/deleteMessage": {
+      "post": {
+        "tags": [
+          "chat.message"
+        ],
+        "operationId": "chat.message.deleteMessage",
+        "summary": "chat.message.deleteMessage",
+        "description": "Requires a user token, or an API key with one of these scopes: message:write.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "messageId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "messageId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "message:write"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "message:write"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "message:write"
+            ]
+          }
+        ]
+      }
+    },
+    "/chat/message/searchMessage": {
+      "post": {
+        "tags": [
+          "chat.message"
+        ],
+        "operationId": "chat.message.searchMessage",
+        "summary": "chat.message.searchMessage",
+        "description": "Requires a user token, or an API key with one of these scopes: message:read.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  },
+                  "converseId": {
+                    "type": "string"
+                  },
+                  "text": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "converseId",
+                  "text"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "message:read"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "message:read"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "message:read"
+            ]
+          }
+        ]
+      }
+    },
+    "/chat/message/fetchConverseLastMessages": {
+      "post": {
+        "tags": [
+          "chat.message"
+        ],
+        "operationId": "chat.message.fetchConverseLastMessages",
+        "summary": "chat.message.fetchConverseLastMessages",
+        "description": "Requires a user token. Not available to API keys.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "converseIds": {
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "converseIds"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [],
+        "security": [
+          {
+            "UserToken": []
+          }
+        ]
+      }
+    },
+    "/chat/message/addReaction": {
+      "post": {
+        "tags": [
+          "chat.message"
+        ],
+        "operationId": "chat.message.addReaction",
+        "summary": "chat.message.addReaction",
+        "description": "Requires a user token, or an API key with one of these scopes: message:write.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "messageId": {
+                    "type": "string"
+                  },
+                  "emoji": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "messageId",
+                  "emoji"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "message:write"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "message:write"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "message:write"
+            ]
+          }
+        ]
+      }
+    },
+    "/chat/message/removeReaction": {
+      "post": {
+        "tags": [
+          "chat.message"
+        ],
+        "operationId": "chat.message.removeReaction",
+        "summary": "chat.message.removeReaction",
+        "description": "Requires a user token, or an API key with one of these scopes: message:write.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "messageId": {
+                    "type": "string"
+                  },
+                  "emoji": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "messageId",
+                  "emoji"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "message:write"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "message:write"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "message:write"
+            ]
+          }
+        ]
+      }
+    },
+    "/plugin/registry/list": {
+      "post": {
+        "tags": [
+          "plugin.registry"
+        ],
+        "operationId": "plugin.registry.list",
+        "summary": "plugin.registry.list",
+        "description": "Requires a user token, or an API key with one of these scopes: plugins.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "plugins"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "plugins"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "plugins"
             ]
           }
         ]
@@ -7264,63 +7321,6 @@
         ]
       }
     },
-    "/plugin/registry/list": {
-      "post": {
-        "tags": [
-          "plugin.registry"
-        ],
-        "operationId": "plugin.registry.list",
-        "summary": "plugin.registry.list",
-        "description": "Requires a user token, or an API key with one of these scopes: plugins.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {}
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "plugins"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "plugins"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "plugins"
-            ]
-          }
-        ]
-      }
-    },
     "/plugin:com.msgbyte.agora/available": {
       "post": {
         "tags": [
@@ -7378,20 +7378,97 @@
         ]
       }
     },
-    "/plugin:com.msgbyte.getui/available": {
+    "/plugin:com.msgbyte.discover/all": {
       "post": {
         "tags": [
-          "plugin:com.msgbyte.getui"
+          "plugin:com.msgbyte.discover"
         ],
-        "operationId": "plugin:com.msgbyte.getui.available",
-        "summary": "plugin:com.msgbyte.getui.available",
+        "operationId": "plugin:com.msgbyte.discover.all",
+        "summary": "plugin:com.msgbyte.discover.all",
         "description": "Requires a user token, or an API key with one of these scopes: plugins.",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {}
+                "properties": {
+                  "page": {
+                    "type": "number",
+                    "default": 1
+                  },
+                  "size": {
+                    "type": "number",
+                    "default": 20
+                  }
+                },
+                "required": [
+                  "page",
+                  "size"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "plugins"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "plugins"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "plugins"
+            ]
+          }
+        ]
+      }
+    },
+    "/plugin:com.msgbyte.discover/join": {
+      "post": {
+        "tags": [
+          "plugin:com.msgbyte.discover"
+        ],
+        "operationId": "plugin:com.msgbyte.discover.join",
+        "summary": "plugin:com.msgbyte.discover.join",
+        "description": "Requires a user token, or an API key with one of these scopes: plugins.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "groupId"
+                ]
               }
             }
           }
@@ -7696,27 +7773,20 @@
         ]
       }
     },
-    "/plugin:com.msgbyte.linkmeta/fetch": {
+    "/plugin:com.msgbyte.getui/available": {
       "post": {
         "tags": [
-          "plugin:com.msgbyte.linkmeta"
+          "plugin:com.msgbyte.getui"
         ],
-        "operationId": "plugin:com.msgbyte.linkmeta.fetch",
-        "summary": "plugin:com.msgbyte.linkmeta.fetch",
+        "operationId": "plugin:com.msgbyte.getui.available",
+        "summary": "plugin:com.msgbyte.getui.available",
         "description": "Requires a user token, or an API key with one of these scopes: plugins.",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {
-                  "url": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "url"
-                ]
+                "properties": {}
               }
             }
           }
@@ -7817,6 +7887,70 @@
         ]
       }
     },
+    "/plugin:com.msgbyte.linkmeta/fetch": {
+      "post": {
+        "tags": [
+          "plugin:com.msgbyte.linkmeta"
+        ],
+        "operationId": "plugin:com.msgbyte.linkmeta.fetch",
+        "summary": "plugin:com.msgbyte.linkmeta.fetch",
+        "description": "Requires a user token, or an API key with one of these scopes: plugins.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "url"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "plugins"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "plugins"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "plugins"
+            ]
+          }
+        ]
+      }
+    },
     "/plugin:com.msgbyte.livekit/available": {
       "post": {
         "tags": [
@@ -7874,13 +8008,13 @@
         ]
       }
     },
-    "/plugin:com.msgbyte.discover/all": {
+    "/plugin:com.msgbyte.prettyinvite/badge": {
       "post": {
         "tags": [
-          "plugin:com.msgbyte.discover"
+          "plugin:com.msgbyte.prettyinvite"
         ],
-        "operationId": "plugin:com.msgbyte.discover.all",
-        "summary": "plugin:com.msgbyte.discover.all",
+        "operationId": "plugin:com.msgbyte.prettyinvite.badge",
+        "summary": "plugin:com.msgbyte.prettyinvite.badge",
         "description": "Requires a user token, or an API key with one of these scopes: plugins.",
         "requestBody": {
           "content": {
@@ -7888,82 +8022,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "page": {
-                    "type": "number",
-                    "default": 1
-                  },
-                  "size": {
-                    "type": "number",
-                    "default": 20
-                  }
-                },
-                "required": [
-                  "page",
-                  "size"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "plugins"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "plugins"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "plugins"
-            ]
-          }
-        ]
-      }
-    },
-    "/plugin:com.msgbyte.discover/join": {
-      "post": {
-        "tags": [
-          "plugin:com.msgbyte.discover"
-        ],
-        "operationId": "plugin:com.msgbyte.discover.join",
-        "summary": "plugin:com.msgbyte.discover.join",
-        "description": "Requires a user token, or an API key with one of these scopes: plugins.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupId": {
+                  "inviteCode": {
                     "type": "string"
                   }
                 },
                 "required": [
-                  "groupId"
+                  "inviteCode"
                 ]
               }
             }
@@ -8677,127 +8741,6 @@
         ]
       }
     },
-    "/plugin:com.msgbyte.prettyinvite/badge": {
-      "post": {
-        "tags": [
-          "plugin:com.msgbyte.prettyinvite"
-        ],
-        "operationId": "plugin:com.msgbyte.prettyinvite.badge",
-        "summary": "plugin:com.msgbyte.prettyinvite.badge",
-        "description": "Requires a user token, or an API key with one of these scopes: plugins.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "inviteCode": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "inviteCode"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "plugins"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "plugins"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "plugins"
-            ]
-          }
-        ]
-      }
-    },
-    "/plugin:com.msgbyte.wxpusher/available": {
-      "post": {
-        "tags": [
-          "plugin:com.msgbyte.wxpusher"
-        ],
-        "operationId": "plugin:com.msgbyte.wxpusher.available",
-        "summary": "plugin:com.msgbyte.wxpusher.available",
-        "description": "Requires a user token, or an API key with one of these scopes: plugins.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {}
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "data": {}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "x-tailchat-scopes": [
-          "plugins"
-        ],
-        "security": [
-          {
-            "UserToken": []
-          },
-          {
-            "ApiKeyBearer": [
-              "plugins"
-            ]
-          },
-          {
-            "ApiKeyHeader": [
-              "plugins"
-            ]
-          }
-        ]
-      }
-    },
     "/plugin:com.msgbyte.topic/list": {
       "post": {
         "tags": [
@@ -9055,6 +8998,63 @@
                   "panelId",
                   "topicId"
                 ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "data": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tailchat-scopes": [
+          "plugins"
+        ],
+        "security": [
+          {
+            "UserToken": []
+          },
+          {
+            "ApiKeyBearer": [
+              "plugins"
+            ]
+          },
+          {
+            "ApiKeyHeader": [
+              "plugins"
+            ]
+          }
+        ]
+      }
+    },
+    "/plugin:com.msgbyte.wxpusher/available": {
+      "post": {
+        "tags": [
+          "plugin:com.msgbyte.wxpusher"
+        ],
+        "operationId": "plugin:com.msgbyte.wxpusher.available",
+        "summary": "plugin:com.msgbyte.wxpusher.available",
+        "description": "Requires a user token, or an API key with one of these scopes: plugins.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
               }
             }
           }
