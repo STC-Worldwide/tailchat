@@ -3,4 +3,9 @@ node_modules
 logs
 dist
 client/desktop
-apps
+# apps/* are excluded one by one rather than as `apps`: tailchat-mcp is built
+# into the image (the hosted /mcp endpoint runs from it), and a blanket `apps`
+# exclusion silently gave `pnpm build` no directory to cd into.
+apps/cli
+apps/oauth-demo
+apps/widget
