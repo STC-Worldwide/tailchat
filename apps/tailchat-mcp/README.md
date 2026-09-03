@@ -45,6 +45,7 @@ without a token.
 | `TAILCHAT_URL` | Gateway origin this server calls, e.g. `http://service-core:3000` |
 | `MCP_HTTP_PORT` | Listen port, default 3010 |
 | `MCP_HTTP_PATH` | Endpoint path, default `/mcp` |
+| `MCP_PUBLIC_URL` | Origin to report to agents, when it differs from the one called |
 | `TAILCHAT_TIMEOUT_MS` | Per-request timeout, default 15000 |
 
 ## Local

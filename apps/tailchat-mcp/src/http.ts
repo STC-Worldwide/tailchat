@@ -35,6 +35,8 @@ const MAX_BODY_BYTES = 1024 * 1024;
 export interface HttpConfig {
   /** Origin of the Tailchat gateway this server calls, e.g. http://service-core:3000 */
   upstreamUrl: string;
+  /** Origin agents should be told they are talking to, e.g. https://chat.example.com */
+  publicUrl?: string;
   port: number;
   /** Path the MCP endpoint is served at. */
   path: string;
@@ -75,7 +77,20 @@ export function loadHttpConfig(
     );
   }
 
-  return { upstreamUrl, port, path, timeoutMs };
+  const publicUrl = (env.MCP_PUBLIC_URL ?? '').trim().replace(/\/+$/, '');
+  if (publicUrl && !/^https?:\/\//.test(publicUrl)) {
+    throw new HttpConfigError(
+      `MCP_PUBLIC_URL must start with http:// or https:// (got "${publicUrl}")`
+    );
+  }
+
+  return {
+    upstreamUrl,
+    port,
+    path,
+    timeoutMs,
+    ...(publicUrl ? { publicUrl } : {}),
+  };
 }
 
 /**
@@ -190,6 +205,7 @@ export async function handleMcpRequest(
     url: config.upstreamUrl,
     apiKey: token,
     timeoutMs: config.timeoutMs,
+    ...(config.publicUrl ? { displayUrl: config.publicUrl } : {}),
   };
 
   const server = new McpServer(
