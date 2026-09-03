@@ -4,7 +4,7 @@ import { Types } from 'mongoose';
 import type { Group } from '../../../models/group/group';
 import { generateRandomStr } from '../../../lib/utils';
 import _ from 'lodash';
-import { GroupPanelType, PERMISSION } from 'tailchat-server-sdk';
+import { GroupPanelType, PERMISSION, allPermission } from 'tailchat-server-sdk';
 
 function createTestGroup(
   userId: Types.ObjectId = new Types.ObjectId(),
@@ -40,12 +40,16 @@ function createTestRole(
 describe('Test "group" service', () => {
   const { broker, service, insertTestData, contextCallMock } =
     createTestServiceBroker<GroupService>(GroupService, {
-      contextCallMockFn(actionName) {
+      contextCallMockFn(actionName, params) {
         if (actionName === 'group.getUserAllPermissions') {
           return [PERMISSION.core.owner];
         }
         if (actionName === 'user.getUserInfo') {
           return { nickname: 'test-nickname' };
+        }
+        if (actionName === 'group.getGroupInfo') {
+          // `service` is assigned below; the mock only runs inside tests
+          return service.adapter.model.findById(params.groupId).lean();
         }
       },
     });
@@ -191,6 +195,7 @@ describe('Test "group" service', () => {
         groupId: String(testGroup._id),
         panelId: String(testGroupPanels[1].id),
         name: newPanelName,
+        type: testGroupPanels[1].type,
       },
       {
         meta: {
@@ -204,8 +209,9 @@ describe('Test "group" service', () => {
       { ...testGroupPanels[1], name: newPanelName },
       testGroupPanels[2],
     ];
-    expect(res.panels).toEqual(expectedPanels);
-    expect(_.omit(res, 'updatedAt')).toEqual(
+    // panels carry schema defaults (fallbackPermissions) the fixture omits
+    expect(res.panels).toMatchObject(expectedPanels);
+    expect(_.omit(res, 'updatedAt')).toMatchObject(
       _.omit(
         {
           ...testGroup.toJSON(),
@@ -374,7 +380,7 @@ describe('Test "group" service', () => {
         'group.updateGroupRolePermission',
         {
           groupId: String(testGroup.id),
-          roleName: 'TestRole1',
+          roleId: role1.id,
           permissions: ['foo'],
         },
         {
@@ -398,12 +404,17 @@ describe('Test "group" service', () => {
     });
 
     test('Test "group.getPermissions"', async () => {
+      const ownerId = new Types.ObjectId();
       const userId = new Types.ObjectId();
       const role1 = createTestRole('TestRole1', ['permission1', 'permission2']);
       const role2 = createTestRole('TestRole2', ['permission2', 'permission3']);
       const testGroup = await insertTestData(
-        createTestGroup(userId, {
+        createTestGroup(ownerId, {
           members: [
+            {
+              userId: ownerId,
+              roles: [],
+            },
             {
               userId,
               roles: [role1.id, role2.id],
@@ -413,6 +424,7 @@ describe('Test "group" service', () => {
         })
       );
 
+      // a plain member gets exactly the union of their roles' permissions
       const res: string[] = await broker.call(
         'group.getPermissions',
         {
@@ -425,6 +437,21 @@ describe('Test "group" service', () => {
         }
       );
       expect(res).toEqual(['permission1', 'permission2', 'permission3']);
+
+      // the owner holds every core permission on top of role permissions
+      const ownerRes: string[] = await broker.call(
+        'group.getPermissions',
+        {
+          groupId: String(testGroup.id),
+        },
+        {
+          meta: {
+            userId: String(ownerId),
+          },
+        }
+      );
+      expect(ownerRes).toEqual(expect.arrayContaining([PERMISSION.core.owner]));
+      expect(ownerRes).toEqual(expect.arrayContaining(allPermission));
     });
 
     test('Test "group.appendGroupMemberRoles"', async () => {
@@ -457,9 +484,13 @@ describe('Test "group" service', () => {
         }
       );
 
-      expect(_.last(service.cleanActionCache.mock.calls)).toEqual([
+      expect(service.cleanActionCache.mock.calls).toContainEqual([
         'getGroupInfo',
         [String(testGroup.id)],
+      ]);
+      expect(service.cleanActionCache.mock.calls).toContainEqual([
+        'getUserAllPermissions',
+        [String(testGroup.id), String(userId)],
       ]);
       const notifiedGroupId = _.last(service.roomcastNotify.mock.calls)[1];
       const notifiedGroupInfo: Group = _.last(
@@ -505,9 +536,13 @@ describe('Test "group" service', () => {
         }
       );
 
-      expect(_.last(service.cleanActionCache.mock.calls)).toEqual([
+      expect(service.cleanActionCache.mock.calls).toContainEqual([
         'getGroupInfo',
         [String(testGroup.id)],
+      ]);
+      expect(service.cleanActionCache.mock.calls).toContainEqual([
+        'getUserAllPermissions',
+        [String(testGroup.id), String(userId)],
       ]);
       const notifiedGroupId = _.last(service.roomcastNotify.mock.calls)[1];
       const notifiedGroupInfo: Group = _.last(
