@@ -11,6 +11,12 @@ import { ACTIONS, type ActionInfo } from './actions.js';
 export interface TailchatConfig {
   /** Origin of the deployment, e.g. https://chat.example.com (no trailing slash). */
   url: string;
+  /**
+   * Origin to SHOW people, when it differs from the one called. The hosted server
+   * reaches the gateway over the internal network, and reporting `service-core:3000`
+   * to a remote agent is both meaningless and needlessly revealing.
+   */
+  displayUrl?: string;
   /** OpenApp API key from the Open Api panel, `tck_` + 44 chars. */
   apiKey: string;
   timeoutMs: number;

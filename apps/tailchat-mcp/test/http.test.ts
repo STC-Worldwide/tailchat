@@ -122,6 +122,52 @@ test('loadHttpConfig insists on an upstream origin', () => {
   assert.equal(cfg.upstreamUrl, 'http://service-core:3000');
   assert.equal(cfg.path, '/mcp');
   assert.equal(cfg.port, 3010);
+  assert.equal(cfg.publicUrl, undefined);
+});
+
+test('MCP_PUBLIC_URL is what agents are told, not the internal upstream', async () => {
+  const cfg = loadHttpConfig({
+    TAILCHAT_URL: 'http://service-core:3000',
+    MCP_PUBLIC_URL: 'https://chat.example.com/',
+  });
+  assert.equal(cfg.publicUrl, 'https://chat.example.com');
+  assert.throws(
+    () =>
+      loadHttpConfig({
+        TAILCHAT_URL: 'http://service-core:3000',
+        MCP_PUBLIC_URL: 'chat.example.com',
+      }),
+    HttpConfigError
+  );
+
+  const seen: Seen[] = [];
+  const gw = await startGateway(seen);
+  const server = createHttpServer({
+    upstreamUrl: gw.url,
+    publicUrl: 'https://chat.example.com',
+    port: 0,
+    path: '/mcp',
+    timeoutMs: 5000,
+  });
+  await new Promise<void>((r) => server.listen(0, '127.0.0.1', r));
+  const { port } = server.address() as AddressInfo;
+  try {
+    const client = await connect(`http://127.0.0.1:${port}/mcp`, ALICE_KEY);
+    const res: any = await client.callTool({
+      name: 'tailchat_whoami',
+      arguments: {},
+    });
+    const who = JSON.parse(
+      (res.content ?? []).map((c: any) => c.text ?? '').join('')
+    );
+    assert.equal(who.server, 'https://chat.example.com');
+    // the internal hostname must not leak to the agent
+    assert.ok(!JSON.stringify(who).includes('127.0.0.1'));
+    await client.close();
+  } finally {
+    await new Promise<void>((r) => server.close(() => r()));
+    await gw.close();
+  }
 });
 
 test('a request with no token is refused before anything reaches the gateway', async () => {

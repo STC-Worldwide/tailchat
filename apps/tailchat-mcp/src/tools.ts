@@ -257,7 +257,7 @@ export function registerTools(server: McpServer, client: TailchatClient): void {
               }
             : null,
           apiKey: meta?.apiKey ?? null,
-          server: client.config.url,
+          server: client.config.displayUrl ?? client.config.url,
           specVersion: SPEC_VERSION,
         };
       })
