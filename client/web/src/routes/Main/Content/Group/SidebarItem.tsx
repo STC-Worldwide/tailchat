@@ -42,6 +42,8 @@ import {
   ContextMenuTrigger,
 } from '@/components/ui/official/context-menu';
 import { useAppPortalContainer } from '@/hooks/useAppPortalContainer';
+import { panelDropClassName, usePanelDragHandlers } from './usePanelDrag';
+import { usePanelManageActions } from './usePanelManageActions';
 
 /**
  * 群组面板侧边栏组件
@@ -70,6 +72,9 @@ export const SidebarItem: React.FC<{
     PERMISSION.core.viewPanel,
   ]);
   const portalContainer = useAppPortalContainer();
+  const { itemsFor } = usePanelManageActions(groupId);
+  const { dragProps, isDragging, dropEdge, dropInside } =
+    usePanelDragHandlers(panel);
 
   if (!groupInfo) {
     return <LoadingSpinner />;
@@ -138,15 +143,26 @@ export const SidebarItem: React.FC<{
       onClick: () => toggleMute(panelId),
     },
     ...(extraMenuItems ?? []),
+    ...itemsFor(panel),
   ]) as GroupPanelMenuItem[];
 
   const icon = isPinned ? <PinIcon /> : <HashIcon />;
+  // 拖拽属性和指示线挂在 <li> 上, 不是外面包一层 —— ContextMenuTrigger 的
+  // 容器是 display:contents, 没有盒子, draggable 和 ::before 都落不下来。
+  const itemClassName = panelDropClassName({
+    isDragging,
+    dropEdge,
+    dropInside,
+  });
+
   const panelItem = isGroupAckPanel(panel) ? (
     <GroupAckPanelItem
       icon={icon}
       groupId={groupId}
       panel={panel}
       nested={props.nested}
+      itemProps={dragProps}
+      itemClassName={itemClassName}
     />
   ) : (
     <GroupPanelItem
@@ -155,6 +171,8 @@ export const SidebarItem: React.FC<{
       to={`/main/group/${groupId}/${panelId}`}
       extraBadge={extraBadge}
       nested={props.nested}
+      itemProps={dragProps}
+      itemClassName={itemClassName}
     />
   );
 
