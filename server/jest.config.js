@@ -3,7 +3,9 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   setupFiles: ['<rootDir>/test/setup.ts'],
-  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
+  // admin-next's *.test.ts(x) are node:test suites run by `pnpm --dir
+  // server/admin-next test`; jest cannot load `node:test`.
+  testPathIgnorePatterns: ['/node_modules/', '/dist/', '/admin-next/'],
   moduleNameMapper: {
     // axios 1.x ships ESM at its package root and relies on the `exports`
     // map to hand CommonJS consumers the .cjs build. jest 27 does not read
