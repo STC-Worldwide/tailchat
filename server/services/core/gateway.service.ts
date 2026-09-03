@@ -373,7 +373,7 @@ export default class ApiService extends TcService {
   /**
    * Turn a presented credential into an identity.
    *
-   * Something shaped like an OpenApp API key goes to `openapi.apikey.resolve`
+   * Something shaped like a personal access token goes to `user.apikey.resolve`
    * and comes back as the app's bot user plus the key's scopes; anything else
    * is a user JWT. Shared by the HTTP route and the socket handshake.
    */
@@ -386,7 +386,7 @@ export default class ApiService extends TcService {
       }
 
       const resolved: { user: UserJWTPayload; apiKey: ApiKeyMeta } =
-        await this.broker.call('openapi.apikey.resolve', {
+        await this.broker.call('user.apikey.resolve', {
           key: credential,
         });
 

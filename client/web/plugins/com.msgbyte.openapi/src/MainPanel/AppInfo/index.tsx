@@ -9,7 +9,6 @@ const Profile = Loadable(() => import('./Profile'));
 const Bot = Loadable(() => import('./Bot'));
 const Webpage = Loadable(() => import('./Webpage'));
 const OAuth = Loadable(() => import('./OAuth'));
-const ApiKeys = Loadable(() => import('./ApiKeys'));
 
 const AppInfo: React.FC = React.memo(() => {
   const { appName, onSelectApp } = useOpenAppInfo();
@@ -45,11 +44,6 @@ const AppInfo: React.FC = React.memo(() => {
             type: 'item',
             title: Translate.app.bot,
             content: <Bot />,
-          },
-          {
-            type: 'item',
-            title: Translate.app.apiKeys,
-            content: <ApiKeys />,
           },
           {
             type: 'item',

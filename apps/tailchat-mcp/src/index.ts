@@ -12,17 +12,21 @@ import { ConfigError, TailchatClient, loadConfig } from './client.js';
 import { registerTools } from './tools.js';
 import { VERSION } from './version.js';
 
-export const INSTRUCTIONS = `You act inside a Tailchat workspace as an OpenApp bot. Start with tailchat_whoami: it
-tells you who the bot is and which scopes the API key carries, and every tool says which
-scope it needs. A 403 means the key lacks a scope or the bot lacks a group permission;
-relay it, it cannot be widened from here.
+export const INSTRUCTIONS = `You act inside a Tailchat workspace as a real user: the personal access token in this
+server's environment belongs to someone, and every call is made as them. Start with
+tailchat_whoami — it names that user and lists the scopes the token carries, and every
+tool says which scope it needs. A 403 means the token lacks a scope or that user lacks a
+group permission; relay it, it cannot be widened from here.
+
+Because you are that user, act with the restraint they would: what you post appears under
+their name and their colleagues will read it as theirs.
 
 Model of the place: a "group" is a server/workspace with channels ("panels"); a text
 channel's id is also its converseId, which is what messages are posted to and read from.
-Direct messages live in their own converse (tailchat_send_dm creates or reuses one). The
-bot only sees groups it is a member of, so an empty tailchat_list_groups means "add the
-bot to a group", not "there are no groups". Roles carry permission keys such as
-core.manageUser and core.managePanel; the group owner holds all of them.
+Direct messages live in their own converse (tailchat_send_dm creates or reuses one). You
+only see groups that user belongs to, so an empty tailchat_list_groups means they are in
+no groups, not that the workspace is empty. Roles carry permission keys such as
+core.manageUser and core.managePanel; a group's owner holds all of them.
 
 Mentions and replies are handled for you by tailchat_send_message. Ids are 24-hex
 Mongo ids; show nicknames and channel names to people, not ids.

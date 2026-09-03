@@ -7,23 +7,32 @@ import {
 } from '@typegoose/typegoose';
 import { Base, TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
 import type { Types } from 'mongoose';
-import { User } from '../user/user';
+import { User } from './user';
 
 /**
- * API key of an OpenApp.
+ * A personal access token.
  *
- * Only the SHA-256 of the secret half is stored. The plaintext key is shown
- * once, when it is created. See packages/sdk/src/services/lib/apikey.ts for
+ * The key belongs to a user and authenticates AS that user, so it inherits
+ * their groups and permissions and needs no bot account and no membership
+ * setup. Scopes narrow it down from there.
+ *
+ * Only the SHA-256 of the secret half is stored. The plaintext is shown once,
+ * when the key is created. See packages/sdk/src/services/lib/apikey.ts for
  * the format and the scope catalog.
  */
 @index({ keyId: 1 }, { unique: true })
-@index({ appId: 1 })
-export class OpenAppApiKey extends TimeStamps implements Base {
+@index({ userId: 1 })
+export class UserApiKey extends TimeStamps implements Base {
   _id: Types.ObjectId;
   id: string;
 
-  @prop()
-  appId: string;
+  /**
+   * The user this key acts as, and whose permissions bound it.
+   */
+  @prop({
+    ref: () => User,
+  })
+  userId: Ref<User>;
 
   /**
    * Public half of the key, embedded in the key string for lookup.
@@ -48,11 +57,6 @@ export class OpenAppApiKey extends TimeStamps implements Base {
   })
   scopes: string[];
 
-  @prop({
-    ref: () => User,
-  })
-  createdBy: Ref<User>;
-
   @prop()
   expiresAt?: Date;
 
@@ -63,10 +67,10 @@ export class OpenAppApiKey extends TimeStamps implements Base {
   revokedAt?: Date;
 }
 
-export type OpenAppApiKeyDocument = DocumentType<OpenAppApiKey>;
+export type UserApiKeyDocument = DocumentType<UserApiKey>;
 
-const model = getModelForClass(OpenAppApiKey);
+const model = getModelForClass(UserApiKey);
 
-export type OpenAppApiKeyModel = typeof model;
+export type UserApiKeyModel = typeof model;
 
 export default model;

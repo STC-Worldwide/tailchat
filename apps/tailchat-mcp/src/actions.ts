@@ -11,9 +11,90 @@ export interface ActionInfo {
   required: string[];
 }
 
-export const SPEC_VERSION = '1.17.0';
+export const SPEC_VERSION = '1.18.0';
 
 export const ACTIONS: ActionInfo[] = [
+  {
+    action: 'admin.addGroupMember',
+    path: '/admin/addGroupMember',
+    summary: 'admin.addGroupMember',
+    scopes: ['admin'],
+    public: false,
+    params: {
+      groupId: {
+        type: 'string',
+      },
+      userId: {
+        type: 'string',
+      },
+    },
+    required: ['groupId', 'userId'],
+  },
+  {
+    action: 'admin.banUser',
+    path: '/admin/banUser',
+    summary: 'admin.banUser',
+    scopes: ['admin'],
+    public: false,
+    params: {
+      userId: {
+        type: 'string',
+      },
+    },
+    required: ['userId'],
+  },
+  {
+    action: 'admin.findUser',
+    path: '/admin/findUser',
+    summary: 'admin.findUser',
+    scopes: ['admin'],
+    public: false,
+    params: {
+      email: {
+        type: 'string',
+      },
+      username: {
+        type: 'string',
+      },
+    },
+    required: [],
+  },
+  {
+    action: 'admin.notifyUsers',
+    path: '/admin/notifyUsers',
+    summary: 'admin.notifyUsers',
+    scopes: ['admin'],
+    public: false,
+    params: {
+      userIds: {
+        type: 'array',
+        items: {
+          type: 'string',
+        },
+        minItems: 1,
+      },
+      title: {
+        type: 'string',
+      },
+      content: {
+        type: 'string',
+      },
+    },
+    required: ['userIds', 'title', 'content'],
+  },
+  {
+    action: 'admin.unbanUser',
+    path: '/admin/unbanUser',
+    summary: 'admin.unbanUser',
+    scopes: ['admin'],
+    public: false,
+    params: {
+      userId: {
+        type: 'string',
+      },
+    },
+    required: ['userId'],
+  },
   {
     action: 'chat.ack.all',
     path: '/chat/ack/all',
@@ -1108,153 +1189,6 @@ export const ACTIONS: ActionInfo[] = [
     required: ['groupId', 'roleId', 'permissions'],
   },
   {
-    action: 'openapi.admin.addGroupMember',
-    path: '/openapi/admin/addGroupMember',
-    summary: 'openapi.admin.addGroupMember',
-    scopes: ['admin'],
-    public: false,
-    params: {
-      groupId: {
-        type: 'string',
-      },
-      userId: {
-        type: 'string',
-      },
-    },
-    required: ['groupId', 'userId'],
-  },
-  {
-    action: 'openapi.admin.banUser',
-    path: '/openapi/admin/banUser',
-    summary: 'openapi.admin.banUser',
-    scopes: ['admin'],
-    public: false,
-    params: {
-      userId: {
-        type: 'string',
-      },
-    },
-    required: ['userId'],
-  },
-  {
-    action: 'openapi.admin.findUser',
-    path: '/openapi/admin/findUser',
-    summary: 'openapi.admin.findUser',
-    scopes: ['admin'],
-    public: false,
-    params: {
-      email: {
-        type: 'string',
-      },
-      username: {
-        type: 'string',
-      },
-    },
-    required: [],
-  },
-  {
-    action: 'openapi.admin.notifyUsers',
-    path: '/openapi/admin/notifyUsers',
-    summary: 'openapi.admin.notifyUsers',
-    scopes: ['admin'],
-    public: false,
-    params: {
-      userIds: {
-        type: 'array',
-        items: {
-          type: 'string',
-        },
-        minItems: 1,
-      },
-      title: {
-        type: 'string',
-      },
-      content: {
-        type: 'string',
-      },
-    },
-    required: ['userIds', 'title', 'content'],
-  },
-  {
-    action: 'openapi.admin.unbanUser',
-    path: '/openapi/admin/unbanUser',
-    summary: 'openapi.admin.unbanUser',
-    scopes: ['admin'],
-    public: false,
-    params: {
-      userId: {
-        type: 'string',
-      },
-    },
-    required: ['userId'],
-  },
-  {
-    action: 'openapi.apikey.create',
-    path: '/openapi/apikey/create',
-    summary: 'openapi.apikey.create',
-    scopes: [],
-    public: false,
-    params: {
-      appId: {
-        type: 'string',
-      },
-      name: {
-        type: 'string',
-        minLength: 1,
-        maxLength: 64,
-      },
-      scopes: {
-        type: 'array',
-        items: {
-          type: 'string',
-        },
-      },
-      expiresInDays: {
-        type: 'integer',
-        exclusiveMinimum: 0,
-      },
-    },
-    required: ['appId', 'name', 'scopes'],
-  },
-  {
-    action: 'openapi.apikey.list',
-    path: '/openapi/apikey/list',
-    summary: 'openapi.apikey.list',
-    scopes: [],
-    public: false,
-    params: {
-      appId: {
-        type: 'string',
-      },
-    },
-    required: ['appId'],
-  },
-  {
-    action: 'openapi.apikey.revoke',
-    path: '/openapi/apikey/revoke',
-    summary: 'openapi.apikey.revoke',
-    scopes: [],
-    public: false,
-    params: {
-      appId: {
-        type: 'string',
-      },
-      keyId: {
-        type: 'string',
-      },
-    },
-    required: ['appId', 'keyId'],
-  },
-  {
-    action: 'openapi.apikey.scopes',
-    path: '/openapi/apikey/scopes',
-    summary: 'openapi.apikey.scopes',
-    scopes: [],
-    public: false,
-    params: {},
-    required: [],
-  },
-  {
     action: 'openapi.app.all',
     path: '/openapi/app/all',
     summary: 'openapi.app.all',
@@ -1844,6 +1778,62 @@ export const ACTIONS: ActionInfo[] = [
     path: '/plugin/registry/list',
     summary: 'plugin.registry.list',
     scopes: ['plugins'],
+    public: false,
+    params: {},
+    required: [],
+  },
+  {
+    action: 'user.apikey.create',
+    path: '/user/apikey/create',
+    summary: 'user.apikey.create',
+    scopes: [],
+    public: false,
+    params: {
+      name: {
+        type: 'string',
+        minLength: 1,
+        maxLength: 64,
+      },
+      scopes: {
+        type: 'array',
+        items: {
+          type: 'string',
+        },
+      },
+      expiresInDays: {
+        type: 'integer',
+        exclusiveMinimum: 0,
+      },
+    },
+    required: ['name', 'scopes'],
+  },
+  {
+    action: 'user.apikey.list',
+    path: '/user/apikey/list',
+    summary: 'user.apikey.list',
+    scopes: [],
+    public: false,
+    params: {},
+    required: [],
+  },
+  {
+    action: 'user.apikey.revoke',
+    path: '/user/apikey/revoke',
+    summary: 'user.apikey.revoke',
+    scopes: [],
+    public: false,
+    params: {
+      keyId: {
+        type: 'string',
+      },
+    },
+    required: ['keyId'],
+  },
+  {
+    action: 'user.apikey.scopes',
+    path: '/user/apikey/scopes',
+    summary: 'user.apikey.scopes',
+    scopes: [],
     public: false,
     params: {},
     required: [],

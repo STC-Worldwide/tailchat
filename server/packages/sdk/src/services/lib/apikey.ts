@@ -2,12 +2,13 @@ import crypto from 'crypto';
 import { Utils } from 'moleculer';
 
 /**
- * API keys for OpenApps.
+ * Personal access tokens.
  *
- * A key acts as the app's bot user and carries named scopes. This module is
- * the single definition of the key format and the scope catalog; the gateway,
- * the socket mixin, the key service, the OpenAPI generator and the client all
- * read it. See docs/superpowers/specs/2026-09-03-tailchat-agent-api-design.md.
+ * A key belongs to a user and acts AS that user, carrying named scopes that
+ * narrow what it may do. This module is the single definition of the key
+ * format and the scope catalog; the gateway, the socket mixin, the key
+ * service, the OpenAPI generator and the client all read it.
+ * See docs/superpowers/specs/2026-09-03-tailchat-agent-api-design.md.
  */
 
 export const API_KEY_PREFIX = 'tck_';
@@ -134,8 +135,8 @@ export const API_KEY_SCOPES: Record<ApiKeyScope, ApiKeyScopeDefinition> = {
   },
   admin: {
     description:
-      'Server administration (requires the admin app capability): find, ban and unban users, add members to any group, send system notifications',
-    actions: ['openapi.admin.*'],
+      'Server administration (owner must be a server administrator): find, ban and unban users, add members to any group, send system notifications',
+    actions: ['admin.*'],
   },
 };
 
@@ -197,7 +198,8 @@ export function scopesForAction(actionName: string): ApiKeyScope[] {
  */
 export interface ApiKeyMeta {
   keyId: string;
-  appId: string;
+  /** The user the key acts as. */
+  userId: string;
   scopes: string[];
 }
 

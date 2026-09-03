@@ -4,7 +4,6 @@ import {
   TcContext,
   PureContext,
   UserJWTPayload,
-  config,
   EntityError,
   NoPermissionError,
   DataNotFoundError,
@@ -18,16 +17,15 @@ import {
   filterApiKeyScopes,
   formatApiKey,
   hashApiKeySecret,
+  isServerAdmin,
   parseApiKey,
   verifyApiKeySecret,
 } from 'tailchat-server-sdk';
 import { customAlphabet } from 'nanoid';
-import type { OpenApp } from '../../models/openapi/app';
 import type {
-  OpenAppApiKey,
-  OpenAppApiKeyDocument,
-  OpenAppApiKeyModel,
-} from '../../models/openapi/apikey';
+  UserApiKeyDocument,
+  UserApiKeyModel,
+} from '../../../models/user/apikey';
 
 const generateKeyId = customAlphabet(API_KEY_ALPHABET, API_KEY_ID_LENGTH);
 const generateSecret = customAlphabet(API_KEY_ALPHABET, API_KEY_SECRET_LENGTH);
@@ -48,31 +46,32 @@ interface ApiKeyView {
   revoked: boolean;
 }
 
-interface OpenApiKeyService
+interface UserApiKeyService
   extends TcService,
-    TcDbService<OpenAppApiKeyDocument, OpenAppApiKeyModel> {}
+    TcDbService<UserApiKeyDocument, UserApiKeyModel> {}
 
 /**
- * OpenApp API keys.
+ * Personal access tokens.
  *
- * A key authenticates as the app's bot user with a fixed set of scopes.
+ * A key acts as the user who created it, narrowed by its scopes. There is no
+ * application and no bot account: an agent holding a key is the user, sees
+ * exactly their groups, and is refused exactly what they would be refused.
+ *
+ * These actions are reachable only with a real login (a JWT). No scope maps to
+ * `user.apikey.*`, so a key can never mint or revoke keys — including its own.
+ *
  * Design: docs/superpowers/specs/2026-09-03-tailchat-agent-api-design.md
  */
-class OpenApiKeyService extends TcService {
+class UserApiKeyService extends TcService {
   get serviceName(): string {
-    return 'openapi.apikey';
+    return 'user.apikey';
   }
 
   onInit(): void {
-    if (!config.enableOpenapi) {
-      return;
-    }
-
-    this.registerLocalDb(require('../../models/openapi/apikey').default);
+    this.registerLocalDb(require('../../../models/user/apikey').default);
 
     this.registerAction('create', this.create, {
       params: {
-        appId: 'string',
         name: { type: 'string', min: 1, max: 64 },
         scopes: { type: 'array', items: 'string' },
         expiresInDays: {
@@ -83,14 +82,9 @@ class OpenApiKeyService extends TcService {
         },
       },
     });
-    this.registerAction('list', this.list, {
-      params: {
-        appId: 'string',
-      },
-    });
+    this.registerAction('list', this.list);
     this.registerAction('revoke', this.revoke, {
       params: {
-        appId: 'string',
         keyId: 'string',
       },
     });
@@ -104,23 +98,21 @@ class OpenApiKeyService extends TcService {
   }
 
   /**
-   * Create a key. The plaintext is in the response and nowhere else.
+   * Create a key for the calling user. The plaintext is in the response and
+   * nowhere else.
    */
   async create(
     ctx: TcContext<{
-      appId: string;
       name: string;
       scopes: string[];
       expiresInDays?: number;
     }>
   ): Promise<ApiKeyView & { key: string }> {
-    const { appId, name, expiresInDays } = ctx.params;
-    const app = await this.getOwnedApp(ctx, appId);
+    const { name, expiresInDays } = ctx.params;
+    const userId = ctx.meta.userId;
 
-    if (!app.capability.includes('bot')) {
-      throw new EntityError(
-        'Enable the bot capability before creating API keys'
-      );
+    if (!userId) {
+      throw new NoPermissionError('A signed-in user is required');
     }
 
     const scopes = filterApiKeyScopes(ctx.params.scopes);
@@ -128,12 +120,11 @@ class OpenApiKeyService extends TcService {
       throw new EntityError('At least one known scope is required');
     }
 
-    if (
-      scopes.includes(API_KEY_ADMIN_SCOPE) &&
-      !app.capability.includes('admin')
-    ) {
+    // The admin scope reaches server administration, so it is available only
+    // to a server administrator — a key can never exceed its owner.
+    if (scopes.includes(API_KEY_ADMIN_SCOPE) && !isServerAdmin(userId)) {
       throw new NoPermissionError(
-        'This app does not hold the admin capability'
+        'The admin scope is only available to a server administrator'
       );
     }
 
@@ -145,16 +136,15 @@ class OpenApiKeyService extends TcService {
         : undefined;
 
     const doc = await this.adapter.model.create({
-      appId,
+      userId,
       keyId,
       secretHash: hashApiKeySecret(secret),
       name,
       scopes,
-      createdBy: ctx.meta.userId,
       expiresAt,
     });
 
-    this.logger.info('[openapi.apikey] created', keyId, 'for app', appId);
+    this.logger.info('[user.apikey] created', keyId, 'for user', userId);
 
     return {
       ...this.toView(doc),
@@ -163,14 +153,13 @@ class OpenApiKeyService extends TcService {
   }
 
   /**
-   * Keys of an app, newest first, without secrets.
+   * The calling user's keys, newest first, without secrets.
    */
-  async list(ctx: TcContext<{ appId: string }>): Promise<ApiKeyView[]> {
-    const { appId } = ctx.params;
-    await this.getOwnedApp(ctx, appId);
+  async list(ctx: TcContext): Promise<ApiKeyView[]> {
+    const userId = ctx.meta.userId;
 
     const docs = await this.adapter.model
-      .find({ appId })
+      .find({ userId })
       .sort({ createdAt: -1 })
       .lean()
       .exec();
@@ -181,28 +170,28 @@ class OpenApiKeyService extends TcService {
   /**
    * Revocation is permanent and takes effect on the next request.
    */
-  async revoke(
-    ctx: TcContext<{ appId: string; keyId: string }>
-  ): Promise<boolean> {
-    const { appId, keyId } = ctx.params;
-    await this.getOwnedApp(ctx, appId);
+  async revoke(ctx: TcContext<{ keyId: string }>): Promise<boolean> {
+    const { keyId } = ctx.params;
+    const userId = ctx.meta.userId;
 
     const res = await this.adapter.model
       .updateOne(
-        { appId, keyId, revokedAt: { $exists: false } },
+        { userId, keyId, revokedAt: { $exists: false } },
         { revokedAt: new Date() }
       )
       .exec();
 
     if (res.matchedCount === 0) {
-      const exists = await this.adapter.model.exists({ appId, keyId });
+      const exists = await this.adapter.model.exists({ userId, keyId });
       if (!exists) {
+        // Not found, or owned by someone else: same answer either way, so a
+        // key id cannot be probed for existence across accounts.
         throw new DataNotFoundError('Not found API key');
       }
       // already revoked: idempotent
     }
 
-    this.logger.info('[openapi.apikey] revoked', keyId, 'for app', appId);
+    this.logger.info('[user.apikey] revoked', keyId, 'for user', userId);
 
     return true;
   }
@@ -224,7 +213,7 @@ class OpenApiKeyService extends TcService {
    * Turn a presented key into an authenticated identity.
    *
    * Internal only: the gateway and the socket handshake call it. Deliberately
-   * uncached so revocation and capability changes apply immediately.
+   * uncached so revocation, expiry and a ban apply immediately.
    */
   async resolve(
     ctx: PureContext<{ key: string }>
@@ -251,65 +240,50 @@ class OpenApiKeyService extends TcService {
       throw new NoPermissionError('API key expired');
     }
 
-    const app: OpenApp | null = await ctx.call('openapi.app.get', {
-      appId: doc.appId,
-    });
+    const userId = String(doc.userId);
+    const user: {
+      _id: string;
+      nickname: string;
+      email: string;
+      avatar: string;
+      banned?: boolean;
+    } | null = await ctx.call('user.getUserInfo', { userId });
 
-    if (!app || !app.capability.includes('bot')) {
-      throw new NoPermissionError('App bot capability is disabled');
+    if (!user) {
+      throw new NoPermissionError('API key owner no longer exists');
     }
 
-    const scopes = (doc.scopes ?? []).filter(
-      (scope) =>
-        scope !== API_KEY_ADMIN_SCOPE || app.capability.includes('admin')
-    );
+    if (user.banned === true) {
+      throw new NoPermissionError('API key owner is banned');
+    }
 
-    const bot: {
-      userId: string;
-      email: string;
-      nickname: string;
-      avatar: string;
-    } = await ctx.call('openapi.bot.getOrCreateBotAccount', {
-      appId: doc.appId,
-    });
+    // A key never outranks its owner: if admin rights were removed after the
+    // key was minted, the admin scope stops working.
+    const scopes = (doc.scopes ?? []).filter(
+      (scope) => scope !== API_KEY_ADMIN_SCOPE || isServerAdmin(userId)
+    );
 
     this.touchLastUsed(doc);
 
     return {
       user: {
-        _id: bot.userId,
-        nickname: bot.nickname,
-        email: bot.email,
-        avatar: bot.avatar,
+        _id: userId,
+        nickname: user.nickname,
+        email: user.email,
+        avatar: user.avatar,
       },
       apiKey: {
         keyId: doc.keyId,
-        appId: doc.appId,
+        userId,
         scopes,
       },
     };
   }
 
   /**
-   * Load the app and check the caller owns it.
+   * Record use, at most once per interval, without blocking the request.
    */
-  private async getOwnedApp(ctx: TcContext, appId: string): Promise<OpenApp> {
-    const app: OpenApp | null = await ctx.call('openapi.app.get', {
-      appId,
-    });
-
-    if (!app) {
-      throw new DataNotFoundError('Not found open app');
-    }
-
-    if (String(app.owner) !== String(ctx.meta.userId)) {
-      throw new NoPermissionError('Not the owner of this app');
-    }
-
-    return app;
-  }
-
-  private touchLastUsed(doc: Pick<OpenAppApiKey, '_id' | 'lastUsedAt'>) {
+  private touchLastUsed(doc: { _id: unknown; lastUsedAt?: Date }): void {
     const last = doc.lastUsedAt ? new Date(doc.lastUsedAt).valueOf() : 0;
     if (Date.now() - last < LAST_USED_TOUCH_INTERVAL) {
       return;
@@ -319,33 +293,30 @@ class OpenApiKeyService extends TcService {
       .updateOne({ _id: doc._id }, { lastUsedAt: new Date() })
       .exec()
       .catch((err) => {
-        this.logger.warn('[openapi.apikey] lastUsedAt update failed:', err);
+        this.logger.warn('[user.apikey] failed to record lastUsedAt', err);
       });
   }
 
-  private toView(
-    doc: Pick<
-      OpenAppApiKey,
-      | 'keyId'
-      | 'name'
-      | 'scopes'
-      | 'createdAt'
-      | 'expiresAt'
-      | 'lastUsedAt'
-      | 'revokedAt'
-    >
-  ): ApiKeyView {
+  private toView(doc: {
+    keyId: string;
+    name: string;
+    scopes: string[];
+    createdAt?: Date;
+    expiresAt?: Date;
+    lastUsedAt?: Date;
+    revokedAt?: Date;
+  }): ApiKeyView {
     return {
       keyId: doc.keyId,
       name: doc.name,
       scopes: doc.scopes ?? [],
       createdAt: doc.createdAt,
-      expiresAt: doc.expiresAt ?? undefined,
-      lastUsedAt: doc.lastUsedAt ?? undefined,
-      revokedAt: doc.revokedAt ?? undefined,
+      expiresAt: doc.expiresAt,
+      lastUsedAt: doc.lastUsedAt,
+      revokedAt: doc.revokedAt,
       revoked: Boolean(doc.revokedAt),
     };
   }
 }
 
-export default OpenApiKeyService;
+export default UserApiKeyService;

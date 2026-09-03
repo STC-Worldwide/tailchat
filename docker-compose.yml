@@ -9,7 +9,7 @@ services:
     restart: unless-stopped
     env_file: docker-compose.env
     environment:
-      SERVICES: core/gateway,core/user/*.service.js,core/group/*.service.js,core/chat/*.service.js,core/file,core/plugin/registry,core/config
+      SERVICES: core/gateway,core/admin,core/user/*.service.js,core/group/*.service.js,core/chat/*.service.js,core/file,core/plugin/registry,core/config
       PORT: 3000
     depends_on:
       - mongo
@@ -30,7 +30,7 @@ services:
     restart: unless-stopped
     env_file: docker-compose.env
     environment:
-      SERVICES: openapi/app,openapi/bot,openapi/integration,openapi/apikey,openapi/admin,openapi/oidc/oidc
+      SERVICES: openapi/app,openapi/bot,openapi/integration,openapi/oidc/oidc
       OPENAPI_PORT: 3003
       OPENAPI_UNDER_PROXY: "true"
     depends_on:

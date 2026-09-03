@@ -88,7 +88,7 @@ class OpenBotService extends TcService {
     this.logger.warn(
       '[openapi.bot.login] appId+appSecret login is deprecated for app',
       appId,
-      '- create an API key (openapi.apikey.create) instead'
+      '- create a personal access token (Settings -> API keys) instead'
     );
     const valid = await ctx.call('openapi.app.authToken', {
       appId,

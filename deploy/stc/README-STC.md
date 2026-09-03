@@ -128,37 +128,38 @@ Design: `docs/superpowers/specs/2026-09-03-tailchat-agent-api-design.md`.
 Contract: `server/openapi.json` (regenerate with `pnpm --dir server gen:openapi`).
 
 Every published service action is `POST /api/<service>/<action>` with a JSON
-body, and the same name as a socket.io event. An agent authenticates with an
-OpenApp API key instead of a user JWT:
+body, and the same name as a socket.io event. An agent authenticates with a
+**personal access token** instead of a user JWT. A token belongs to a user and
+acts as that user: no application, no bot account, and nothing to add to a
+group — it already sees exactly what its owner sees.
 
-1. In the web client open **Open Api** (the openapi plugin), create an
-   application, enable **Bot**, then under **API keys** create a key with the
-   scopes the agent needs. The key (`tck_...`) is shown once.
-2. Add the app's bot user to the groups it should act in (group settings ->
-   integrations), and give it a role with the permissions those actions need.
-   Scopes limit what the key may call; group roles still decide what the bot
-   is allowed to do inside a group.
-3. Call the API:
+1. In the web client open **Settings -> API keys**, create a token with the
+   scopes the agent needs, and copy it. The token (`tck_...`) is shown once.
+   This is core UI; no plugin install is required.
+2. Call the API:
 
 ```sh
 curl -s https://$CHAT_DOMAIN/api/group/getUserGroups   -H "Authorization: Bearer tck_..." -H 'Content-Type: application/json' -d '{}'
 ```
 
-`X-Api-Key: tck_...` works too. A call outside the key's scopes is a 403 with
-`API_KEY_SCOPE`. Revoke a key from the same panel; revocation is immediate.
+`X-Api-Key: tck_...` works too. A call outside the token's scopes is a 403
+with `API_KEY_SCOPE`. Revoke a token from the same panel; revocation is
+immediate, and so is a ban or an expiry.
 
-**Admin scope.** Keys may carry the `admin` scope (`openapi.admin.*`: find,
-ban and unban users, add a member to any group, send system notifications)
-only when the app holds the `admin` capability. An app owner cannot grant
-that capability to their own app; the server operator does it, either from
-the admin panel (`POST /admin/api/callAction` with
-`{"action":"openapi.app.setAppCapability","params":{"appId":"tc_...","capability":["bot","admin"]}}`)
-or by listing their own user id in `ADMIN_USER_IDS` and toggling it in the
-web UI.
+A token can never do more than its owner. It cannot mint or revoke tokens —
+no scope maps to `user.apikey.*`, so that surface needs a real login.
+
+**Admin scope.** The `admin` scope reaches `admin.*` (find, ban and unban
+users, add a member to any group, send system notifications) and is accepted
+only for a user listed in `ADMIN_USER_IDS`. Creating a token with it is
+refused for anyone else, and if the id is removed from that list later the
+scope stops working on the next request. Server administrators can also call
+`admin.*` with an ordinary login.
 
 **Environment.** `API_RATE_LIMIT` (requests per minute per credential,
 default 600, `0` disables; the store is per gateway node) and
-`ADMIN_USER_IDS` (comma-separated). Both live in `docker-compose.env`.
+`ADMIN_USER_IDS` (comma-separated user ids). Both live in
+`docker-compose.env`.
 
 The legacy `POST /api/openapi/bot/login` with `md5(appId + appSecret)` still
 works for old bots and logs a deprecation warning; do not build on it.
