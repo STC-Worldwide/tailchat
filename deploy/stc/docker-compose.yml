@@ -14,7 +14,7 @@
 
 services:
   service-core:
-    image: ghcr.io/stc-worldwide/tailchat:1.19.0
+    image: ghcr.io/stc-worldwide/tailchat:1.19.1
     restart: unless-stopped
     env_file: docker-compose.env
     environment:
@@ -41,7 +41,7 @@ services:
       - internal
 
   service-openapi:
-    image: ghcr.io/stc-worldwide/tailchat:1.19.0
+    image: ghcr.io/stc-worldwide/tailchat:1.19.1
     restart: unless-stopped
     env_file: docker-compose.env
     environment:
@@ -60,7 +60,7 @@ services:
       - internal
 
   service-all-plugins:
-    image: ghcr.io/stc-worldwide/tailchat:1.19.0
+    image: ghcr.io/stc-worldwide/tailchat:1.19.1
     restart: unless-stopped
     env_file: docker-compose.env
     environment:
@@ -73,7 +73,7 @@ services:
       - internal
 
   tailchat-admin:
-    image: ghcr.io/stc-worldwide/tailchat:1.19.0
+    image: ghcr.io/stc-worldwide/tailchat:1.19.1
     restart: unless-stopped
     env_file: docker-compose.env
     depends_on:
