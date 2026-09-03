@@ -12,6 +12,8 @@ interface GroupTextPanelItemProps {
   panel: GroupPanel;
   icon: React.ReactNode;
   nested?: boolean;
+  itemProps?: React.HTMLAttributes<HTMLLIElement> & { draggable?: boolean };
+  itemClassName?: string;
 }
 
 /**
@@ -42,6 +44,8 @@ export const GroupAckPanelItem: React.FC<GroupTextPanelItemProps> = React.memo(
         }}
         extraBadge={extraBadge}
         nested={props.nested}
+        itemProps={props.itemProps}
+        itemClassName={props.itemClassName}
       />
     );
   }

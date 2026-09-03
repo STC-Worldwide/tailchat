@@ -27,6 +27,12 @@ export const GroupPanelItem: React.FC<{
   badgeProps?: SidebarBadgeProps;
   extraBadge?: React.ReactNode[];
   nested?: boolean;
+  /**
+   * 摊到最外层 <li> 上。侧边栏用它挂 draggable 和放置指示线 —— 这些都需要一个
+   * 真实的盒子, 包一层 display:contents 的 div 是不行的。
+   */
+  itemProps?: React.HTMLAttributes<HTMLLIElement> & { draggable?: boolean };
+  itemClassName?: string;
 }> = React.memo((props) => {
   const { icon, name, to, dimmed = false, badge, nested = false } = props;
   const location = useLocation();
@@ -34,8 +40,7 @@ export const GroupPanelItem: React.FC<{
   const hasExtraBadge = Boolean(props.extraBadge?.some(Boolean));
   const showBadge = badge === true || hasExtraBadge;
   const badgeDot =
-    typeof props.badgeProps?.count !== 'number' ||
-    props.badgeProps.count <= 0;
+    typeof props.badgeProps?.count !== 'number' || props.badgeProps.count <= 0;
 
   const content = (
     <>
@@ -56,7 +61,7 @@ export const GroupPanelItem: React.FC<{
 
   if (nested) {
     return (
-      <SidebarMenuSubItem>
+      <SidebarMenuSubItem className={props.itemClassName} {...props.itemProps}>
         <SidebarMenuSubButton
           render={<Link to={to} />}
           isActive={isActive}
@@ -72,7 +77,7 @@ export const GroupPanelItem: React.FC<{
   }
 
   return (
-    <SidebarMenuItem>
+    <SidebarMenuItem className={props.itemClassName} {...props.itemProps}>
       <SidebarMenuButton
         render={<Link to={to} />}
         isActive={isActive}

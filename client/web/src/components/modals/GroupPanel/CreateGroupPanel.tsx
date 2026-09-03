@@ -16,17 +16,22 @@ import { useGroupPanelFields } from './useGroupPanelFields';
  */
 export const ModalCreateGroupPanel: React.FC<{
   groupId: string;
+  /** 建在哪个分组下; 不传则建在顶层 */
+  parentId?: string;
   onSuccess?: () => void;
 }> = React.memo((props) => {
   const [currentValues, setValues] = useState<Partial<GroupPanelValues>>({});
 
   const [, handleSubmit] = useAsyncRequest(
     async (values: GroupPanelValues) => {
-      await createGroupPanel(props.groupId, buildDataFromValues(values));
+      await createGroupPanel(props.groupId, {
+        ...buildDataFromValues(values),
+        ...(props.parentId ? { parentId: props.parentId } : {}),
+      });
       showToasts(t('创建成功'), 'success');
       typeof props.onSuccess === 'function' && props.onSuccess();
     },
-    [props.groupId, props.onSuccess]
+    [props.groupId, props.parentId, props.onSuccess]
   );
 
   const { fields, schema } = useGroupPanelFields(props.groupId, currentValues);
