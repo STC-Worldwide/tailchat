@@ -26,7 +26,9 @@ token's scopes and that user's own permissions.
    ```
 
    Any MCP host works the same way: run `node dist/src/index.js` over stdio with the
-   two environment variables set.
+   two environment variables set. **Settings -> MCP setup** in the web client has
+   ready-to-copy snippets for Claude Code, Claude Desktop, Codex CLI and Cursor,
+   already filled in with that deployment's origin.
 
 | Variable | Meaning |
 | --- | --- |

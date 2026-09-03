@@ -11,6 +11,7 @@ import { SettingsAbout } from './About';
 import { SettingsAccount } from './Account';
 import { SettingsApiKeys } from './ApiKeys';
 import { SettingsDebug } from './Debug';
+import { SettingsMcpSetup } from './McpSetup';
 import { SettingsPerformance } from './Performance';
 import { SettingsStatus } from './Status';
 import { SettingsSystem } from './System';
@@ -20,6 +21,7 @@ import {
   GaugeIcon,
   InfoIcon,
   KeyRoundIcon,
+  PlugZapIcon,
   PuzzleIcon,
   Settings2Icon,
   UserRoundIcon,
@@ -54,6 +56,12 @@ export const SettingsView: React.FC<SettingsViewProps> = React.memo((props) => {
           title: t('API 密钥'),
           icon: <KeyRoundIcon />,
           content: <SettingsApiKeys />,
+        },
+        {
+          type: 'item',
+          title: t('MCP 接入'),
+          icon: <PlugZapIcon />,
+          content: <SettingsMcpSetup />,
         },
         {
           type: 'item',
