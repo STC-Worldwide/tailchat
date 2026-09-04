@@ -1,5 +1,11 @@
-import { Loadable, regGroupPanel, regInspectService } from '@capital/common';
+import {
+  Loadable,
+  regGroupPanel,
+  regInspectService,
+  regPluginGroupConfigItem,
+} from '@capital/common';
 import { Translate } from './translate';
+import { ApprovalChainField, RefPrefixField, SETTING_NAMES } from './Settings';
 
 const PLUGIN_ID = 'com.stcworldwide.projectops';
 const PLUGIN_NAME = 'Project Ops';
@@ -51,4 +57,23 @@ regInspectService({
 regInspectService({
   name: `plugin:${PLUGIN_ID}.parts`,
   label: Translate.parts,
+});
+
+/**
+ * Settings live in Group Settings -> plugin settings, not in a panel of their
+ * own: they are per-group configuration, they are already gated on the same
+ * permission as every other group setting, and that is where people look.
+ */
+regPluginGroupConfigItem({
+  name: SETTING_NAMES.refPrefix,
+  title: Translate.refPrefix,
+  tip: Translate.refPrefixTip,
+  component: RefPrefixField,
+});
+
+regPluginGroupConfigItem({
+  name: SETTING_NAMES.timesheetApproval,
+  title: Translate.timesheetApproval,
+  tip: Translate.timesheetApprovalTip,
+  component: ApprovalChainField,
 });
