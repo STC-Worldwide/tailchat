@@ -16,9 +16,9 @@ import {
 } from '@capital/component';
 import { Translate } from '../translate';
 import { timesheetRequest } from '../request';
-import { formatDate, formatRef, STATUS_COLOR } from '../shared';
+import { formatDate, formatHm, formatRef, STATUS_COLOR } from '../shared';
 import { AddTimesheetModal } from './AddTimesheetModal';
-import { WeekMatrix } from './WeekMatrix';
+import { WeekRollup } from './WeekRollup';
 
 interface TimesheetEntry {
   _id: string;
@@ -112,7 +112,7 @@ const TimesheetPanel: React.FC = React.memo(() => {
         align: 'right',
         render: (hours: number) => (
           <span style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 600 }}>
-            {Number(hours ?? 0).toFixed(1)}
+            {formatHm(hours)}
           </span>
         ),
       },
@@ -200,7 +200,7 @@ const TimesheetPanel: React.FC = React.memo(() => {
         </Button>
       </div>
 
-      <WeekMatrix entries={entries} />
+      <WeekRollup entries={entries} />
 
       <Table
         rowKey="_id"

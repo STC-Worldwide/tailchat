@@ -96,3 +96,58 @@ export function formatDate(value: string | Date | undefined): string {
 
   return date.toLocaleDateString();
 }
+
+/**
+ * Hours are stored as a decimal — 8.5 — because that is what sums and the
+ * paper report both want. `h:mm` is a display format laid over that, and the
+ * only format crews say out loud.
+ *
+ * The total is rounded to whole minutes ONCE and only then split. Rounding
+ * the hour and the minute apart is how 7.999 renders as "7:60".
+ */
+export function formatHm(hours: number | undefined | null): string {
+  const value = Number(hours ?? 0);
+  if (!Number.isFinite(value)) {
+    return '0:00';
+  }
+
+  const sign = value < 0 ? '-' : '';
+  const total = Math.round(Math.abs(value) * 60);
+
+  return `${sign}${Math.floor(total / 60)}:${String(total % 60).padStart(
+    2,
+    '0'
+  )}`;
+}
+
+/** `8:30` — hours, then minutes, which must be a real minute count. */
+const HOURS_MINUTES = /^(\d{1,3})\s*:\s*([0-5]\d)$/;
+const DECIMAL = /^\d{1,3}(\.\d{1,4})?$/;
+
+/**
+ * Read what someone typed into the hours field, in either format they might
+ * reach for: `8.5` or `8:30`. Both mean the same stored number.
+ *
+ * Returns null for anything that is not one of those — an empty box, a stray
+ * word, `8:75`. The caller shows the field error; nothing invalid is coerced
+ * to a number, because `Number('8:30')` is NaN and NaN hours silently books a
+ * day of work as nothing.
+ */
+export function parseHours(input: unknown): number | null {
+  if (typeof input === 'number') {
+    return Number.isFinite(input) && input >= 0 ? input : null;
+  }
+
+  if (typeof input !== 'string') {
+    return null;
+  }
+
+  const text = input.trim();
+
+  const hm = HOURS_MINUTES.exec(text);
+  if (hm) {
+    return Number(hm[1]) + Number(hm[2]) / 60;
+  }
+
+  return DECIMAL.test(text) ? Number(text) : null;
+}

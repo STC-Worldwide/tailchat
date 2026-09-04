@@ -45,12 +45,20 @@ export const Translate = {
   reopen: localTrans({ 'zh-CN': '重新打开', 'en-US': 'Reopen' }),
   locked: localTrans({ 'zh-CN': '已锁定', 'en-US': 'Locked' }),
   weekToDate: localTrans({
-    'zh-CN': '本周累计 — 区域 × 任务',
-    'en-US': 'Week to date — building × task',
+    'zh-CN': '本周累计',
+    'en-US': 'Week to date',
   }),
-  totalByTask: localTrans({
-    'zh-CN': '按任务合计',
-    'en-US': 'Total by task',
+  weekTotal: localTrans({
+    'zh-CN': '本周合计',
+    'en-US': 'week to date',
+  }),
+  showEmptyAreas: localTrans({
+    'zh-CN': '显示无工时的区域',
+    'en-US': 'Show areas with no hours',
+  }),
+  whoWorkedHere: localTrans({
+    'zh-CN': '展开查看每人工时',
+    'en-US': 'Show hours per person',
   }),
   total: localTrans({ 'zh-CN': '合计', 'en-US': 'Total' }),
   noApprovalConfigured: localTrans({
@@ -81,5 +89,13 @@ export const Translate = {
   hoursRequired: localTrans({
     'zh-CN': '请填写工时',
     'en-US': 'Hours are required',
+  }),
+  hoursInvalid: localTrans({
+    'zh-CN': '工时格式为 8.5 或 8:30',
+    'en-US': 'Enter hours as 8.5 or 8:30',
+  }),
+  hoursHint: localTrans({
+    'zh-CN': '工时 (8.5 或 8:30)',
+    'en-US': 'Hours (8.5 or 8:30)',
   }),
 };
