@@ -9,13 +9,14 @@ import {
 import { WebFastForm } from '@capital/component';
 import { Translate } from '../translate';
 import { timesheetRequest } from '../request';
-import { AREAS, HOUR_TYPES, TASK_TYPES } from '../shared';
+import { AREAS, HOUR_TYPES, TASK_TYPES, parseHours } from '../shared';
 
 const schema = createFastFormSchema({
   workDate: fieldSchema.string().required(),
   // fieldSchema exposes only string/ref/mixed — there is no number(), and
   // calling one throws while the schema is built at module load, which takes
-  // the whole panel down. Values are coerced with Number() on submit.
+  // the whole panel down. The field is free text either way, because it
+  // accepts both 8.5 and 8:30; parseHours turns it into a number on submit.
   hours: fieldSchema.mixed().required(Translate.hoursRequired),
   area: fieldSchema.string(),
   taskType: fieldSchema.string(),
@@ -27,8 +28,9 @@ const fields = [
   { type: 'text', name: 'workDate', label: Translate.date },
   // 'number' is not a registered field type — only text/textarea/password/
   // select/checkbox/custom are, and an unregistered type renders nothing at
-  // all, so the field silently vanishes. Coerced with Number() on submit.
-  { type: 'text', name: 'hours', label: Translate.hours },
+  // all, so the field silently vanishes. Text also lets someone type 8:30,
+  // which is what crews say out loud.
+  { type: 'text', name: 'hours', label: Translate.hoursHint },
   {
     type: 'select',
     name: 'area',
@@ -64,10 +66,18 @@ export const AddTimesheetModal: React.FC<{
   onSuccess?: () => void;
 }> = React.memo((props) => {
   const handleSubmit = async (values: any) => {
+    // Number('8:30') is NaN, and NaN hours books a full day as nothing at
+    // all — so an unreadable value stops here rather than reaching the server.
+    const hours = parseHours(values.hours);
+    if (hours === null) {
+      showToasts(Translate.hoursInvalid, 'error');
+      return;
+    }
+
     try {
       await timesheetRequest.post('add', {
         ...values,
-        hours: Number(values.hours),
+        hours,
         groupId: props.groupId,
       });
 
