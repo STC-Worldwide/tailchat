@@ -78,3 +78,34 @@ export function checkPathMatch(urlList: string[], url: string): boolean {
   // 考虑到serviceName中间可能会有. 且注册的时候不可能把所有情况都列出来，因此进行模糊处理
   return fuzzList.includes(fuzzUrl);
 }
+
+/**
+ * Should this static file be revalidated on every request rather than cached?
+ *
+ * Everything under `public/` is served with a one-day max-age, which is right
+ * for content-hashed assets and wrong for the few files whose names are stable
+ * across releases. A plugin's entry (`index.js`) and its `manifest.json` keep
+ * the same URL forever and point at the hashed chunks, so caching them for a
+ * day pins every browser to whichever plugin build it saw first: a plugin fix
+ * stays invisible for up to 24 hours even after the app itself has updated.
+ *
+ * Hashed chunks are unaffected — a new build gives them new names anyway.
+ */
+export function isRevalidatingStaticAsset(filePath: string): boolean {
+  const normalized = filePath.split('\\').join('/');
+  const fileName = normalized.split('/').pop() ?? '';
+
+  // The plugin registry is regenerated on every build under a stable name.
+  if (fileName === 'registry-be.json' || fileName === 'registry.json') {
+    return true;
+  }
+
+  if (!normalized.includes('/plugins/')) {
+    return false;
+  }
+
+  // `index-8ef1afeb.js` carries its build in the name; `index.js` does not.
+  const isContentHashed = /-[0-9a-f]{8,}\.\w+$/.test(fileName);
+
+  return !isContentHashed;
+}

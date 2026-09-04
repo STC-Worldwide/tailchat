@@ -28,7 +28,8 @@ const fields = [
   { type: 'text', name: 'description', label: Translate.description },
   { type: 'text', name: 'manufacturer', label: Translate.manufacturer },
   { type: 'text', name: 'partNumber', label: Translate.partNumber },
-  { type: 'number', name: 'quantity', label: Translate.quantity },
+  // 'number' is not a registered field type — see AddTimesheetModal.
+  { type: 'text', name: 'quantity', label: Translate.quantity },
   {
     type: 'select',
     name: 'status',
@@ -37,7 +38,7 @@ const fields = [
   },
   { type: 'text', name: 'supplier', label: 'Supplier' },
   { type: 'text', name: 'poNumber', label: Translate.poNumber },
-  { type: 'number', name: 'unitCost', label: 'Unit cost' },
+  { type: 'text', name: 'unitCost', label: 'Unit cost' },
   { type: 'text', name: 'deviceName', label: Translate.destination },
 ];
 

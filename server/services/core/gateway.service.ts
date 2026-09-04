@@ -17,7 +17,7 @@ import {
 } from 'tailchat-server-sdk';
 import { TcHealth } from '../../mixins/health.mixin';
 import type { Readable } from 'stream';
-import { checkPathMatch } from '../../lib/utils';
+import { checkPathMatch, isRevalidatingStaticAsset } from '../../lib/utils';
 import { buildRateLimitKey, extractCredential } from '../../lib/credential';
 import serve from 'serve-static';
 import accepts from 'accepts';
@@ -335,6 +335,17 @@ export default class ApiService extends TcService {
             maxAge: '1d', // 1 day for public file, include plugins
             setHeaders(res: ServerResponse, path: string, stat: any) {
               res.setHeader('Access-Control-Allow-Origin', '*'); // 允许跨域
+
+              // 插件入口(index.js / manifest.json)的文件名不带 hash, 一天的
+              // max-age 会把每个浏览器钉在它第一次见到的那个插件版本上 ——
+              // 插件修好了, 用户最多还要等 24 小时才看得到。带 hash 的
+              // chunk 不受影响, 新构建本来就是新文件名。
+              if (isRevalidatingStaticAsset(path)) {
+                res.setHeader(
+                  'Cache-Control',
+                  'public, max-age=0, must-revalidate'
+                );
+              }
             },
           }),
         ],
