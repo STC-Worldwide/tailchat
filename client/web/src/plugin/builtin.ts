@@ -1,5 +1,6 @@
 import type { PluginManifest } from 'tailchat-shared';
 import _compact from 'lodash/compact';
+import isElectron from 'is-electron';
 
 const isOffical = [
   'nightly.paw.msgbyte.com', //
@@ -107,6 +108,21 @@ export const builtinPlugins: PluginManifest[] = _compact([
     author: 'STC Worldwide',
     description: 'Punchlist, timesheet and parts panels for a project group',
     'description.zh-CN': '为项目群组提供缺陷清单、工时和物料面板',
+    requireRestart: true,
+  },
+  // The desktop client used to install this itself, by injecting a
+  // `window.tailchat.installPlugin(...)` call on load. That entry point is
+  // gone — it was also the console's way in — so the environment plugin is
+  // simply built in for the environment that needs it.
+  isElectron() && {
+    label: 'Electron Support',
+    'label.zh-CN': 'Electron 支持',
+    name: 'com.msgbyte.env.electron',
+    url: '/plugins/com.msgbyte.env.electron/index.js',
+    version: '0.0.0',
+    author: 'moonrailgun',
+    description: 'Add support for Electron environment in Tailchat',
+    'description.zh-CN': '在 Tailchat 添加对 Electron 环境的支持',
     requireRestart: true,
   },
   // isOffical

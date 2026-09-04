@@ -12,6 +12,7 @@ export {
   getCachedBaseGroupInfo,
   getCachedGroupInviteInfo,
   getCachedRegistryPlugins,
+  getCachedServerPlugins,
   getCachedUserSettings,
 } from './cache/cache';
 export { useCachedOnlineStatus } from './cache/useCache';

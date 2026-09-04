@@ -69,6 +69,14 @@ export interface GlobalConfig {
    */
   disableTelemetry?: boolean;
 
+  /**
+   * Origins a group web panel may embed.
+   *
+   * Decided by the server, not the browser. Empty allows nothing; `*` allows
+   * everything, which is upstream's behaviour.
+   */
+  webviewOriginAllowlist?: string[];
+
   announcement?:
     | false
     | {

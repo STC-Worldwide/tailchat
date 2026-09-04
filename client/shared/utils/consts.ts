@@ -30,5 +30,6 @@ export const defaultGlobalConfig: GlobalConfig = {
   disablePluginStore: false,
   disableAddFriend: false,
   disableTelemetry: false,
+  webviewOriginAllowlist: [],
   announcement: false,
 };

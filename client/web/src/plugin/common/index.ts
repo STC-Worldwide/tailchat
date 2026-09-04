@@ -78,6 +78,12 @@ export {
   parseUrlStr,
   useUpdateRef,
   isDevelopment,
+  /**
+   * The server's global config. Plugins read it to find out what the SERVER
+   * permits — e.g. which origins a web panel may embed — rather than deciding
+   * for themselves in the browser.
+   */
+  useGlobalConfigStore,
 } from 'tailchat-shared';
 export { setWebviewKernel, resetWebviewKernel } from '@/components/Webview';
 

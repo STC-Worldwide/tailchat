@@ -117,6 +117,48 @@ export async function getCachedAckInfo(converseId: string, refetch = false) {
 }
 
 /**
+ * Rewrite a server manifest's urls onto the backend this client is talking to.
+ */
+function parseServiceManifestUrls(manifest: PluginManifest): PluginManifest {
+  const serviceManifest = {
+    ...manifest,
+    // 后端url策略。根据前端的url在获取时自动变更为当前链接的后端地址
+    url: parseUrlStr(manifest.url),
+  };
+
+  if (manifest.icon) {
+    serviceManifest.icon = parseUrlStr(manifest.icon);
+  }
+
+  if (manifest.documentUrl) {
+    serviceManifest.documentUrl = parseUrlStr(manifest.documentUrl);
+  }
+
+  return serviceManifest;
+}
+
+/**
+ * The plugins this server actually has installed.
+ *
+ * `registry-be.json` is written by `server/scripts/installPlugin.js` at image
+ * build time, so unlike the registry endpoints — which are catalogues of what
+ * *could* be installed — this is what is on disk. It is what the client loads,
+ * so it is cached briefly rather than for hours.
+ */
+export async function getCachedServerPlugins(): Promise<PluginManifest[]> {
+  return queryClient.fetchQuery(
+    [CacheKey.pluginRegistry, 'server'],
+    () =>
+      fetchServiceRegistryPlugins().then((list) =>
+        list.map(parseServiceManifestUrls)
+      ),
+    {
+      staleTime: 5 * 60 * 1000,
+    }
+  );
+}
+
+/**
  * 获取缓存的插件列表
  */
 export async function getCachedRegistryPlugins(): Promise<PluginManifest[]> {
@@ -126,25 +168,7 @@ export async function getCachedRegistryPlugins(): Promise<PluginManifest[]> {
       Promise.all([
         fetchRegistryPlugins().catch(() => []),
         fetchServiceRegistryPlugins()
-          .then((list) =>
-            list.map((manifest) => {
-              const serviceManifest = {
-                ...manifest,
-                // 后端url策略。根据前端的url在获取时自动变更为当前链接的后端地址
-                url: parseUrlStr(manifest.url),
-              };
-
-              if (manifest.icon) {
-                serviceManifest.icon = parseUrlStr(manifest.icon);
-              }
-
-              if (manifest.documentUrl) {
-                serviceManifest.documentUrl = parseUrlStr(manifest.documentUrl);
-              }
-
-              return serviceManifest;
-            })
-          )
+          .then((list) => list.map(parseServiceManifestUrls))
           .catch(() => []),
         fetchLocalStaticRegistryPlugins().catch(() => []),
       ]).then(([a, b, c]) => [...a, ...b, ...c]),

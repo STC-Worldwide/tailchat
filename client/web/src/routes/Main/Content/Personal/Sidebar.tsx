@@ -58,7 +58,10 @@ export const PersonalSidebar: React.FC = React.memo(() => {
 
               {!disablePluginStore && (
                 <SidebarItem
-                  name={t('插件中心')}
+                  name={localTrans({
+                    'zh-CN': '已安装插件',
+                    'en-US': 'Installed plugins',
+                  })}
                   icon={<PuzzleIcon />}
                   to="/main/personal/plugins"
                 />

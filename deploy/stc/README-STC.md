@@ -52,6 +52,39 @@ aborts if it does not match. Tagging before the bump burns the tag: the image bu
 the org is onboarded, add `DISABLE_USER_REGISTER=true` to `docker-compose.env` and
 `docker compose up -d` (recreates app containers).
 
+## Users are clients of this server
+
+Upstream Tailchat is self-service: a member can install plugins into their own
+browser, create groups, and mint bot credentials. This deployment is not that, and
+the difference is partly code and partly env.
+
+**In the code (nothing to configure).** The plugin store is gone. What the client
+loads is the built-in set plus `registry-be.json` — what this server actually has
+on disk — and there is no install path in the browser at all: no install button, no
+paste-a-manifest tab, and no `window.tailchat.installPlugin`, which used to be
+reachable from the console no matter what `DISABLE_PLUGIN_STORE` said. Personal ->
+Installed plugins is now a read-only list. `client/web/src/plugin/__tests__/no-client-install.spec.ts`
+fails if any of it comes back.
+
+**In `docker-compose.env`:**
+
+| Variable | Effect |
+|---|---|
+| `DISABLE_USER_REGISTER=1` | accounts are created by an admin |
+| `DISABLE_GUEST_LOGIN=1` | no anonymous sessions |
+| `DISABLE_CREATE_GROUP=1` | you create project groups; crews join |
+| `DISABLE_OPEN_APP_CREATE=1` | only `ADMIN_USER_IDS` may call `openapi.app.create` / `setAppCapability` |
+| `WEBVIEW_ORIGIN_ALLOWLIST=` | origins a web panel may embed. **Empty allows none** |
+| `DISABLE_PLUGIN_STORE=1` | *optional* — also hides the read-only list |
+
+`WEBVIEW_ORIGIN_ALLOWLIST` is the one to watch. It is comma-separated and matches on
+origin, so `https://docs.example.com` does not cover `https://docs.example.com:8443`
+or a subdomain. `*` restores upstream's allow-everything. A blocked panel renders a
+message naming the URL rather than an empty frame, so the fix is legible from the
+panel itself: add the origin and `docker compose up -d`.
+
+Changing any of these needs `docker compose up -d` to recreate the app containers.
+
 ## Backups
 
 Nightly cron on the VPS (`/etc/cron.d/tailchat-backup`) dumps MongoDB and tars the

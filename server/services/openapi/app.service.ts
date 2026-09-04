@@ -6,6 +6,7 @@ import {
   EntityError,
   NoPermissionError,
 } from 'tailchat-server-sdk';
+import { canCreateOpenApp } from '../../lib/openapp';
 import _ from 'lodash';
 import {
   filterAvailableAppCapability,
@@ -183,6 +184,8 @@ class OpenAppService extends TcService {
     const { appName, appDesc, appIcon } = ctx.params;
     const userId = ctx.meta.userId;
 
+    this.assertCanCreateOpenApp(userId);
+
     if (!appName) {
       throw new EntityError();
     }
@@ -279,6 +282,11 @@ class OpenAppService extends TcService {
   ) {
     const { appId, capability } = ctx.params;
     const { userId } = ctx.meta;
+
+    // Capability is what turns an app into a bot or an OAuth provider, so it
+    // is gated in its own right: owning an app created before the flag went
+    // on must not be a way to grant yourself those powers afterwards.
+    this.assertCanCreateOpenApp(userId);
 
     const openapp = await this.adapter.model.findAppByIdAndOwner(appId, userId);
     if (!openapp) {
@@ -379,6 +387,13 @@ class OpenAppService extends TcService {
    */
   private async cleanAppInfoCache(appId: string) {
     await this.cleanActionCache('get', [String(appId)]);
+  }
+  private assertCanCreateOpenApp(userId: unknown) {
+    if (canCreateOpenApp(userId)) {
+      return;
+    }
+
+    throw new NoPermissionError('Open app creation is disabled on this server');
   }
 }
 
