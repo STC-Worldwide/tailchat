@@ -519,15 +519,36 @@ class GroupService extends TcService {
       throw new NoPermissionError(t('没有操作权限'));
     }
 
+    /**
+     * `$setField`, not `$set: { 'config.<name>': value }`.
+     *
+     * A dotted update path is a PATH: setting
+     * `config.plugin:com.stcworldwide.projectops:refPrefix` writes
+     * `{ 'plugin:com': { stcworldwide: { 'projectops:refPrefix': ... } } }`,
+     * and the client, reading the flat key back, sees nothing. The value is
+     * saved and unreadable — silently, with no error anywhere.
+     *
+     * Nothing hit this before because the one plugin using group config picked
+     * a dot-free name, while every plugin id has dots in it. `$setField` takes
+     * the field name literally, so a key may contain dots and still round-trip.
+     */
     const group = await this.adapter.model.findOneAndUpdate(
       {
         _id: String(groupId),
       },
-      {
-        $set: {
-          [`config.${configName}`]: configValue,
+      [
+        {
+          $set: {
+            config: {
+              $setField: {
+                field: { $literal: configName },
+                input: { $ifNull: ['$config', {}] },
+                value: { $literal: configValue },
+              },
+            },
+          },
         },
-      },
+      ],
       {
         new: true,
       }
