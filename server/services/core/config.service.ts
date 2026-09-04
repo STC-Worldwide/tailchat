@@ -87,6 +87,7 @@ class ConfigService extends TcService {
       disablePluginStore: config.feature.disablePluginStore,
       disableAddFriend: config.feature.disableAddFriend,
       disableTelemetry: config.feature.disableTelemetry,
+      webviewOriginAllowlist: config.webviewOriginAllowlist,
       ...persistConfig,
     };
   }

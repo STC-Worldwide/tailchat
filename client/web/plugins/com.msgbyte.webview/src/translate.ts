@@ -26,6 +26,14 @@ export const Translate = {
     'zh-CN': '在外部打开',
     'en-US': 'Open in extra',
   }),
+  blockedTitle: localTrans({
+    'zh-CN': '该网址未被服务器允许',
+    'en-US': 'This address is not allowed by the server',
+  }),
+  blockedDesc: localTrans({
+    'zh-CN': '请联系管理员将该来源加入允许列表。',
+    'en-US': 'Ask an administrator to add this origin to the allowed list.',
+  }),
   editTip: localTrans({
     'zh-CN': '使用html语法编辑, 关闭窗口自动保存',
     'en-US': 'Edit with html syntax, close the window and save automatically',

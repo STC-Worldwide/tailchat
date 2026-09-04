@@ -56,8 +56,14 @@ interface PluginManifest {
   documentUrl?: string;
 }
 
+/**
+ * Tailchat's window surface.
+ *
+ * `installPlugin` used to live here. It loaded arbitrary remote code into the
+ * app under the signed-in user's session and was reachable from the console
+ * regardless of `DISABLE_PLUGIN_STORE`, which made that flag cosmetic. What
+ * loads is the server's decision now, so nothing is injected.
+ */
 declare interface Window {
-  tailchat?: {
-    installPlugin?: (manifest: PluginManifest) => Promise<void>;
-  };
+  tailchat?: Record<string, never>;
 }

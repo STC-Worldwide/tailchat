@@ -1,23 +1,13 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import {
   isValidStr,
   localTrans,
   parseUrlStr,
   type PluginManifest,
-  showAlert,
-  showToasts,
   t,
-  useAsyncRequest,
 } from 'tailchat-shared';
-import {
-  BookOpenIcon,
-  LoaderCircleIcon,
-  PackageCheckIcon,
-  PackageMinusIcon,
-  PackagePlusIcon,
-} from 'lucide-react';
+import { BookOpenIcon, PackageCheckIcon } from 'lucide-react';
 import { ModalWrapper, openModal } from '../common';
-import { pluginManager } from '../manager';
 import { DocumentView } from './DocumentView';
 import { getManifestFieldWithI18N } from '../utils';
 import {
@@ -36,36 +26,17 @@ import {
 } from '@/components/ui/official/card';
 
 /**
- * 插件项
+ * One installed plugin, for reading.
+ *
+ * There is deliberately no install or uninstall control: what this client
+ * loads is decided by the server, so the card exists to answer "what is this
+ * and what version am I on", which is what support actually needs.
  */
-export const PluginStoreItem: React.FC<{
+export const InstalledPluginItem: React.FC<{
   manifest: PluginManifest;
-  installed: boolean;
   builtin?: boolean;
 }> = React.memo((props) => {
   const { manifest, builtin = false } = props;
-  const [installed, setInstalled] = useState(props.installed);
-
-  const [{ loading }, handleInstallPlugin] = useAsyncRequest(async () => {
-    await pluginManager.installPlugin(manifest);
-    if (manifest.requireRestart === true) {
-      showToasts(t('插件安装成功, 刷新页面后生效'), 'success');
-    } else {
-      showToasts(t('插件安装成功'), 'success');
-    }
-    setInstalled(true);
-  }, [manifest]);
-
-  const handleUninstallPlugin = useCallback(() => {
-    showAlert({
-      message: t('是否要卸载插件'),
-      onConfirm: async () => {
-        await pluginManager.uninstallPlugin(manifest.name);
-        setInstalled(false);
-        showToasts(t('插件卸载成功, 刷新页面后生效'), 'success');
-      },
-    });
-  }, [manifest]);
 
   const label = getManifestFieldWithI18N(manifest, 'label');
   const description = getManifestFieldWithI18N(manifest, 'description');
@@ -131,51 +102,15 @@ export const PluginStoreItem: React.FC<{
         </p>
       </CardContent>
 
-      {(hasDocument || !builtin) && (
+      {hasDocument && (
         <CardFooter className="min-h-14 justify-end gap-2 border-border/70 px-3 py-2.5">
-          {hasDocument && (
-            <Button variant="ghost" size="sm" onClick={handleShowDocument}>
-              <BookOpenIcon data-icon="inline-start" />
-              {t('文档')}
-            </Button>
-          )}
-
-          {!builtin &&
-            (installed ? (
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={handleUninstallPlugin}
-              >
-                <PackageMinusIcon data-icon="inline-start" />
-                {localTrans({ 'zh-CN': '卸载', 'en-US': 'Uninstall' })}
-              </Button>
-            ) : (
-              <Button
-                size="sm"
-                disabled={loading}
-                aria-busy={loading}
-                onClick={handleInstallPlugin}
-              >
-                {loading ? (
-                  <LoaderCircleIcon
-                    data-icon="inline-start"
-                    className="animate-spin"
-                  />
-                ) : (
-                  <PackagePlusIcon data-icon="inline-start" />
-                )}
-                {loading
-                  ? localTrans({
-                      'zh-CN': '正在安装',
-                      'en-US': 'Installing',
-                    })
-                  : t('安装')}
-              </Button>
-            ))}
+          <Button variant="ghost" size="sm" onClick={handleShowDocument}>
+            <BookOpenIcon data-icon="inline-start" />
+            {t('文档')}
+          </Button>
         </CardFooter>
       )}
     </Card>
   );
 });
-PluginStoreItem.displayName = 'PluginStoreItem';
+InstalledPluginItem.displayName = 'InstalledPluginItem';

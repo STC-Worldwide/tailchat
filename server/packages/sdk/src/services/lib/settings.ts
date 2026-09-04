@@ -95,7 +95,32 @@ export const config = {
     disablePluginStore: checkEnvTrusty(process.env.DISABLE_PLUGIN_STORE), // 是否禁用用户插件中心功能
     disableAddFriend: checkEnvTrusty(process.env.DISABLE_ADD_FRIEND), // 是否禁用用户添加好友功能
     disableTelemetry: checkEnvTrusty(process.env.DISABLE_TELEMETRY), // 是否禁用遥测
+    /**
+     * Whether an ordinary user may mint an open app (bot + OAuth credentials).
+     *
+     * Upstream lets any authenticated user call `openapi.app.create` and then
+     * `setAppCapability` to turn it into a bot. On a deployment where users
+     * are meant to be clients of the server and nothing more, app creation
+     * belongs to the admin.
+     */
+    disableOpenAppCreate: checkEnvTrusty(process.env.DISABLE_OPEN_APP_CREATE),
   },
+
+  /**
+   * Origins a group web panel may embed.
+   *
+   * A web panel points an iframe at whatever URL its creator typed. The
+   * allowlist is served to the client as part of the global config, so what
+   * may be embedded is the server's decision and not the browser's.
+   *
+   * Empty means no external origin is allowed; the panel says so rather than
+   * rendering a blank frame. `*` allows everything, which is upstream's
+   * behaviour and is only right for a deployment that trusts every member.
+   */
+  webviewOriginAllowlist: (process.env.WEBVIEW_ORIGIN_ALLOWLIST ?? '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter((origin) => origin.length > 0),
 };
 
 export const builtinAuthWhitelist = [

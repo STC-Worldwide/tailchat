@@ -1,7 +1,7 @@
-import { PluginStore } from '@/plugin/PluginStore';
+import { InstalledPlugins } from '@/plugin/InstalledPlugins';
 import React from 'react';
 
 export const PluginsPanel: React.FC = React.memo(() => {
-  return <PluginStore />;
+  return <InstalledPlugins />;
 });
 PluginsPanel.displayName = 'PluginsPanel';
