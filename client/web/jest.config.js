@@ -51,6 +51,16 @@ const esModules = [
   'html-void-elements',
 ].join('|');
 
+/*
+ * 时区钉死在 UTC。
+ *
+ * 有些断言会把本地时间格式化后跟字面量比 (date-helper 就是), 不钉的话结果跟跑测试
+ * 的机器在哪个时区有关 —— 开发机在 UTC+7、CI runner 在 UTC、原作者在 UTC+8, 三边
+ * 谁也别想同时绿。写在这里而不是 setup.js: worker 是子进程, 从父进程继承 env, TZ
+ * 必须在进程起来之前就定下来。
+ */
+process.env.TZ = 'UTC';
+
 /** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
 module.exports = {
   preset: 'ts-jest',
@@ -69,6 +79,13 @@ module.exports = {
   },
   // projects: ['<rootDir>/web/'], // https://jestjs.io/docs/configuration#projects-arraystring--projectconfig
   rootDir: '.',
+  /*
+   * client/shared 的测试也要跑。
+   *
+   * CI 只有 `cd client/web && pnpm test` 这一条命令, 之前 roots 默认等于 rootDir,
+   * 于是 client/shared 下的 spec 一个都不执行 —— 悄悄烂掉两个才被发现。
+   */
+  roots: ['<rootDir>', '<rootDir>/../shared'],
   testRegex: '.*\\.(test|spec)\\.tsx?$',
   testPathIgnorePatterns: ['/node_modules/'],
   transform: {
