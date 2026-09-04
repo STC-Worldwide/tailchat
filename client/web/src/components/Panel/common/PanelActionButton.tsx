@@ -15,6 +15,12 @@ type PanelActionButtonProps = Omit<
 > & {
   label: string;
   icon: React.ReactNode;
+  /**
+   * 这个按钮是个开关, 并且当前是"开"。
+   *
+   * 会带上 aria-pressed —— 读屏靠它区分开关和普通按钮, 光把背景涂深是看不出来的。
+   */
+  active?: boolean;
 };
 
 /**
@@ -25,7 +31,7 @@ type PanelActionButtonProps = Omit<
 export const PanelActionButton = React.forwardRef<
   HTMLButtonElement,
   PanelActionButtonProps
->(({ className, icon, label, ...props }, ref) => {
+>(({ className, icon, label, active, ...props }, ref) => {
   const portalContainer = useAppPortalContainer();
   const button = (
     <Button
@@ -34,7 +40,12 @@ export const PanelActionButton = React.forwardRef<
       variant="ghost"
       size="icon"
       aria-label={label}
-      className={cn('size-11 rounded-lg md:size-8', className)}
+      aria-pressed={active}
+      className={cn(
+        'size-11 rounded-lg md:size-8',
+        active && 'bg-accent text-accent-foreground',
+        className
+      )}
       {...props}
     >
       {icon}

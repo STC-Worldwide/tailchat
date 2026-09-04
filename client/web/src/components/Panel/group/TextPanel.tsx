@@ -101,6 +101,11 @@ export const TextPanel: React.FC<TextPanelProps> = React.memo(
       <GroupPanelContainer
         groupId={groupId}
         panelId={panelId}
+        sidePanel={{
+          storageKey: 'panel:membersSidebar',
+          name: t('成员'),
+          panel: <MembersPanel groupId={groupId} panelId={panelId} />,
+        }}
         prefixActions={() => [
           ...pluginPanelActions
             .filter(
@@ -121,7 +126,7 @@ export const TextPanel: React.FC<TextPanelProps> = React.memo(
               />
             )),
         ]}
-        suffixActions={({ setRightPanel }) => [
+        suffixActions={({ setRightPanel, sidePanelOpen, toggleSidePanel }) => [
           <PanelActionButton
             key="search"
             label={t('聊天记录搜索')}
@@ -139,12 +144,8 @@ export const TextPanel: React.FC<TextPanelProps> = React.memo(
             key="members"
             label={t('成员列表')}
             icon={<UsersIcon />}
-            onClick={() =>
-              setRightPanel({
-                name: t('成员') + ` (${groupMembers.length})`,
-                panel: <MembersPanel groupId={groupId} />,
-              })
-            }
+            active={sidePanelOpen}
+            onClick={toggleSidePanel}
           />,
         ]}
       >

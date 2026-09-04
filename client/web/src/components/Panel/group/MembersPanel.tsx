@@ -31,16 +31,24 @@ import {
 } from '@/components/ui/official/empty';
 import { SearchIcon, SearchXIcon } from 'lucide-react';
 import { useAppPortalContainer } from '@/hooks/useAppPortalContainer';
+import { buildMemberGroups, filterMembersByPanel } from './memberGroups';
 
 interface MembersPanelProps {
   groupId: string;
+  /**
+   * 当前选中的频道。
+   *
+   * 传了就只列出在这个频道里有 `core.viewPanel` 的人 —— 和左边频道列表隐藏频道用
+   * 的是同一个判断。不传则列出群组全部成员。
+   */
+  panelId?: string;
 }
 
 /**
  * 用户面板
  */
 export const MembersPanel: React.FC<MembersPanelProps> = React.memo((props) => {
-  const groupId = props.groupId;
+  const { groupId, panelId } = props;
   const groupInfo = useGroupInfo(groupId);
   const members = groupInfo?.members ?? [];
   const membersOnlineStatus = useCachedOnlineStatus(
@@ -58,51 +66,75 @@ export const MembersPanel: React.FC<MembersPanelProps> = React.memo((props) => {
   } = useGroupMemberAction(groupId);
   const portalContainer = useAppPortalContainer();
 
-  const sortedMembers = useMemo(() => {
-    const online: UserBaseInfo[] = [];
-    const offline: UserBaseInfo[] = [];
+  /**
+   * 按 userId 查在线状态。
+   *
+   * `membersOnlineStatus` 是跟着 `groupInfo.members` 的下标走的, 而要分组的是
+   * `userInfos` —— 两个数组同序只是巧合, 按 id 查才不会有人被标成假的离线。
+   */
+  const isOnline = useMemo(() => {
+    const online = new Set(
+      members
+        .filter((_, index) => membersOnlineStatus[index] === true)
+        .map((m) => m.userId)
+    );
 
-    userInfos.forEach((m, i) => {
-      if (membersOnlineStatus[i] === true) {
-        online.push(m);
-      } else {
-        offline.push(m);
-      }
+    return (userId: string) => online.has(userId);
+  }, [members, membersOnlineStatus]);
+
+  const memberGroups = useMemo(() => {
+    if (isSearching) {
+      return [
+        {
+          key: 'search',
+          label: localTrans({
+            'zh-CN': '搜索结果',
+            'en-US': 'Search results',
+          }),
+          members: filterMembersByPanel(
+            groupInfo,
+            panelId,
+            filteredGroupMembers
+          ),
+        },
+      ];
+    }
+
+    return buildMemberGroups({
+      groupInfo,
+      panelId,
+      members: userInfos,
+      isOnline,
+      labels: { online: t('在线'), offline: t('离线') },
     });
-
-    return {
-      [t('在线')]: online,
-      [t('离线')]: offline,
-    };
-  }, [userInfos, membersOnlineStatus]);
+  }, [
+    isSearching,
+    filteredGroupMembers,
+    groupInfo,
+    panelId,
+    userInfos,
+    isOnline,
+  ]);
 
   const { groupCounts, groupNames, getGroupedMemberInfo } = useMemo(() => {
-    const searchResultsLabel = localTrans({
-      'zh-CN': '搜索结果',
-      'en-US': 'Search results',
-    });
-    const groupMemberInfo = isSearching
-      ? { [searchResultsLabel]: filteredGroupMembers }
-      : sortedMembers;
-
-    const groupCounts = Object.values(groupMemberInfo).map(
-      (item) => item.length
-    );
-    const groupNames = Object.keys(groupMemberInfo);
+    const groupCounts = memberGroups.map((group) => group.members.length);
+    const groupNames = memberGroups.map((group) => group.label);
 
     const getGroupedMemberInfo = (
       index: number,
       groupIndex: number
     ): UserBaseInfo | null => {
-      const groupName = groupNames[groupIndex];
       const prevIndexCount = _sum(_take(groupCounts, groupIndex));
-      const currentGroupIndex = index - prevIndexCount;
 
-      return _get(groupMemberInfo, [groupName, currentGroupIndex], null);
+      return _get(
+        memberGroups,
+        [groupIndex, 'members', index - prevIndexCount],
+        null
+      );
     };
 
     return { groupCounts, groupNames, getGroupedMemberInfo };
-  }, [isSearching, filteredGroupMembers, sortedMembers]);
+  }, [memberGroups]);
 
   if (!groupInfo) {
     return <Problem />;
