@@ -15,6 +15,20 @@ import path from 'path';
  */
 const ALLOWED = ['string', 'ref', 'mixed'];
 
+/**
+ * Field types registered by WebMetaForm. An unregistered type is worse than a
+ * throw: the field renders as nothing at all, so the form silently loses an
+ * input and the first sign of trouble is a record saved without its hours.
+ */
+const ALLOWED_FIELD_TYPES = [
+  'text',
+  'textarea',
+  'password',
+  'select',
+  'checkbox',
+  'custom',
+];
+
 const srcRoot = path.resolve(
   __dirname,
   '../web/plugins/com.stcworldwide.projectops/src'
@@ -48,6 +62,24 @@ describe('web plugin form schemas', () => {
         const name = call.split('.')[1];
         if (!ALLOWED.includes(name)) {
           offenders.push(`${path.relative(srcRoot, file)}: ${call}()`);
+        }
+      }
+    }
+
+    expect(offenders).toEqual([]);
+  });
+
+  test('only use form field types that are registered', () => {
+    const offenders: string[] = [];
+
+    for (const file of files) {
+      const source = fs.readFileSync(file, 'utf-8');
+      const types = source.match(/type: '(\w+)'/g) ?? [];
+
+      for (const decl of types) {
+        const name = decl.split("'")[1];
+        if (!ALLOWED_FIELD_TYPES.includes(name)) {
+          offenders.push(`${path.relative(srcRoot, file)}: ${decl}`);
         }
       }
     }

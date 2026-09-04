@@ -25,7 +25,10 @@ const schema = createFastFormSchema({
 
 const fields = [
   { type: 'text', name: 'workDate', label: Translate.date },
-  { type: 'number', name: 'hours', label: Translate.hours },
+  // 'number' is not a registered field type — only text/textarea/password/
+  // select/checkbox/custom are, and an unregistered type renders nothing at
+  // all, so the field silently vanishes. Coerced with Number() on submit.
+  { type: 'text', name: 'hours', label: Translate.hours },
   {
     type: 'select',
     name: 'area',
