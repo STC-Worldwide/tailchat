@@ -279,6 +279,12 @@ export {
   getDefaultPermissionList,
   applyDefaultFallbackGroupPermission,
 } from './utils/role-helper';
+export {
+  canMemberViewPanel,
+  getGroupMemberPermissions,
+  getMemberPanelPermissions,
+  getPanelMemberPermissions,
+} from './utils/member-permission-helper';
 export { uploadFile } from './utils/upload-helper';
 export type { UploadFileResult, UploadFileUsage } from './utils/upload-helper';
 export { parseUrlStr } from './utils/url-helper';

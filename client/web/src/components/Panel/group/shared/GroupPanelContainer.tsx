@@ -16,6 +16,7 @@ interface GroupPanelWithHeader extends PropsWithChildren {
 
   prefixActions?: CommonPanelWrapperProps['actions'];
   suffixActions?: CommonPanelWrapperProps['actions'];
+  sidePanel?: CommonPanelWrapperProps['sidePanel'];
 }
 export const GroupPanelContainer: React.FC<GroupPanelWithHeader> = React.memo(
   (props) => {
@@ -35,6 +36,7 @@ export const GroupPanelContainer: React.FC<GroupPanelWithHeader> = React.memo(
     return (
       <CommonPanelWrapper
         header={panelInfo.name}
+        sidePanel={props.sidePanel}
         actions={(ctx) => [
           ...(props.prefixActions?.(ctx) ?? []),
           <PanelActionButton
