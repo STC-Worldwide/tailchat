@@ -1,0 +1,11 @@
+{
+  "label": "Project Ops",
+  "label.zh-CN": "项目运维",
+  "name": "com.stcworldwide.projectops",
+  "url": "{BACKEND}/plugins/com.stcworldwide.projectops/index.js",
+  "version": "0.0.0",
+  "author": "STC Worldwide",
+  "description": "Punchlist, timesheet and parts panels for a project group",
+  "description.zh-CN": "为项目群组提供缺陷清单、工时和物料面板",
+  "requireRestart": true
+}

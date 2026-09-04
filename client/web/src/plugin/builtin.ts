@@ -95,6 +95,20 @@ export const builtinPlugins: PluginManifest[] = _compact([
     'description.zh-CN': '增加预获取的图标，适用于内网环境',
     requireRestart: true,
   },
+  {
+    // Force-loaded rather than left to the Plugin Store on purpose: installs
+    // live in each browser's localStorage with no server sync, so a panel a
+    // foreman created would simply fail to render for everyone else.
+    label: 'Project Ops',
+    'label.zh-CN': '项目运维',
+    name: 'com.stcworldwide.projectops',
+    url: '{BACKEND}/plugins/com.stcworldwide.projectops/index.js',
+    version: '0.0.0',
+    author: 'STC Worldwide',
+    description: 'Punchlist, timesheet and parts panels for a project group',
+    'description.zh-CN': '为项目群组提供缺陷清单、工时和物料面板',
+    requireRestart: true,
+  },
   // isOffical
   isOffical && {
     label: 'Posthog',

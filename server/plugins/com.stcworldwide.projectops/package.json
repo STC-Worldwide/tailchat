@@ -1,0 +1,22 @@
+{
+  "name": "tailchat-plugin-projectops",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "STC Worldwide",
+  "description": "Project timesheets, parts and punchlist items for a group",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build:web": "ministar buildPlugin all",
+    "build:web:watch": "ministar watchPlugin all"
+  },
+  "devDependencies": {
+    "@types/react": "18.0.20",
+    "mini-star": "*"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "nanoid": "^3.1.23",
+    "tailchat-server-sdk": "*"
+  }
+}
