@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Tailchat API",
-    "version": "1.28.0",
+    "version": "1.29.0",
     "description": "Every published Moleculer action is reachable as `POST /api/<service>/<action>` with a JSON body.\nPaths below omit the `/api` prefix. The same actions are callable as socket.io events named `<service>.<action>`.\n\nAuthenticate with a user JWT in `X-Token`, or with a personal access token in `Authorization: Bearer <key>` or `X-Api-Key`.\nA token acts as the user who created it, so it reaches exactly what that user reaches, and may only call actions permitted by its scopes (`x-tailchat-scopes` on each operation):\n\n- `message:read`: Read messages, converses, acks and the inbox\n- `message:write`: Send, recall and delete messages, react, open DMs\n- `group:read`: List groups, read group info, membership and invites\n- `group:manage`: Create and configure groups, panels, roles, members and invites (includes group:read)\n- `user:read`: Read the bot identity, user profiles, friends and DM list\n- `user:write`: Update the bot profile and settings, manage friends and DMs\n- `file`: Upload and read files\n- `plugins`: Call backend plugin services\n- `admin`: Server administration (owner must be a server administrator): find, ban and unban users, add members to any group, send system notifications\n\nRate limit: `API_RATE_LIMIT` requests per minute per credential (default 600), reported in `X-Rate-Limit-*` headers; HTTP 429 when exceeded.\nResponses are `{ \"code\": <http status>, \"data\": <result> }`."
   },
   "servers": [
