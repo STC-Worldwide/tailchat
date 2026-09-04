@@ -104,6 +104,7 @@ export const TextPanel: React.FC<TextPanelProps> = React.memo(
         sidePanel={{
           storageKey: 'panel:membersSidebar',
           name: t('成员'),
+          widthClassName: 'w-60',
           panel: <MembersPanel groupId={groupId} panelId={panelId} />,
         }}
         prefixActions={() => [

@@ -170,6 +170,7 @@ export const MembersPanel: React.FC<MembersPanelProps> = React.memo((props) => {
               <div>
                 <UserListItem
                   userId={member._id}
+                  compact={true}
                   popover={<UserPopover userInfo={member} />}
                   hideDiscriminator={hideGroupMemberDiscriminator}
                 />
@@ -192,6 +193,7 @@ export const MembersPanel: React.FC<MembersPanelProps> = React.memo((props) => {
         <UserListItem
           key={member._id}
           userId={member._id}
+          compact={true}
           popover={<UserPopover userInfo={member} />}
           hideDiscriminator={hideGroupMemberDiscriminator}
         />
@@ -201,14 +203,14 @@ export const MembersPanel: React.FC<MembersPanelProps> = React.memo((props) => {
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="shrink-0 border-b bg-background p-3">
+      <div className="shrink-0 px-2 pb-1 pt-2">
         <div className="relative">
           <SearchIcon
             aria-hidden="true"
-            className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+            className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
           />
           <Input
-            className="h-11 w-full pl-9 md:h-9"
+            className="h-11 w-full border-transparent bg-muted/40 pl-8 shadow-none focus-visible:border-border md:h-8"
             placeholder={t('搜索成员')}
             aria-label={t('搜索成员')}
             value={searchText}
@@ -233,8 +235,9 @@ export const MembersPanel: React.FC<MembersPanelProps> = React.memo((props) => {
             groupCounts={groupCounts}
             groupContent={(index) => {
               return (
-                <div className="border-b bg-muted/70 px-3 py-2 text-xs font-medium uppercase tracking-wide text-muted-foreground backdrop-blur-sm">
-                  {groupNames[index]} · {groupCounts[index]}
+                // bg-card 和侧栏同色: 粘顶时能挡住滚上来的行, 又不会看着像一条色带
+                <div className="bg-card px-3 pb-1 pt-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  {groupNames[index]} — {groupCounts[index]}
                 </div>
               );
             }}
