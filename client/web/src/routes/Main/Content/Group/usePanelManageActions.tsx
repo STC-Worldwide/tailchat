@@ -17,8 +17,8 @@ import type { GroupPanelMenuItem } from './utils';
 /**
  * 侧边栏右键菜单里的"增删改"。
  *
- * 和设置页里的面板管理调的是同一批接口, 只是把入口放到了频道自己身上 ——
- * 要改一个频道, 不该先去设置里找到它。
+ * 这里是增删改频道的唯一入口: 设置页里那份面板管理已经删掉了 —— 要改一个
+ * 频道, 不该先去设置里找到它。改动直接落库, 没有暂存和保存按钮。
  */
 export function usePanelManageActions(groupId: string) {
   const [hasManagePanel] = useHasGroupPermission(groupId, [

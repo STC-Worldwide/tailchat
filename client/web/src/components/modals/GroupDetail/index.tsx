@@ -9,7 +9,6 @@ import { pluginCustomPanel } from '@/plugin/common';
 import React, { useCallback, useMemo } from 'react';
 import { PERMISSION, t, useHasGroupPermission } from 'tailchat-shared';
 import { GroupInvite } from './Invite';
-import { GroupPanel } from './Panel';
 import { GroupRole } from './Role';
 import { GroupSummary } from './Summary';
 import _compact from 'lodash/compact';
@@ -17,7 +16,6 @@ import { GroupConfig } from './Config';
 import { GroupMember } from './Member';
 import {
   LayoutDashboardIcon,
-  PanelsTopLeftIcon,
   PuzzleIcon,
   Settings2Icon,
   ShieldCheckIcon,
@@ -42,13 +40,11 @@ export const GroupDetail: React.FC<SettingsViewProps> = React.memo((props) => {
   const [
     allowManageConfig,
     allowManageUser,
-    allowManagePanel,
     allowManageInvite,
     allowManageRoles,
   ] = useHasGroupPermission(groupId, [
     PERMISSION.core.groupConfig,
     PERMISSION.core.manageUser,
-    PERMISSION.core.managePanel,
     PERMISSION.core.manageInvite,
     PERMISSION.core.manageRoles,
   ]);
@@ -77,12 +73,6 @@ export const GroupDetail: React.FC<SettingsViewProps> = React.memo((props) => {
             title: t('成员'),
             icon: <UsersIcon />,
             content: <GroupMember groupId={groupId} />,
-          },
-          allowManagePanel && {
-            type: 'item',
-            title: t('面板'),
-            icon: <PanelsTopLeftIcon />,
-            content: <GroupPanel groupId={groupId} />,
           },
           allowManageInvite && {
             type: 'item',
@@ -122,7 +112,6 @@ export const GroupDetail: React.FC<SettingsViewProps> = React.memo((props) => {
   }, [
     allowManageConfig,
     allowManageInvite,
-    allowManagePanel,
     allowManageRoles,
     allowManageUser,
     groupId,
