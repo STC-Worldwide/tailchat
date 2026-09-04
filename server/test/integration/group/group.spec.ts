@@ -223,6 +223,90 @@ describe('Test "group" service', () => {
     );
   });
 
+  describe('Test "group.updateGroupConfig"', () => {
+    const setConfig = async (
+      groupId: string,
+      userId: string,
+      configName: string,
+      configValue: unknown
+    ) => {
+      await broker.call(
+        'group.updateGroupConfig',
+        { groupId, configName, configValue },
+        { meta: { userId } }
+      );
+
+      const group = await service.adapter.model.findById(groupId).lean();
+
+      return (group as any)?.config ?? {};
+    };
+
+    test('a plain config name round-trips', async () => {
+      const userId = new Types.ObjectId();
+      const group = await insertTestData(createTestGroup(userId));
+
+      const config = await setConfig(
+        String(group._id),
+        String(userId),
+        'hideGroupMemberDiscriminator',
+        true
+      );
+
+      expect(config.hideGroupMemberDiscriminator).toBe(true);
+    });
+
+    test('a name containing dots stays one flat key', async () => {
+      // `$set: { 'config.<name>': v }` reads the dots as a PATH, so this
+      // stored `{ 'plugin:com': { stcworldwide: { 'projectops:refPrefix' } } }`
+      // and the client, reading the flat key back, saw nothing at all. Every
+      // plugin id has dots in it.
+      const userId = new Types.ObjectId();
+      const group = await insertTestData(createTestGroup(userId));
+      const name = 'plugin:com.stcworldwide.projectops:refPrefix';
+
+      const config = await setConfig(
+        String(group._id),
+        String(userId),
+        name,
+        '861'
+      );
+
+      expect(config[name]).toBe('861');
+      expect(config['plugin:com']).toBeUndefined();
+    });
+
+    test('a dotted key holding structured data round-trips whole', async () => {
+      const userId = new Types.ObjectId();
+      const group = await insertTestData(createTestGroup(userId));
+      const name = 'plugin:com.stcworldwide.projectops:timesheetApproval';
+      const chain = [
+        { id: 'a', name: 'Foreman', roleIds: ['r1'], userIds: [] },
+        { id: 'b', name: 'PM', roleIds: [], userIds: ['u1'] },
+      ];
+
+      const config = await setConfig(
+        String(group._id),
+        String(userId),
+        name,
+        chain
+      );
+
+      expect(config[name]).toEqual(chain);
+    });
+
+    test('setting one key leaves the others alone', async () => {
+      const userId = new Types.ObjectId();
+      const group = await insertTestData(createTestGroup(userId));
+      const groupId = String(group._id);
+
+      await setConfig(groupId, String(userId), 'a.b', 1);
+      const config = await setConfig(groupId, String(userId), 'c.d', 2);
+
+      expect(config['a.b']).toBe(1);
+      expect(config['c.d']).toBe(2);
+    });
+  });
+
   describe('Test "group.deleteGroupPanel"', () => {
     const groupPanelId = new Types.ObjectId();
     const textPanelId = new Types.ObjectId();
