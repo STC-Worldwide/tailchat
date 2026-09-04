@@ -13,6 +13,7 @@ import { useLocalStorageState } from '@/hooks/useLocalStorage';
 import { localTrans, t } from 'tailchat-shared';
 import { PanelActionButton } from './PanelActionButton';
 import { XIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface RightPanelType {
   name: string;
@@ -30,6 +31,13 @@ export interface SidePanelType {
   storageKey: string;
   name: string;
   panel: React.ReactNode;
+  /**
+   * 侧栏宽度的 tailwind 类, 不传就用一次性面板那个宽度。
+   *
+   * 成员列表要窄: 一行就是头像加个名字, 384px 撑出来一大片空白, 看着就是块板子。
+   * 搜索结果那种要展示消息片段的还是宽的好, 所以宽度跟着面板走而不是写死在容器上。
+   */
+  widthClassName?: string;
 }
 
 export interface PanelActionContext {
@@ -75,6 +83,9 @@ export const CommonPanelWrapper: React.FC<CommonPanelWrapperProps> = React.memo(
     const activePanel: RightPanelType | undefined =
       rightPanel ?? (sidePanelOpen ? props.sidePanel : undefined);
     const closeActivePanel = rightPanel ? closeRightPanel : toggleSidePanel;
+    // 一次性面板占坑时用它自己的宽度, 别被成员列表的窄宽度挤到
+    const asideWidth =
+      (!rightPanel && props.sidePanel?.widthClassName) || 'w-96';
 
     const rightPanelContent = activePanel ? (
       <>
@@ -147,7 +158,12 @@ export const CommonPanelWrapper: React.FC<CommonPanelWrapperProps> = React.memo(
           </Sheet>
         ) : (
           activePanel && (
-            <aside className="flex h-full w-96 max-w-[40%] shrink-0 flex-col border-l bg-card">
+            <aside
+              className={cn(
+                'flex h-full max-w-[40%] shrink-0 flex-col border-l bg-card',
+                asideWidth
+              )}
+            >
               {rightPanelContent}
             </aside>
           )
