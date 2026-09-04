@@ -351,7 +351,17 @@ export const [pluginGroupConfigItems, regPluginGroupConfigItem] = buildRegList<{
     value: any;
     onChange: (val: unknown) => void;
     loading: boolean;
-  }) => ReactElement;
+    /**
+     * The group being configured.
+     *
+     * Group settings render outside `GroupIdContext`, so without this a config
+     * item cannot look up the group's own roles or members — which is what any
+     * setting that names people needs.
+     */
+    groupId: string;
+    // `| null` so a plain `React.FC` is assignable — every React component
+    // may render nothing, and requiring an element rejects `React.FC` outright.
+  }) => ReactElement | null;
 }>();
 
 /**

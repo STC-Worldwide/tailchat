@@ -14,6 +14,7 @@ import {
   closeModal,
 } from '@capital/component';
 import { Translate } from '../translate';
+import { useProjectOpsSettings } from '../Settings';
 import { partsRequest } from '../request';
 import { formatDate, formatRef, STATUS_COLOR } from '../shared';
 import { AddPartModal } from './AddPartModal';
@@ -42,6 +43,7 @@ interface PartLine {
  */
 const PartsPanel: React.FC = React.memo(() => {
   const groupId = useGroupIdContext();
+  const { refPrefix } = useProjectOpsSettings(groupId);
 
   const [{ value, loading }, fetch] = useAsyncFn(
     () => partsRequest.post('list', { groupId }).then(({ data }) => data),
@@ -84,7 +86,7 @@ const PartsPanel: React.FC = React.memo(() => {
         title: Translate.ref,
         dataIndex: 'seq',
         width: 92,
-        render: (seq: number) => <code>{formatRef(undefined, 'PT', seq)}</code>,
+        render: (seq: number) => <code>{formatRef(refPrefix, 'PT', seq)}</code>,
       },
       {
         title: Translate.part,
@@ -164,7 +166,7 @@ const PartsPanel: React.FC = React.memo(() => {
         ),
       },
     ],
-    [act]
+    [act, refPrefix]
   );
 
   return (

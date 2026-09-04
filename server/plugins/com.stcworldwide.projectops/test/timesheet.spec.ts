@@ -1,6 +1,6 @@
 import { createTestServiceBroker } from '../../../test/utils';
 import TimesheetService from '../services/timesheet.service';
-import settingsModel from '../models/settings';
+import { SETTING_KEYS } from '../utils/settings';
 import { Types } from 'mongoose';
 
 /**
@@ -16,8 +16,10 @@ describe('Test "plugin:com.stcworldwide.projectops.timesheet" service', () => {
   const owner = String(new Types.ObjectId());
   const other = String(new Types.ObjectId());
 
-  // Every group call the service makes: membership, permissions, roles.
+  // Every group call the service makes: membership, permissions, roles, and
+  // now the approval chain, which lives in the group's own config.
   let managePanel = false;
+  let chain: { id: string; name: string }[] = [];
   const { broker, service } = createTestServiceBroker<TimesheetService>(
     TimesheetService,
     {
@@ -29,7 +31,10 @@ describe('Test "plugin:com.stcworldwide.projectops.timesheet" service', () => {
           return managePanel ? ['core.managePanel'] : [];
         }
         if (actionName === 'group.getGroupInfo') {
-          return { members: [{ userId: owner, roles: [] }] };
+          return {
+            members: [{ userId: owner, roles: [] }],
+            config: { [SETTING_KEYS.timesheetApproval]: chain },
+          };
         }
         return undefined;
       },
@@ -51,19 +56,16 @@ describe('Test "plugin:com.stcworldwide.projectops.timesheet" service', () => {
       meta(userId)
     ) as Promise<any>;
 
-  const setChain = (stages: { id: string; name: string }[]) =>
-    settingsModel.findOneAndUpdate(
-      { groupId },
-      { groupId, timesheetApproval: stages },
-      { upsert: true, new: true }
-    );
+  const setChain = (stages: { id: string; name: string }[]) => {
+    chain = stages;
+  };
 
   // Cleanup lives here rather than in afterAll: createTestServiceBroker
   // registers its own afterAll first, which closes the mongoose connection,
   // so anything we try to delete afterwards fails with MongoNotConnectedError.
   beforeEach(async () => {
     managePanel = false;
-    await settingsModel.deleteMany({ groupId });
+    chain = [];
     await service.adapter.model.deleteMany({ groupId });
   });
 

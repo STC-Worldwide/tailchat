@@ -213,7 +213,7 @@ class TimesheetService extends TcService {
     this.assertOwner(ctx, entry);
     this.assertUnlocked(entry);
 
-    const chain = await getTimesheetChain(groupId);
+    const chain = await getTimesheetChain(ctx, groupId);
     const now = new Date();
     const outcome = onSubmit(chain, now);
 
@@ -251,7 +251,7 @@ class TimesheetService extends TcService {
       throw new Error('Only a submitted entry can be decided');
     }
 
-    const chain = await getTimesheetChain(groupId);
+    const chain = await getTimesheetChain(ctx, groupId);
     const stage = chain[entry.currentStageIndex];
     const roles = await getMemberRoles(ctx, groupId);
 

@@ -15,6 +15,7 @@ import {
   closeModal,
 } from '@capital/component';
 import { Translate } from '../translate';
+import { useProjectOpsSettings } from '../Settings';
 import { timesheetRequest } from '../request';
 import { formatDate, formatHm, formatRef, STATUS_COLOR } from '../shared';
 import { AddTimesheetModal } from './AddTimesheetModal';
@@ -45,6 +46,7 @@ interface TimesheetEntry {
  */
 const TimesheetPanel: React.FC = React.memo(() => {
   const groupId = useGroupIdContext();
+  const { refPrefix } = useProjectOpsSettings(groupId);
 
   const [{ value, loading }, fetch] = useAsyncFn(
     () => timesheetRequest.post('list', { groupId }).then(({ data }) => data),
@@ -91,7 +93,7 @@ const TimesheetPanel: React.FC = React.memo(() => {
         title: Translate.ref,
         dataIndex: 'seq',
         width: 92,
-        render: (seq: number) => <code>{formatRef(undefined, 'TS', seq)}</code>,
+        render: (seq: number) => <code>{formatRef(refPrefix, 'TS', seq)}</code>,
       },
       {
         title: Translate.date,
@@ -181,7 +183,7 @@ const TimesheetPanel: React.FC = React.memo(() => {
         ),
       },
     ],
-    [act]
+    [act, refPrefix]
   );
 
   return (

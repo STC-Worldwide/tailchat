@@ -78,6 +78,55 @@ export const Translate = {
   serialNumber: localTrans({ 'zh-CN': '序列号', 'en-US': 'Serial' }),
 
   saved: localTrans({ 'zh-CN': '已保存', 'en-US': 'Saved' }),
+  save: localTrans({ 'zh-CN': '保存', 'en-US': 'Save' }),
+  edit: localTrans({ 'zh-CN': '编辑', 'en-US': 'Edit' }),
+
+  timesheetApproval: localTrans({
+    'zh-CN': '工时审批流程',
+    'en-US': 'Timesheet approval',
+  }),
+  timesheetApprovalTip: localTrans({
+    'zh-CN': '留空表示不需要审批, 提交即为最终状态。',
+    'en-US':
+      'Leave this empty for no approval — submitting an entry finalises it.',
+  }),
+  approvalChainHelp: localTrans({
+    'zh-CN':
+      '按顺序逐级审批。每一级可指定角色或成员; 都不指定则任何成员都可审批。',
+    'en-US':
+      'Stages are approved in order. Name a role or a member for each; a stage with neither is open to any member.',
+  }),
+  approvalOff: localTrans({
+    'zh-CN': '未配置审批',
+    'en-US': 'No approval — submitting finalises the entry',
+  }),
+  addStage: localTrans({ 'zh-CN': '添加一级', 'en-US': 'Add stage' }),
+  removeStage: localTrans({ 'zh-CN': '删除', 'en-US': 'Remove' }),
+  stageNamePlaceholder: localTrans({
+    'zh-CN': '名称, 如 工长',
+    'en-US': 'Stage name, e.g. Foreman',
+  }),
+  stageNeedsName: localTrans({
+    'zh-CN': '每一级都需要名称',
+    'en-US': 'Every stage needs a name',
+  }),
+  stageOpenToAnyone: localTrans({
+    'zh-CN': '未指定审批人 — 任何成员都可审批这一级',
+    'en-US': 'No approver named — any member can approve this stage',
+  }),
+  approverRoles: localTrans({ 'zh-CN': '角色', 'en-US': 'Roles' }),
+  approverUsers: localTrans({ 'zh-CN': '成员', 'en-US': 'Members' }),
+  noRoles: localTrans({
+    'zh-CN': '本群未创建角色',
+    'en-US': 'This group has no roles yet',
+  }),
+
+  refPrefix: localTrans({ 'zh-CN': '编号前缀', 'en-US': 'Reference prefix' }),
+  refPrefixTip: localTrans({
+    'zh-CN': '项目编号前缀, 如 861 显示为 861-TS-061。',
+    'en-US': 'Project prefix for references — 861 renders as 861-TS-061.',
+  }),
+  refPrefixPlaceholder: localTrans({ 'zh-CN': '如 861', 'en-US': 'e.g. 861' }),
   titleRequired: localTrans({
     'zh-CN': '请填写标题',
     'en-US': 'A title is required',

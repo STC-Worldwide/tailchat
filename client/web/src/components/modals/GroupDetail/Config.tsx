@@ -162,6 +162,7 @@ export const GroupConfig: React.FC<{
                     value: config[name],
                     onChange: (val: any) => handleModifyConfig(name, val),
                     loading,
+                    groupId,
                   })}
                 </GroupDetailRow>
               );

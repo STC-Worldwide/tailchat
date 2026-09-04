@@ -14,6 +14,7 @@ import {
   closeModal,
 } from '@capital/component';
 import { Translate } from '../translate';
+import { useProjectOpsSettings } from '../Settings';
 import { punchlistRequest } from '../request';
 import { formatDate, formatRef, PRIORITY_COLOR, STATUS_COLOR } from '../shared';
 import { AddPunchlistModal } from './AddPunchlistModal';
@@ -45,6 +46,7 @@ interface PunchlistItem {
  */
 const PunchlistPanel: React.FC = React.memo(() => {
   const groupId = useGroupIdContext();
+  const { refPrefix } = useProjectOpsSettings(groupId);
 
   const [{ value, loading }, fetch] = useAsyncFn(
     () => punchlistRequest.post('list', { groupId }).then(({ data }) => data),
@@ -87,7 +89,7 @@ const PunchlistPanel: React.FC = React.memo(() => {
         title: Translate.ref,
         dataIndex: 'seq',
         width: 96,
-        render: (seq: number) => <code>{formatRef(undefined, 'PL', seq)}</code>,
+        render: (seq: number) => <code>{formatRef(refPrefix, 'PL', seq)}</code>,
       },
       {
         title: Translate.title,
@@ -180,7 +182,7 @@ const PunchlistPanel: React.FC = React.memo(() => {
         ),
       },
     ],
-    [act]
+    [act, refPrefix]
   );
 
   return (
