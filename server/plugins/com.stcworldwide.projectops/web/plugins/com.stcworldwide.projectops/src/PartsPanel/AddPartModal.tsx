@@ -15,11 +15,12 @@ const schema = createFastFormSchema({
   description: fieldSchema.string().required(Translate.descriptionRequired),
   manufacturer: fieldSchema.string(),
   partNumber: fieldSchema.string(),
-  quantity: fieldSchema.number(),
+  // fieldSchema has no number() — see AddTimesheetModal.
+  quantity: fieldSchema.mixed(),
   status: fieldSchema.string(),
   supplier: fieldSchema.string(),
   poNumber: fieldSchema.string(),
-  unitCost: fieldSchema.number(),
+  unitCost: fieldSchema.mixed(),
   deviceName: fieldSchema.string(),
 });
 

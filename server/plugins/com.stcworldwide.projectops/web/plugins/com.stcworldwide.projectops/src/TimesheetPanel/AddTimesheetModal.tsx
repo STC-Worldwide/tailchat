@@ -13,7 +13,10 @@ import { AREAS, HOUR_TYPES, TASK_TYPES } from '../shared';
 
 const schema = createFastFormSchema({
   workDate: fieldSchema.string().required(),
-  hours: fieldSchema.number().required(Translate.hoursRequired),
+  // fieldSchema exposes only string/ref/mixed — there is no number(), and
+  // calling one throws while the schema is built at module load, which takes
+  // the whole panel down. Values are coerced with Number() on submit.
+  hours: fieldSchema.mixed().required(Translate.hoursRequired),
   area: fieldSchema.string(),
   taskType: fieldSchema.string(),
   hourType: fieldSchema.string(),
