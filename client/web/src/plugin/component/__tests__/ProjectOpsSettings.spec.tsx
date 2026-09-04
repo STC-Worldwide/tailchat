@@ -56,15 +56,23 @@ jest.mock('@capital/component', () => {
   };
 });
 
-// The fields are imported directly rather than through the plugin entry: the
-// entry also registers panels through `Loadable`, which cannot be typechecked
-// outside the plugin bundle's own untyped `@capital/*` modules.
-import {
-  ApprovalChainField,
-  RefPrefixField,
-  SETTING_KEYS,
-  SETTING_NAMES,
-} from '../../../../../../server/plugins/com.stcworldwide.projectops/web/plugins/com.stcworldwide.projectops/src/Settings';
+/**
+ * `require`, not `import`, and this is not a style choice.
+ *
+ * Plugin sources import `@capital/*`, which only resolves inside the plugin
+ * bundle. An `import` pulls those files into the client's own tsc program,
+ * where `@capital/*` does not exist, and `pnpm check:type` fails on a plugin
+ * that builds perfectly well. `require` keeps them out of the program.
+ *
+ * The fields are pulled from `./Settings` rather than the plugin entry because
+ * the entry also registers panels through `Loadable`.
+ */
+const settings = require('../../../../../../server/plugins/com.stcworldwide.projectops/web/plugins/com.stcworldwide.projectops/src/Settings');
+
+const ApprovalChainField: any = settings.ApprovalChainField;
+const RefPrefixField: any = settings.RefPrefixField;
+const SETTING_KEYS = settings.SETTING_KEYS;
+const SETTING_NAMES = settings.SETTING_NAMES;
 
 describe('Project Ops group settings', () => {
   test('the stored keys are the ones the server reads', () => {
