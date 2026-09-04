@@ -1,5 +1,6 @@
 import {
   isValidStr,
+  localTrans,
   t,
   useAppSelector,
   useAsync,
@@ -34,7 +35,10 @@ const builtinActions: QuickAction[] = [
   {
     key: 'plugins',
     source: 'core',
-    label: t('插件中心'),
+    label: localTrans({
+      'zh-CN': '已安装插件',
+      'en-US': 'Installed plugins',
+    }),
     action({ navigate }) {
       navigate('/main/personal/plugins');
     },

@@ -16,7 +16,7 @@ jest.mock('../useQuickSwitcherAllAction', () => ({
     {
       key: 'plugins',
       source: 'core',
-      label: '插件中心',
+      label: 'Installed plugins',
       action: jest.fn(),
     },
   ],
@@ -38,12 +38,12 @@ describe('QuickSwitcher', () => {
     });
 
     expect(screen.getByText('个人主页')).toBeTruthy();
-    expect(screen.getByText('插件中心')).toBeTruthy();
+    expect(screen.getByText('Installed plugins')).toBeTruthy();
 
     const input = screen.getByPlaceholderText('快速搜索、跳转');
-    fireEvent.change(input, { target: { value: '插件' } });
+    fireEvent.change(input, { target: { value: 'plugins' } });
 
     expect(screen.queryByText('个人主页')).toBeNull();
-    expect(screen.getByText('插件中心')).toBeTruthy();
+    expect(screen.getByText('Installed plugins')).toBeTruthy();
   });
 });

@@ -13,7 +13,10 @@ function getPersonalDetail(pathname: string): string | null {
     return t('好友');
   }
   if (pathname.includes('/plugins')) {
-    return t('插件中心');
+    return localTrans({
+      'zh-CN': '已安装插件',
+      'en-US': 'Installed plugins',
+    });
   }
   if (pathname.includes('/converse/')) {
     return localTrans({ 'zh-CN': '私信', 'en-US': 'Direct message' });
