@@ -340,6 +340,59 @@ export class Group extends TimeStamps implements Base {
   }
 
   /**
+   * 用户在某个面板上的最终权限 = 群组权限 ∪ 面板权限
+   *
+   * 面板权限是"加"上去的, 减不掉群组已经发出去的东西 —— 和客户端
+   * `useHasGroupPanelPermission` 是同一套算法, 两边必须一致, 否则会出现
+   * "界面上藏起来了, 接口却还给"这种最难查的漏。
+   */
+  static async getGroupUserPanelPermission(
+    this: ReturnModelType<typeof Group>,
+    groupId: string,
+    userId: string,
+    panelId: string
+  ): Promise<string[]> {
+    const groupPermissions = await this.getGroupUserPermission(groupId, userId);
+
+    const group = await this.findById(groupId);
+    const panel = group?.panels.find((p) => String(p.id) === panelId);
+    if (!panel) {
+      return groupPermissions;
+    }
+
+    const member = group?.members.find((m) => String(m.userId) === userId);
+    const permissionMap = panel.permissionMap ?? {};
+
+    return _.uniq([
+      ...groupPermissions,
+      ..._.flatten(
+        (member?.roles ?? []).map(
+          (roleId) => permissionMap[String(roleId)] ?? []
+        )
+      ),
+      ...(permissionMap[userId] ?? []),
+      ...(panel.fallbackPermissions ?? []),
+    ]);
+  }
+
+  /**
+   * 面板 id 反查它属于哪个群组, 没有则为 null
+   *
+   * 文字频道的面板 id 同时就是它的 converseId, 而客户端读消息时只带 converseId。
+   * 鉴权不能拿调用方自己报的 groupId 当真, 只能从 converseId 反查。
+   */
+  static async findGroupIdByPanelId(
+    this: ReturnModelType<typeof Group>,
+    panelId: string
+  ): Promise<string | null> {
+    const group = await this.findOne({ 'panels.id': panelId }, { _id: 1 })
+      .lean()
+      .exec();
+
+    return group ? String(group._id) : null;
+  }
+
+  /**
    * 检查群组字段操作权限，如果没有权限会直接抛出异常
    */
   static async checkGroupFieldPermission<

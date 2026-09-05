@@ -125,6 +125,34 @@ export function call(ctx: TcPureContext) {
       });
     },
     /**
+     * 检查群组成员在某个面板上的权限
+     *
+     * 面板权限 = 群组权限 ∪ 面板权限, 和客户端算法一致。
+     */
+    async checkUserPanelPermissions(
+      groupId: string,
+      userId: string,
+      panelId: string,
+      permissions: string[]
+    ): Promise<boolean[]> {
+      const userAllPermissions: string[] = await ctx.call(
+        'group.getUserAllPanelPermissions',
+        {
+          groupId,
+          userId,
+          panelId,
+        }
+      );
+
+      const hasOwnerPermission = userAllPermissions.includes(
+        PERMISSION.core.owner
+      );
+
+      return permissions.map((p) =>
+        hasOwnerPermission ? true : (userAllPermissions ?? []).includes(p)
+      );
+    },
+    /**
      * 检查群组成员权限
      */
     async checkUserPermissions(

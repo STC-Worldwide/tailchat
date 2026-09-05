@@ -20,6 +20,7 @@ import {
 } from 'tailchat-server-sdk';
 import type { Group } from '../../../models/group/group';
 import { isValidStr } from '../../../lib/utils';
+import { decideConverseAccess } from '../../../lib/converse-access';
 import _ from 'lodash';
 import RedisSlowModeCounter, { SlowModeRedisClient } from './slowModeCounter';
 
@@ -148,6 +149,10 @@ class MessageService extends TcService {
     }>
   ) {
     const { converseId, startId } = ctx.params;
+
+    // 鉴权是否能获取到会话内容
+    await this.checkConversePermission(ctx, converseId);
+
     const docs = await this.adapter.model.fetchConverseMessage(
       converseId,
       startId ?? null
@@ -602,15 +607,10 @@ class MessageService extends TcService {
     ctx: TcContext<{ groupId?: string; converseId: string; text: string }>
   ) {
     const { groupId, converseId, text } = ctx.params;
-    const userId = ctx.meta.userId;
-    const t = ctx.meta.t;
 
-    if (groupId) {
-      const groupInfo = await call(ctx).getGroupInfo(groupId);
-      if (!groupInfo.members.map((m) => m.userId).includes(userId)) {
-        throw new Error(t('不是群组成员无法搜索消息'));
-      }
-    }
+    // 鉴权是否能获取到会话内容
+    // 之前只在带 groupId 时查群成员, 不带就直接搜 —— 私信照样搜得到
+    await this.checkConversePermission(ctx, converseId, groupId);
 
     const messages = this.adapter.model
       .find({
@@ -639,10 +639,32 @@ class MessageService extends TcService {
   async fetchConverseLastMessages(ctx: TcContext<{ converseIds: string[] }>) {
     const { converseIds } = ctx.params;
 
+    /**
+     * 只保留看得见的会话。
+     *
+     * 这里不抛异常而是过滤: 客户端是拿整条侧边栏的会话列表来问的, 其中一条没权限
+     * 就让整个列表失败, 不值得。返回 null 和"这个会话还没有消息"是同一种表现。
+     * 权限检查全部走缓存, 正常情况下这一圈不产生额外查询。
+     */
+    const visible = await Promise.all(
+      converseIds.map(async (id) => {
+        try {
+          await this.checkConversePermission(ctx, id);
+          return id;
+        } catch (e) {
+          return null;
+        }
+      })
+    );
+
     // 这里使用了多个请求，但是通过limit=1会将查询范围降低到最低
     // 这种方式会比用聚合操作实际上更加节省资源
     const list = await Promise.all(
-      converseIds.map((id) => {
+      converseIds.map((id, index) => {
+        if (visible[index] === null) {
+          return null;
+        }
+
         return this.adapter.model
           .findOne(
             {
@@ -681,6 +703,12 @@ class MessageService extends TcService {
     const userId = ctx.meta.userId;
 
     const message = await this.adapter.model.findById(messageId);
+    if (!message) {
+      throw new DataNotFoundError(ctx.meta.t('该消息未找到'));
+    }
+
+    // 鉴权是否能获取到会话内容, 否则任何人都能给任何会话里的消息加表情
+    await this.checkConversePermission(ctx, String(message.converseId));
 
     const appendReaction = {
       name: emoji,
@@ -722,6 +750,12 @@ class MessageService extends TcService {
     const userId = ctx.meta.userId;
 
     const message = await this.adapter.model.findById(messageId);
+    if (!message) {
+      throw new DataNotFoundError(ctx.meta.t('该消息未找到'));
+    }
+
+    // 鉴权是否能获取到会话内容, 否则任何人都能给任何会话里的消息加表情
+    await this.checkConversePermission(ctx, String(message.converseId));
 
     const removedReaction = {
       name: emoji,
@@ -754,7 +788,46 @@ class MessageService extends TcService {
   }
 
   /**
+   * 用户是不是这个群的成员
+   */
+  private async isGroupMember(
+    ctx: TcContext,
+    groupId: string,
+    userId: string
+  ): Promise<boolean> {
+    const group = await call(ctx).getGroupInfo(groupId);
+
+    return (
+      (group?.members ?? []).findIndex((m) => String(m.userId) === userId) !==
+      -1
+    );
+  }
+
+  /**
    * 校验会话权限，如果没有抛出异常则视为正常
+   */
+  /**
+   * converseId 属于哪个群组, 不属于任何群组则为 null
+   *
+   * 文字频道的面板 id 同时就是它的 converseId。反查而不是信调用方报的 groupId:
+   * groupId 是请求参数, 报一个自己在的群、再配一个别的群的 converseId, 成员检查
+   * 就过了 —— 检查的是"我在我说的那个群里", 而不是"我能看这个会话"。
+   */
+  private async resolveConverseGroupId(
+    ctx: TcContext,
+    converseId: string
+  ): Promise<string | null> {
+    return ctx.call<string | null, { panelId: string }>(
+      'group.findGroupIdByPanelId',
+      { panelId: converseId }
+    );
+  }
+
+  /**
+   * 校验会话权限，如果没有抛出异常则视为正常
+   *
+   * 群组频道要同时满足两件事: 是群成员, 并且在这个面板上有 core.viewPanel。
+   * 只查成员资格的话, 频道权限就只是界面上的装饰 —— 左边栏把频道藏了, 接口照给。
    */
   private async checkConversePermission(
     ctx: TcContext,
@@ -773,32 +846,40 @@ class MessageService extends TcService {
       return { bypassSlowMode: false };
     }
 
-    // 鉴权是否能获取到会话内容
-    if (groupId) {
-      // 是群组
-      const group = await call(ctx).getGroupInfo(groupId);
-      if (group.members.findIndex((m) => String(m.userId) === userId) === -1) {
-        // 不存在该用户
-        throw new NoPermissionError(t('没有当前会话权限'));
-      }
-    } else {
-      // 是普通会话
-      const converse = await ctx.call<
-        any,
-        {
-          converseId: string;
-        }
-      >('chat.converse.findConverseInfo', {
-        converseId,
-      });
+    const resolvedGroupId = await this.resolveConverseGroupId(ctx, converseId);
 
-      if (!converse) {
-        throw new NotFoundError(t('没有找到会话信息'));
-      }
-      const memebers = converse.members ?? [];
-      if (memebers.findIndex((member) => String(member) === userId) === -1) {
-        throw new NoPermissionError(t('没有当前会话权限'));
-      }
+    // 鉴权是否能获取到会话内容; 判定本身在 lib/converse-access, 这里只负责取事实
+    const denial = resolvedGroupId
+      ? decideConverseAccess({
+          kind: 'group',
+          groupId: resolvedGroupId,
+          claimedGroupId: groupId,
+          isMember: await this.isGroupMember(ctx, resolvedGroupId, userId),
+          panelPermissions: await ctx.call<
+            string[],
+            { groupId: string; userId: string; panelId: string }
+          >('group.getUserAllPanelPermissions', {
+            groupId: resolvedGroupId,
+            userId,
+            panelId: converseId,
+          }),
+        })
+      : decideConverseAccess({
+          kind: 'direct',
+          userId,
+          members:
+            (
+              await ctx.call<any, { converseId: string }>(
+                'chat.converse.findConverseInfo',
+                { converseId }
+              )
+            )?.members ?? null,
+        });
+
+    if (denial) {
+      throw denial === 'not-found'
+        ? new NotFoundError(t('没有找到会话信息'))
+        : new NoPermissionError(t('没有当前会话权限'));
     }
 
     return { bypassSlowMode: false };
