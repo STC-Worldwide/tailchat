@@ -20,7 +20,10 @@ import {
 } from 'tailchat-server-sdk';
 import type { Group } from '../../../models/group/group';
 import { isValidStr } from '../../../lib/utils';
-import { decideConverseAccess } from '../../../lib/converse-access';
+import {
+  decideConverseAccess,
+  type ConverseDenial,
+} from '../../../lib/converse-access';
 import _ from 'lodash';
 import RedisSlowModeCounter, { SlowModeRedisClient } from './slowModeCounter';
 
@@ -849,32 +852,45 @@ class MessageService extends TcService {
     const resolvedGroupId = await this.resolveConverseGroupId(ctx, converseId);
 
     // 鉴权是否能获取到会话内容; 判定本身在 lib/converse-access, 这里只负责取事实
-    const denial = resolvedGroupId
-      ? decideConverseAccess({
-          kind: 'group',
-          groupId: resolvedGroupId,
-          claimedGroupId: groupId,
-          isMember: await this.isGroupMember(ctx, resolvedGroupId, userId),
-          panelPermissions: await ctx.call<
+    let denial: ConverseDenial | null;
+    if (resolvedGroupId) {
+      const isMember = await this.isGroupMember(ctx, resolvedGroupId, userId);
+
+      /*
+       * 非成员就不要再去问面板权限了。getGroupUserPermission 对不在群里的人是
+       * 直接 throw('Not Found Member') 的, 那会变成一个 500 —— 拒绝是对的, 但
+       * 得是一个干净的 403, 而不是把内部异常抛到接口上。
+       */
+      const panelPermissions = isMember
+        ? await ctx.call<
             string[],
             { groupId: string; userId: string; panelId: string }
           >('group.getUserAllPanelPermissions', {
             groupId: resolvedGroupId,
             userId,
             panelId: converseId,
-          }),
-        })
-      : decideConverseAccess({
-          kind: 'direct',
-          userId,
-          members:
-            (
-              await ctx.call<any, { converseId: string }>(
-                'chat.converse.findConverseInfo',
-                { converseId }
-              )
-            )?.members ?? null,
-        });
+          })
+        : [];
+
+      denial = decideConverseAccess({
+        kind: 'group',
+        groupId: resolvedGroupId,
+        claimedGroupId: groupId,
+        isMember,
+        panelPermissions,
+      });
+    } else {
+      const converse = await ctx.call<any, { converseId: string }>(
+        'chat.converse.findConverseInfo',
+        { converseId }
+      );
+
+      denial = decideConverseAccess({
+        kind: 'direct',
+        userId,
+        members: converse?.members ?? null,
+      });
+    }
 
     if (denial) {
       throw denial === 'not-found'
