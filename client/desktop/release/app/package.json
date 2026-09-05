@@ -1,12 +1,11 @@
 {
   "name": "tailchat-desktop",
   "version": "0.1.0",
-  "description": "A foundation for scalable desktop apps",
+  "description": "Anchor Chat by STC Worldwide",
   "license": "MIT",
   "author": {
-    "name": "moonrailgun",
-    "email": "moonrailgun@gmail.com",
-    "url": "https://github.com/moonrailgun"
+    "name": "STC Worldwide",
+    "url": "https://stc-worldwide.com/"
   },
   "main": "./dist/main/main.js",
   "scripts": {

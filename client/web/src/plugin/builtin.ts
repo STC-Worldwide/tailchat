@@ -81,8 +81,8 @@ export const builtinPlugins: PluginManifest[] = _compact([
     version: '0.0.0',
     author: 'moonrailgun',
     description:
-      'Provide Tailchat with the function of conveniently accessing external account systems',
-    'description.zh-CN': '为Tailchat提供方便的接入外部账户系统的功能',
+      'Provide Anchor Chat with the function of conveniently accessing external account systems',
+    'description.zh-CN': '为Anchor Chat提供方便的接入外部账户系统的功能',
     requireRestart: true,
   },
   {
@@ -121,8 +121,8 @@ export const builtinPlugins: PluginManifest[] = _compact([
     url: '/plugins/com.msgbyte.env.electron/index.js',
     version: '0.0.0',
     author: 'moonrailgun',
-    description: 'Add support for Electron environment in Tailchat',
-    'description.zh-CN': '在 Tailchat 添加对 Electron 环境的支持',
+    description: 'Add support for Electron environment in Anchor Chat',
+    'description.zh-CN': '在 Anchor Chat 添加对 Electron 环境的支持',
     requireRestart: true,
   },
   // isOffical
@@ -160,13 +160,13 @@ export const builtinPlugins: PluginManifest[] = _compact([
     requireRestart: true,
   },
   isOffical && {
-    label: 'AI Assistant',
+    label: 'BASsie',
     name: 'com.msgbyte.ai-assistant',
     url: '/plugins/com.msgbyte.ai-assistant/index.js',
     icon: '/plugins/com.msgbyte.ai-assistant/assets/icon.png',
     version: '0.0.0',
     author: 'moonrailgun',
-    description: 'Add chatgpt into Tailchat',
+    description: 'BASsie writing and conversation assistance for Anchor Chat',
     requireRestart: true,
   },
   // 因为大段内容可能会有性能问题暂时移除，用户可以按需安装

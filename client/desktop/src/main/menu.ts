@@ -55,17 +55,17 @@ export default class MenuBuilder {
 
   buildDarwinTemplate(): MenuItemConstructorOptions[] {
     const subMenuAbout: DarwinMenuItemConstructorOptions = {
-      label: 'Tailchat',
+      label: 'Anchor Chat',
       submenu: [
         {
-          label: 'About Tailchat',
+          label: 'About Anchor Chat',
           selector: 'orderFrontStandardAboutPanel:',
         },
         { type: 'separator' },
         { label: 'Services', submenu: [] },
         { type: 'separator' },
         {
-          label: 'Hide Tailchat',
+          label: 'Hide Anchor Chat',
           accelerator: 'Command+H',
           selector: 'hide:',
         },
@@ -146,25 +146,25 @@ export default class MenuBuilder {
         {
           label: 'Learn More',
           click() {
-            shell.openExternal('https://tailchat.msgbyte.com/');
+            shell.openExternal('https://stc-worldwide.com/');
           },
         },
         {
           label: 'Documentation',
           click() {
-            shell.openExternal('https://tailchat.msgbyte.com/docs/intro');
+            shell.openExternal('https://github.com/STC-Worldwide/tailchat#readme');
           },
         },
         {
           label: 'Github',
           click() {
-            shell.openExternal('https://github.com/msgbyte/tailchat');
+            shell.openExternal('https://github.com/STC-Worldwide/tailchat');
           },
         },
         {
           label: 'Search Issues',
           click() {
-            shell.openExternal('https://github.com/msgbyte/tailchat/issues');
+            shell.openExternal('https://github.com/STC-Worldwide/tailchat/issues');
           },
         },
       ],
@@ -223,25 +223,25 @@ export default class MenuBuilder {
           {
             label: 'Learn More',
             click() {
-              shell.openExternal('https://tailchat.msgbyte.com/');
+              shell.openExternal('https://stc-worldwide.com/');
             },
           },
           {
             label: 'Documentation',
             click() {
-              shell.openExternal('https://tailchat.msgbyte.com/docs/intro');
+              shell.openExternal('https://github.com/STC-Worldwide/tailchat#readme');
             },
           },
           {
             label: 'Github',
             click() {
-              shell.openExternal('https://github.com/msgbyte/tailchat');
+              shell.openExternal('https://github.com/STC-Worldwide/tailchat');
             },
           },
           {
             label: 'Search Issues',
             click() {
-              shell.openExternal('https://github.com/msgbyte/tailchat/issues');
+              shell.openExternal('https://github.com/STC-Worldwide/tailchat/issues');
             },
           },
           {

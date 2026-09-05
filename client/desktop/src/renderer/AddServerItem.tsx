@@ -55,7 +55,7 @@ export const AddServerItem: React.FC = React.memo(() => {
       setIsModalOpen(false);
     } catch {
       setError(
-        'We could not connect to that Tailchat server. Check the address and try again.'
+        'We could not connect to that Anchor Chat server. Check the address and try again.'
       );
     } finally {
       setIsAdding(false);
@@ -80,9 +80,9 @@ export const AddServerItem: React.FC = React.memo(() => {
         <DialogContent>
           <form onSubmit={handleSubmit}>
             <DialogHeader>
-              <DialogTitle>Add a Tailchat server</DialogTitle>
+              <DialogTitle>Add an Anchor Chat server</DialogTitle>
               <DialogDescription>
-                Connect this app to another Tailchat deployment.
+                Connect this app to another Anchor Chat deployment.
               </DialogDescription>
             </DialogHeader>
 
@@ -105,7 +105,7 @@ export const AddServerItem: React.FC = React.memo(() => {
                 }}
               />
               <p className="field-help" id="server-url-help">
-                Tailchat will verify the deployment before adding it.
+                Anchor Chat will verify the deployment before adding it.
               </p>
             </div>
 

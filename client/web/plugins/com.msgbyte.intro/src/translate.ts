@@ -10,8 +10,8 @@ export const Translate = {
     'en-US': 'Skip Tour',
   }),
   step1: localTrans({
-    'zh-CN': '欢迎使用 Tailchat, 一个插件化的开源IM应用！',
-    'en-US': 'Welcome to Tailchat, a pluginify open source IM application!',
+    'zh-CN': '欢迎使用 Anchor Chat, 一个插件化的开源IM应用！',
+    'en-US': 'Welcome to Anchor Chat, a pluginify open source IM application!',
   }),
   step2: localTrans({
     'zh-CN': '这是导航栏, 在这里可以切换tailchat的各个主要页面。',
@@ -41,9 +41,9 @@ export const Translate = {
       'This is the sidebar, used to toggle content. Will use it frequently in the future to switch between different panels.',
   }),
   step7: localTrans({
-    'zh-CN': '这是内容区，用于显示主要内容，也是Tailchat展示内容的地方。',
+    'zh-CN': '这是内容区，用于显示主要内容，也是Anchor Chat展示内容的地方。',
     'en-US':
-      'This is the content area, which is used to display the main content, and it is also where Tailchat displays the content.',
+      'This is the content area, which is used to display the main content, and it is also where Anchor Chat displays the content.',
   }),
   step8: localTrans({
     'zh-CN':

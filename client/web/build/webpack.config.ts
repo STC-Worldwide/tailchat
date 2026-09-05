@@ -113,7 +113,7 @@ const plugins: WebpackPluginInstance[] = [
   }),
   buildWorkboxPlugin(isDev),
   new WebpackBar({
-    name: `Tailchat`,
+    name: `Anchor Chat`,
   }),
 ];
 

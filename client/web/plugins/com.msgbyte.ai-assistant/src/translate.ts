@@ -2,16 +2,17 @@ import { localTrans } from '@capital/common';
 
 export const Translate = {
   name: localTrans({
-    'zh-CN': 'AI Assistant',
-    'en-US': 'AI Assistant',
+    'zh-CN': 'BASsie',
+    'en-US': 'BASsie',
   }),
   description: localTrans({
     'zh-CN': '总结最近的对话，或改进你正在撰写的消息。',
-    'en-US': 'Summarize recent conversations or refine the message you are writing.',
+    'en-US':
+      'Summarize recent conversations or refine the message you are writing.',
   }),
   result: localTrans({
-    'zh-CN': 'AI 助手结果',
-    'en-US': 'AI assistant result',
+    'zh-CN': 'BASsie 结果',
+    'en-US': 'BASsie result',
   }),
   helpMeTo: localTrans({
     'zh-CN': '帮我:',

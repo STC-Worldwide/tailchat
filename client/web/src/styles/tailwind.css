@@ -121,10 +121,10 @@
     --tc-control-track: var(--tc-control-border);
     /* Theme-neutral Tailchat action defaults. Theme plugins can continue to
        override these variables on #tailchat-app without depending on a
-       legacy component stylesheet. White foreground contrast is 5.05:1 for
-       primary and 6.94:1 for primary-hover. */
-    --tc-primary-color: #0b6fcc;
-    --tc-primary-hover-color: #095aa6;
+       legacy component stylesheet. White foreground meets AA for primary and primary-hover. */
+    --tc-primary-color: #087c8c;
+    --tc-primary-hover-color: #066675;
+    --tc-primary-text-color: var(--tc-primary-color);
     --tc-dangerous-color: #d92d3a;
     --tc-dangerous-hover-color: #b4232f;
     /* Advisory tones, same shape as dangerous: one token drives text,
@@ -176,6 +176,7 @@
     --tc-control-border: oklch(66% 0.02 257);
     --tc-control-track: var(--tc-control-border);
     /* amber-400 / green-400 — 6.2:1 and 5.9:1 on slate-700 raised. */
+    --tc-primary-text-color: color-mix(in srgb, var(--tc-primary-color) 55%, white);
     --tc-warning-color: #fbbf24;
     --tc-success-color: #4ade80;
   }
@@ -192,7 +193,7 @@
     color: var(--tc-text-body);
     background-color: var(--tc-surface-content);
     caret-color: var(--tc-primary-color);
-    --tc-background-image: url(../../assets/images/bg.webp);
+    --tc-background-image: none;
     --tc-content-background-image: none;
     --tc-content-background-image-opacity: 0.2;
     --tc-content-background-color: var(--tc-surface-content);
@@ -282,3 +283,13 @@
    cascade layer. antd is gone from every package.json and every import, and no
    remaining stylesheet (plugin .less included) sets a heading color — headings
    now inherit --tc-text-body from #tailchat-app like everything else. */
+
+/* Text accents need a brighter teal on dark surfaces; filled actions retain white text. */
+@layer utilities {
+  /* Match the legacy important scope and follow Tailwind's generated color
+     utility. Defining @utility text-primary merges with that utility and lets
+     its background-oriented color win in the compiled declaration. */
+  #tailchat-app .text-primary {
+    color: var(--tc-primary-text-color, var(--tc-primary-color));
+  }
+}

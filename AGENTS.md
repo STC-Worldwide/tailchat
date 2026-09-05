@@ -1,4 +1,7 @@
-# Tailchat Agent Guide
+# Anchor Chat Agent Guide
+
+Read `docs/branding.md` for the Anchor Chat / BASsie display-name policy and
+compatibility boundaries.
 
 ## Scope and priorities
 
@@ -6,7 +9,7 @@ This file applies to the entire repository. It is guidance for coding agents,
 not a replacement for `README.md`, `README.zh.md`, or the long-form website
 documentation. A direct user request always takes precedence.
 
-Tailchat is a noIM platform: messaging is the collaboration core and plugins
+Anchor Chat (the STC Worldwide Tailchat fork) is a noIM platform: messaging is the collaboration core and plugins
 are first-class product extensions. Preserve that model when choosing where a
 change belongs.
 The primary runtime flow is:

@@ -6,7 +6,7 @@
   "documentUrl": "https://tailchat.msgbyte.com/docs/advanced-usage/plugins/com.msgbyte.iam",
   "version": "0.0.0",
   "author": "moonrailgun",
-  "description": "Provide Tailchat with the function of conveniently accessing external account systems",
-  "description.zh-CN": "为Tailchat提供方便的接入外部账户系统的功能",
+  "description": "Provide Anchor Chat with the function of conveniently accessing external account systems",
+  "description.zh-CN": "为Anchor Chat提供方便的接入外部账户系统的功能",
   "requireRestart": true
 }

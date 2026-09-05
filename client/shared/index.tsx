@@ -250,6 +250,8 @@ export { useGlobalConfigStore } from './store/globalConfig';
 
 // utils
 export { joinArray } from './utils/array-helper';
+export { BRAND, getServerDisplayName } from './utils/branding';
+
 export { NAME_REGEXP, SYSTEM_USERID } from './utils/consts';
 export {
   shouldShowMessageTime,

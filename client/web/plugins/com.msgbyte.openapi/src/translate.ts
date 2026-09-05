@@ -31,9 +31,9 @@ export const Translate = {
     'en-US': 'Create Application',
   }),
   manageApplications: localTrans({
-    'zh-CN': '创建并管理接入 Tailchat 的应用与能力。',
+    'zh-CN': '创建并管理接入 Anchor Chat 的应用与能力。',
     'en-US':
-      'Create and manage applications and capabilities connected to Tailchat.',
+      'Create and manage applications and capabilities connected to Anchor Chat.',
   }),
   noApplications: localTrans({
     'zh-CN': '暂无应用',

@@ -31,7 +31,7 @@ export default function App() {
     return () => window.removeEventListener('popstate', sync);
   }, []);
   useEffect(() => {
-    document.title = `Tailchat Admin · ${route}`;
+    document.title = `Anchor Chat Admin · ${route}`;
   }, [route]);
   if (!session) return <LoginPage />;
   const navigate = (next: RouteId) => {
@@ -90,8 +90,11 @@ function LoginPage() {
       </Button>
       <main className="login-panel">
         <div className="login-brand">
-          <img src="/admin/tailchat-logo.svg" alt="Tailchat" />
-          <span>{t('app.edition')}</span>
+          <img src="/admin/tailchat-logo.svg" alt="Anchor Chat" />
+          <div>
+            <strong>{t('app.name')}</strong>
+            <span>{t('app.edition')}</span>
+          </div>
         </div>
         <div className="login-heading">
           <h1>{t('auth.signIn')}</h1>

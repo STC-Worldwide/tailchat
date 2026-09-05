@@ -49,7 +49,7 @@ export const SettingsSystem: React.FC = React.memo(() => {
   return (
     <SettingsPage
       title={t('系统设置')}
-      description={t('调整 Tailchat 的外观、消息体验和实验性功能。')}
+      description={t('调整 Anchor Chat 的外观、消息体验和实验性功能。')}
     >
       <SettingsSection
         title={t('外观')}
@@ -190,7 +190,7 @@ export const SettingsSystem: React.FC = React.memo(() => {
 
       <SettingsSection
         title={t('应用更改')}
-        description={t('重新加载 Tailchat 以确保所有设置完全生效。')}
+        description={t('重新加载 Anchor Chat 以确保所有设置完全生效。')}
       >
         <Button variant="outline" onClick={() => window.location.reload()}>
           <RotateCwIcon />

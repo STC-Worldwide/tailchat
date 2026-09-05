@@ -1,5 +1,5 @@
 import React from 'react';
-import { t, version } from 'tailchat-shared';
+import { BRAND, t, version } from 'tailchat-shared';
 import logoUrl from '@assets/images/logo.svg';
 import { Button } from '@/components/ui/official/button';
 import { Badge } from '@/components/ui/official/badge';
@@ -7,7 +7,8 @@ import { SettingsPage, SettingsSection } from './Layout';
 import { CheckCircle2Icon, ExternalLinkIcon } from 'lucide-react';
 
 const projectLinks = [
-  ['GitHub', 'https://github.com/msgbyte/tailchat'],
+  ['GitHub', 'https://github.com/STC-Worldwide/tailchat'],
+  ['Tailchat (upstream)', 'https://github.com/msgbyte/tailchat'],
   ['Open Source', 'https://en.wikipedia.org/wiki/Open_source'],
   ['Docker', 'https://www.docker.com/'],
   ['MiniStar', 'https://ministar.moonrailgun.com/'],
@@ -21,24 +22,25 @@ export const SettingsAbout: React.FC = React.memo(() => {
   return (
     <SettingsPage
       title={t('关于')}
-      description={t('Tailchat 的版本、项目能力和开源生态。')}
+      description={t('Anchor Chat 的版本、项目能力和开源生态。')}
     >
-      <SettingsSection title="Tailchat">
+      <SettingsSection title={BRAND.product}>
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
           <img
             className="size-20 shrink-0 select-none rounded-2xl bg-muted p-3"
             width={80}
             height={80}
             src={logoUrl}
-            alt="Tailchat"
+            alt="Anchor Chat"
           />
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-xl font-semibold text-foreground">
-                Tailchat
+                Anchor Chat
               </h2>
               <Badge variant="secondary">v{version}</Badge>
             </div>
+            <p className="text-sm text-muted-foreground">{BRAND.byline}</p>
             <p className="max-w-xl text-sm leading-6 text-muted-foreground">
               {t('属于所有人的开源聊天工具')} ·{' '}
               {t('完全独属于私人团队的沟通平台')}
@@ -49,7 +51,7 @@ export const SettingsAbout: React.FC = React.memo(() => {
 
       <SettingsSection
         title={t('特性(亮点)')}
-        description={t('Tailchat 的核心架构能力。')}
+        description={t('Anchor Chat 的核心架构能力。')}
       >
         <ul className="space-y-3 text-sm">
           {[
@@ -67,7 +69,7 @@ export const SettingsAbout: React.FC = React.memo(() => {
 
       <SettingsSection
         title={t('开源生态')}
-        description={t('访问 Tailchat 使用和依赖的项目。')}
+        description={t('访问 Anchor Chat 使用和依赖的项目。')}
       >
         <div className="flex flex-wrap gap-2">
           {projectLinks.map(([label, href]) => (

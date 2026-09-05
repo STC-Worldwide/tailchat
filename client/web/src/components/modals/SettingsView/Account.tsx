@@ -237,7 +237,7 @@ export const SettingsAccount: React.FC = React.memo(() => {
 
       <SettingsSection
         title={t('账户会话')}
-        description={t('退出当前设备上的 Tailchat 会话。')}
+        description={t('退出当前设备上的 Anchor Chat 会话。')}
       >
         <SettingsFieldGroup>
           <SettingsRow

@@ -5,7 +5,7 @@
   "url": "/plugins/com.msgbyte.biggerfont/index.js",
   "version": "0.0.0",
   "author": "moonrailgun",
-  "description": "Add the feature of enlarging the font size to Tailchat, which is convenient for different user",
-  "description.zh-CN": "为Tailchat增加放大字号的功能,方便不同用户群体",
+  "description": "Add the feature of enlarging the font size to Anchor Chat, which is convenient for different user",
+  "description.zh-CN": "为Anchor Chat增加放大字号的功能,方便不同用户群体",
   "requireRestart": true
 }

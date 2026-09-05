@@ -1,5 +1,9 @@
-# Tailchat
+# Anchor Chat by STC Worldwide
 
+> **Rebrand in progress:** this source branch implements Anchor Chat. See the
+> [branding and compatibility contract](docs/branding.md). BASsie is the shared
+> STC assistant. No new release is implied.
+>
 > STC Worldwide's hard fork of [msgbyte/tailchat](https://github.com/msgbyte/tailchat),
 > Apache-2.0. Images publish to `ghcr.io/stc-worldwide/tailchat`; deployment for
 > this fork lives in [`deploy/stc/`](./deploy/stc/README-STC.md). Links below to
@@ -12,7 +16,12 @@
 
 [简体中文](./README.zh.md)
 
-## Next generation noIM application in your own workspace
+## Upstream project background
+
+The remaining background and examples describe the original Tailchat project.
+Use the STC deployment runbook above for this fork.
+
+### Next generation noIM application in your own workspace
 
 ### Not only another `Slack`, `Discord`, `Rocket.Chat`....
 
@@ -90,7 +99,7 @@ its [README](apps/tailchat-mcp/README.md) and the
 
 If you are interested in `Tailchat`, welcome to join `Tailchat`'s seed user exchange group, your feedback can help `Tailchat` grow better
 
-### Tailchat
+### Anchor Chat by STC Worldwide
 
 [Tailchat Nightly Group](https://nightly.paw.msgbyte.com/invite/8Jfm1dWb)
 

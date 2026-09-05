@@ -1,3 +1,4 @@
+import { BRAND } from './branding';
 import type { GlobalConfig } from '../model/config';
 
 /**
@@ -22,7 +23,7 @@ export const defaultGlobalConfig: GlobalConfig = {
   tianji: {},
   uploadFileLimit: 1 * 1024 * 1024,
   emailVerification: false,
-  serverName: 'Tailchat',
+  serverName: BRAND.product,
   disableMsgpack: false,
   disableUserRegister: false,
   disableGuestLogin: false,

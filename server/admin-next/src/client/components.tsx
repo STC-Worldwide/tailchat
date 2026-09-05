@@ -5,7 +5,12 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import { AlertCircle, CheckCircle2, LoaderCircle, SearchIcon } from 'lucide-react';
+import {
+  AlertCircle,
+  CheckCircle2,
+  LoaderCircle,
+  SearchIcon,
+} from 'lucide-react';
 import {
   Bar,
   BarChart as RechartsBarChart,
@@ -137,9 +142,7 @@ export function ErrorState({
     <div className="state">
       <Alert className="state-error" variant="destructive">
         <AlertCircle />
-        <AlertDescription>
-          {message || t('common.loadError')}
-        </AlertDescription>
+        <AlertDescription>{message || t('common.loadError')}</AlertDescription>
         {retry && <Button onClick={retry}>{t('common.retry')}</Button>}
       </Alert>
     </div>
@@ -305,7 +308,7 @@ export function AppShell({
       )}
       <aside className={`sidebar ${drawer ? 'sidebar-open' : ''}`}>
         <div className="brand">
-          <img src="/admin/tailchat-logo.svg" alt="Tailchat" />
+          <img src="/admin/tailchat-logo.svg" alt="Anchor Chat" />
           <div>
             <strong>{t('app.name')}</strong>
             <span>{t('app.edition')}</span>

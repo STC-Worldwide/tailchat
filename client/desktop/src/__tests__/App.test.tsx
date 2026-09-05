@@ -8,9 +8,8 @@ const removeServer = jest.fn();
 jest.mock('../renderer/store/server', () => ({
   defaultServerList: [
     {
-      name: 'Tailchat',
-      url: 'https://nightly.paw.msgbyte.com/',
-      version: 'nightly',
+      name: 'Anchor Chat',
+      url: 'https://chat.stc-worldwide.com/',
     },
   ],
   useServerStore: () => ({
@@ -32,7 +31,7 @@ describe('App', () => {
     expect(
       screen.getByRole('heading', { name: 'Choose a server' })
     ).not.toBeNull();
-    expect(screen.getByRole('button', { name: /Tailchat/i })).not.toBeNull();
+    expect(screen.getByRole('button', { name: /Anchor Chat/i })).not.toBeNull();
     expect(
       screen.getByRole('button', { name: /Add Server/i })
     ).not.toBeNull();

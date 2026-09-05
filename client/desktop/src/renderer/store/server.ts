@@ -22,9 +22,8 @@ interface ServerStoreState {
 
 export const defaultServerList: ServerInfo[] = [
   {
-    name: 'Tailchat',
-    url: 'https://nightly.paw.msgbyte.com/',
-    version: 'nightly',
+    name: 'Anchor Chat',
+    url: 'https://chat.stc-worldwide.com/',
   },
 ];
 
@@ -49,7 +48,11 @@ export const useServerStore = create<ServerStoreState>()(
 
           set((state) => {
             state.serverList.push({
-              name: serviceConfig.serverName ?? 'Tailchat',
+              name:
+                !serviceConfig.serverName ||
+                serviceConfig.serverName === 'Tailchat'
+                  ? 'Anchor Chat'
+                  : serviceConfig.serverName,
               url,
               version,
             });

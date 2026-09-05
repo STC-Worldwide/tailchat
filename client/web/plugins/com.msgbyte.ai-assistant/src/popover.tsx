@@ -48,7 +48,7 @@ export const AssistantPopover: React.FC<{
     async (question: string) => {
       // TODO: wait for replace
       const { data } = await axios.post('https://yyejoq.laf.dev/chatgpt', {
-        question,
+        question: `You are BASsie, the AI assistant in Anchor Chat by STC Worldwide.\n${question}`,
       });
 
       return data;

@@ -12,7 +12,7 @@
   --card-foreground: #f7f8fb;
   --popover: #182238;
   --popover-foreground: #f7f8fb;
-  --primary: #6f7bf7;
+  --primary: #087c8c;
   --primary-foreground: #ffffff;
   --secondary: #202b43;
   --secondary-foreground: #f7f8fb;
@@ -25,7 +25,7 @@
   --border: #2a3751;
   --control-border: #3a4968;
   --input: #111a2c;
-  --ring: #95a0ff;
+  --ring: #50c5cf;
   --radius: 0.75rem;
 }
 
@@ -114,11 +114,17 @@ button:disabled {
   align-items: center;
   gap: 0.75rem;
   margin-bottom: 2rem;
-  color: var(--muted-foreground);
-  font-size: 0.8125rem;
+  color: var(--foreground);
+  font-size: 0.9375rem;
   font-weight: 650;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+}
+
+.launcher-byline {
+  display: block;
+  margin-top: 0.125rem;
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 400;
 }
 
 .launcher-brand-mark {

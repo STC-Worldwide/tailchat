@@ -1,5 +1,9 @@
-# Tailchat
+# Anchor Chat by STC Worldwide
 
+> **Rebrand in progress:** this source branch implements Anchor Chat. See the
+> [branding and compatibility contract](docs/branding.md). BASsie is the shared
+> STC assistant. No new release is implied.
+>
 > STC Worldwide 对 [msgbyte/tailchat](https://github.com/msgbyte/tailchat) 的硬分叉，Apache-2.0。
 > 镜像发布到 `ghcr.io/stc-worldwide/tailchat`；本分叉的部署配置见
 > [`deploy/stc/`](./deploy/stc/README-STC.md)。下文指向 `tailchat.msgbyte.com`
@@ -11,7 +15,11 @@
 [![Docker Publish](https://github.com/STC-Worldwide/tailchat/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/STC-Worldwide/tailchat/actions/workflows/docker-publish.yml)
 
 
-## 在您自己工作区中的下一代 noIM 应用程序
+## 上游项目背景
+
+以下内容描述原始 Tailchat 项目；本分叉的部署说明请参阅上方 STC 文档。
+
+### 在您自己工作区中的下一代 noIM 应用程序
 
 ### 不仅仅是另一个 `Slack`, `Discord`, `Rocket.Chat`....
 

@@ -23,7 +23,8 @@ import {
   useSidebar,
 } from '@/components/ui/official/sidebar';
 import { localTrans, t } from 'tailchat-shared';
-import { MessageSquareMoreIcon } from 'lucide-react';
+import { BrandMark } from '@/components/BrandMark';
+import { BRAND } from 'tailchat-shared';
 import { Link } from 'react-router-dom';
 
 /**
@@ -63,14 +64,17 @@ export const Navbar: React.FC = React.memo(() => {
                 />
               }
               size="lg"
-              tooltip="Tailchat"
+              tooltip={BRAND.fullName}
               className="h-10"
             >
-              <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-xs">
-                <MessageSquareMoreIcon className="size-4" />
-              </span>
-              <span className="min-w-0 flex-1 truncate text-sm font-semibold">
-                Tailchat
+              <BrandMark className="size-7 shrink-0" />
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-semibold">
+                  {BRAND.product}
+                </span>
+                <span className="block truncate text-[11px] text-muted-foreground">
+                  {BRAND.byline}
+                </span>
               </span>
             </SidebarMenuButton>
           </SidebarMenuItem>
