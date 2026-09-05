@@ -1,7 +1,5 @@
-productName: Tailchat
-# appId keys code-signing identity and auto-update channels, so it is far
-# cheaper to correct now than after a signed artifact ships. This fork has
-# never produced one -- desktop-build.yml has not successfully run here.
+productName: Anchor Chat
+# Existing application identity stays stable across the display-name migration.
 appId: com.stcworldwide.tailchat
 asar: true
 asarUnpack: '**\*.{node,dll}'
@@ -32,6 +30,7 @@ dmg:
       type: link
       path: /Applications
 win:
+  executableName: Tailchat
   target:
     - zip
     # - nsis

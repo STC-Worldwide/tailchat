@@ -34,7 +34,7 @@ export const SettingsDebug: React.FC = React.memo(() => {
         <SettingsFieldGroup>
           <SettingsRow
             title={t('Socket 状态')}
-            description={t('Tailchat 使用此连接接收实时消息和通知。')}
+            description={t('Anchor Chat 使用此连接接收实时消息和通知。')}
           >
             <Badge
               variant={socketConnected ? 'secondary' : 'destructive'}

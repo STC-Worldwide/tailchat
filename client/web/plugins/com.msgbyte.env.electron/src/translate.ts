@@ -42,9 +42,9 @@ export const Translate = {
     'en-US': 'Use Native Webview Render',
   }),
   nativeWebviewRenderDesc: localTrans({
-    'zh-CN': '解除默认网页访问限制，允许在Tailchat嵌入任意网站内容',
+    'zh-CN': '解除默认网页访问限制，允许在Anchor Chat嵌入任意网站内容',
     'en-US':
-      'Lift default web page access restrictions and allow any website content to be embedded in Tailchat',
+      'Lift default web page access restrictions and allow any website content to be embedded in Anchor Chat',
   }),
   nativeWebviewRenderHideTip: localTrans({
     'zh-CN': '组件被遮挡，暂时隐藏网页视图',

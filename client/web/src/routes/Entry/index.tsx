@@ -9,31 +9,38 @@ import { Button } from '@/components/ui/official/button';
 import { LanguageSelect } from '@/components/LanguageSelect';
 import { openModal } from '@/components/Modal';
 import { ServiceUrlSettings } from '@/components/modals/ServiceUrlSettings';
-import { MessageSquareMoreIcon, Settings2Icon } from 'lucide-react';
-import { t, useGlobalConfigStore } from 'tailchat-shared';
+import { Settings2Icon } from 'lucide-react';
+import { BrandMark } from '@/components/BrandMark';
+import {
+  BRAND,
+  getServerDisplayName,
+  t,
+  useGlobalConfigStore,
+} from 'tailchat-shared';
 
 const EntryRoute = React.memo(() => {
   useRecordMeasure('appEntryRenderStart');
   const serverName = useGlobalConfigStore((state) => state.serverName);
-  const displayServerName = serverName || 'Tailchat';
+  const serverEntryImage = useGlobalConfigStore(
+    (state) => state.serverEntryImage
+  );
+  const displayServerName = getServerDisplayName(serverName);
 
   return (
     <div className="flex h-full min-h-0 bg-background text-foreground">
       <main className="flex w-full shrink-0 flex-col overflow-y-auto border-r border-border/70 bg-background md:w-[34rem]">
         <div className="mx-auto flex min-h-full w-full max-w-md flex-col px-6 py-6 sm:px-8 sm:py-8">
           <header className="flex items-center gap-2.5">
-            <div className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
-              <MessageSquareMoreIcon className="size-4.5" />
-            </div>
+            <BrandMark className="size-9 shrink-0" />
             <div className="min-w-0">
               <div className="truncate text-sm font-semibold">
                 {displayServerName}
               </div>
-              {displayServerName !== 'Tailchat' && (
-                <div className="truncate text-xs text-muted-foreground">
-                  Tailchat
-                </div>
-              )}
+              <div className="truncate text-xs text-muted-foreground">
+                {displayServerName === BRAND.product
+                  ? BRAND.byline
+                  : BRAND.fullName}
+              </div>
             </div>
           </header>
 
@@ -65,8 +72,14 @@ const EntryRoute = React.memo(() => {
         </div>
       </main>
 
-      <aside className="tc-background relative hidden min-w-0 flex-1 md:block">
-        <div className="absolute inset-0 bg-black/20" />
+      <aside className="tc-background relative hidden min-w-0 flex-1 bg-navbar md:block">
+        {serverEntryImage ? (
+          <div className="absolute inset-0 bg-black/20" />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center pb-24">
+            <BrandMark className="size-40" />
+          </div>
+        )}
         <div className="absolute inset-x-0 bottom-0 bg-black/65 px-10 py-8 text-white">
           <h2 className="text-xl font-semibold text-white">
             {displayServerName}

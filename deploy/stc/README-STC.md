@@ -1,4 +1,8 @@
-# STC Tailchat deployment — netcup-vps-01
+# Anchor Chat deployment — netcup-vps-01
+
+Source branding: **Anchor Chat by STC Worldwide**, with **BASsie** as the shared
+assistant. The rebrand is not deployed until a new version ships through this
+runbook. See [compatibility and desktop upgrade checks](../../docs/branding.md).
 
 Production chat for STC Worldwide, served publicly at `https://$CHAT_DOMAIN`.
 

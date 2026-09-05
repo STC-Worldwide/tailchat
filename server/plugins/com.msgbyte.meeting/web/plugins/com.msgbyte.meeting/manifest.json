@@ -5,7 +5,7 @@
   "url": "{BACKEND}/plugins/com.msgbyte.meeting/index.js",
   "version": "0.0.0",
   "author": "moonrailgun",
-  "description": "Provide audio and video communication services for Tailchat",
-  "description.zh-CN": "为Tailchat提供音视频通讯的服务",
+  "description": "Provide audio and video communication services for Anchor Chat",
+  "description.zh-CN": "为Anchor Chat提供音视频通讯的服务",
   "requireRestart": true
 }

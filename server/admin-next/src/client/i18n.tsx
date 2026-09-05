@@ -3,10 +3,10 @@ import React, { createContext, useContext, useMemo, useState } from 'react';
 export type Language = 'zh' | 'en';
 
 const commonZh: Record<string, string> = {
-  'app.name': 'Tailchat 管理后台',
-  'app.edition': '运营控制台',
+  'app.name': 'Anchor Chat 管理后台',
+  'app.edition': 'by STC Worldwide',
   'app.console': '管理控制台',
-  'app.footer': '由 MsgByte 构建',
+  'app.footer': '由 STC Worldwide 构建 · 基于开源 Tailchat',
   'common.loading': '正在加载',
   'common.retry': '重试',
   'common.search': '搜索',
@@ -99,7 +99,7 @@ const commonZh: Record<string, string> = {
   'dashboard.messages': '消息',
   'dashboard.newUsers': '最近 14 天新增用户',
   'dashboard.messageCount': '最近 14 天消息数',
-  'dashboard.realData': '数据来自当前 Tailchat 实例',
+  'dashboard.realData': '数据来自当前 Anchor Chat 实例',
   'analytics.activeGroups': '前 5 名活跃群组',
   'analytics.activeUsers': '前 5 名活跃用户',
   'analytics.largeGroups': '最大的 5 个群组',
@@ -135,7 +135,7 @@ const commonZh: Record<string, string> = {
   'network.actions': '操作',
   'network.events': '事件',
   'socket.url': '服务器 URL',
-  'socket.credentials': '账号密码与 Tailchat 管理后台凭证一致。',
+  'socket.credentials': '账号密码与 Anchor Chat 管理后台凭证一致。',
   'socket.notice':
     '在 Advanced options 中启用 websocket only 和 MessagePack parser。',
   'socket.open': '打开 Socket.IO Admin UI',
@@ -173,10 +173,10 @@ const commonZh: Record<string, string> = {
 };
 
 const commonEn: Record<string, string> = {
-  'app.name': 'Tailchat Admin',
-  'app.edition': 'Operator Console',
+  'app.name': 'Anchor Chat Admin',
+  'app.edition': 'by STC Worldwide',
   'app.console': 'Management Console',
-  'app.footer': 'Built by MsgByte',
+  'app.footer': 'Built by STC Worldwide · Based on open-source Tailchat',
   'common.loading': 'Loading',
   'common.retry': 'Retry',
   'common.search': 'Search',
@@ -275,7 +275,7 @@ const commonEn: Record<string, string> = {
   'dashboard.messages': 'Messages',
   'dashboard.newUsers': 'New users · last 14 days',
   'dashboard.messageCount': 'Messages · last 14 days',
-  'dashboard.realData': 'Data from this Tailchat instance',
+  'dashboard.realData': 'Data from this Anchor Chat instance',
   'analytics.activeGroups': 'Top 5 active groups',
   'analytics.activeUsers': 'Top 5 active users',
   'analytics.largeGroups': '5 largest groups',
@@ -312,7 +312,7 @@ const commonEn: Record<string, string> = {
   'network.actions': 'Actions',
   'network.events': 'Events',
   'socket.url': 'Server URL',
-  'socket.credentials': 'Use the same credentials as Tailchat Admin.',
+  'socket.credentials': 'Use the same credentials as Anchor Chat Admin.',
   'socket.notice':
     'Enable websocket only and MessagePack parser under Advanced options.',
   'socket.open': 'Open Socket.IO Admin UI',

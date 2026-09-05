@@ -5,7 +5,7 @@ import { AssistantPopover } from './popover';
 import { Translate } from './translate';
 
 const PLUGIN_ID = 'com.msgbyte.ai-assistant';
-const PLUGIN_NAME = 'AI Assistant';
+const PLUGIN_NAME = 'BASsie';
 
 console.log(`Plugin ${PLUGIN_NAME}(${PLUGIN_ID}) is loaded`);
 

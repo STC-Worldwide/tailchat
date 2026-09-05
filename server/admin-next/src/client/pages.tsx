@@ -795,7 +795,11 @@ export function SystemPage() {
           <label>
             <span>{t('system.serverName')}</span>
             <div className="inline-form">
-              <Input value={name} onChange={setName} placeholder="Tailchat" />
+              <Input
+                value={name}
+                onChange={setName}
+                placeholder="Anchor Chat"
+              />
               <Button onClick={() => patch('serverName', name)}>
                 {t('system.saveName')}
               </Button>
@@ -861,7 +865,7 @@ export function SystemPage() {
             <Input
               value={announcement.link}
               onChange={(link) => setAnnouncement({ ...announcement, link })}
-              placeholder="https://tailchat.msgbyte.com/"
+              placeholder="https://chat.stc-worldwide.com/"
             />
           </label>
           <div className="form-actions">

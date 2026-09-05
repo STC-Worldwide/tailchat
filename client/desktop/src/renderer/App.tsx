@@ -1,12 +1,7 @@
 import icon from '../../assets/icon.svg';
 import { ServerItem } from './ServerItem';
 import React, { useState } from 'react';
-import {
-  ExternalLinkIcon,
-  LogOutIcon,
-  MessageCircleMoreIcon,
-  Trash2Icon,
-} from 'lucide-react';
+import { ExternalLinkIcon, LogOutIcon, Trash2Icon } from 'lucide-react';
 import { defaultServerList, useServerStore } from './store/server';
 import { AddServerItem } from './AddServerItem';
 import { Button } from './components/ui/button';
@@ -39,13 +34,16 @@ const Hello: React.FC = React.memo(() => {
       <header className="launcher-header">
         <div className="launcher-brand">
           <span className="launcher-brand-mark" aria-hidden="true">
-            <MessageCircleMoreIcon className="size-4" />
+            <img src={icon} className="size-7" alt="" />
           </span>
-          Tailchat Desktop
+          <span>
+            Anchor Chat
+            <span className="launcher-byline">by STC Worldwide</span>
+          </span>
         </div>
         <h1 className="launcher-title">Choose a server</h1>
         <p className="launcher-description">
-          Select a Tailchat deployment to open, or connect another server.
+          Select an Anchor Chat deployment to open, or connect another server.
         </p>
       </header>
 
@@ -65,7 +63,9 @@ const Hello: React.FC = React.memo(() => {
                     });
                   }}
                 >
-                  {serverInfo.name}
+                  {serverInfo.name === 'Tailchat'
+                    ? 'Anchor Chat'
+                    : serverInfo.name}
                 </ServerItem>
               </ContextMenuTrigger>
               <ContextMenuContent>
@@ -90,7 +90,7 @@ const Hello: React.FC = React.memo(() => {
           type="button"
           variant="outline"
           onClick={() => {
-            window.open('https://tailchat.msgbyte.com/');
+            window.open('https://stc-worldwide.com/');
           }}
         >
           <ExternalLinkIcon />

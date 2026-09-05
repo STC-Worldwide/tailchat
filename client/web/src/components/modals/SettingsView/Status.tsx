@@ -87,7 +87,7 @@ export const SettingsStatus: React.FC = React.memo(() => {
   return (
     <SettingsPage
       title={t('服务状态')}
-      description={t('检查当前 Tailchat 部署中各项后端服务的可用性。')}
+      description={t('检查当前 Anchor Chat 部署中各项后端服务的可用性。')}
     >
       <SettingsSection
         title={t('服务检查')}

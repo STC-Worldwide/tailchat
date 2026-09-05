@@ -1,16 +1,20 @@
-# Tailchat Product Context
+# Anchor Chat Product Context
 
-Tailchat is a plugin-first collaboration platform where messaging is the core
+Anchor Chat is a plugin-first collaboration platform where messaging is the core
 workflow. The interface must keep conversations, groups, people, and extension
 surfaces easy to scan while supporting dense administrative and operational
 tasks.
+
+The full attribution is **Anchor Chat by STC Worldwide**. **BASsie** is the
+shared AI assistant. The anchor mark follows Anchor Desktop; see
+[the branding contract](docs/branding.md).
 
 ## Interface authority
 
 - Use official Shadcn/UI components and Base UI behavior as the default web
   component grammar. Keep local wrappers thin, semantic, and accessible.
-- Preserve Tailchat's established dark operator-console identity: blue-black
-  grounds, charcoal surfaces, cool-blue emphasis, restrained one-pixel
+- Preserve Anchor Chat's established dark operator-console identity: blue-black
+  grounds, charcoal surfaces, Anchor teal emphasis (#087c8c), restrained one-pixel
   boundaries, compact neutral typography, and Lucide-style outline icons.
 - Prefer clear hierarchy and information density over decorative effects.
   Avoid glows, glass panels, gradient text, ornamental grids, and unnecessary

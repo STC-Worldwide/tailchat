@@ -1,3 +1,4 @@
+import { BRAND, getServerDisplayName } from 'tailchat-shared';
 import React, { PropsWithChildren, Suspense, useEffect } from 'react';
 import {
   BrowserRouter,
@@ -113,7 +114,11 @@ const AppHeader: React.FC = React.memo(() => {
   return (
     <Helmet>
       <meta httpEquiv="Content-Language" content={language} />
-      <title>{serverName}</title>
+      <title>
+        {getServerDisplayName(serverName) === BRAND.product
+          ? BRAND.fullName
+          : `${getServerDisplayName(serverName)} · ${BRAND.product}`}
+      </title>
 
       {serverEntryImage && (
         <style type="text/css">

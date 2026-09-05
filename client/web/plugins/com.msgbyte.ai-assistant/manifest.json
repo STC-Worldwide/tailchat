@@ -1,10 +1,10 @@
 {
-  "label": "AI Assistant",
+  "label": "BASsie",
   "name": "com.msgbyte.ai-assistant",
   "url": "/plugins/com.msgbyte.ai-assistant/index.js",
   "icon": "/plugins/com.msgbyte.ai-assistant/assets/icon.png",
   "version": "0.0.0",
   "author": "moonrailgun",
-  "description": "Add chatgpt into Tailchat",
+  "description": "BASsie writing and conversation assistance for Anchor Chat",
   "requireRestart": true
 }

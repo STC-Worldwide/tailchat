@@ -71,15 +71,15 @@ export const RegisterView: React.FC = React.memo(() => {
     { loading: sendEmailLoading, error: sendEmailError },
     handleSendEmail,
   ] = useAsyncFn(async () => {
-      await string()
-        .email(t('邮箱格式不正确'))
-        .required(t('邮箱不能为空'))
-        .max(40, t('邮箱最长限制40个字符'))
-        .validate(email);
+    await string()
+      .email(t('邮箱格式不正确'))
+      .required(t('邮箱不能为空'))
+      .max(40, t('邮箱最长限制40个字符'))
+      .validate(email);
 
-      await model.user.verifyEmail(email);
-      showSuccessToasts(t('发送成功, 请检查你的邮箱。'));
-      setSendedEmail(true);
+    await model.user.verifyEmail(email);
+    showSuccessToasts(t('发送成功, 请检查你的邮箱。'));
+    setSendedEmail(true);
   }, [email]);
 
   useWatch([email, customNickname], () => {
@@ -95,8 +95,8 @@ export const RegisterView: React.FC = React.memo(() => {
     <EntryView
       title={t('注册账号')}
       description={localTrans({
-        'zh-CN': '创建账号并加入这个 Tailchat 服务器。',
-        'en-US': 'Create an account for this Tailchat server.',
+        'zh-CN': '创建账号并加入这个 Anchor Chat 服务器。',
+        'en-US': 'Create an account for this Anchor Chat server.',
       })}
     >
       <form
@@ -125,7 +125,8 @@ export const RegisterView: React.FC = React.memo(() => {
             <p className="mb-3 text-sm leading-5 text-muted-foreground">
               {localTrans({
                 'zh-CN': '先发送校验码，再完成账号资料。',
-                'en-US': 'Send a verification code before completing your account.',
+                'en-US':
+                  'Send a verification code before completing your account.',
               })}
             </p>
             <PrimaryBtn

@@ -6,8 +6,8 @@
     "url": "/plugins/com.msgbyte.biggerfont/index.js",
     "version": "0.0.0",
     "author": "moonrailgun",
-    "description": "Add the feature of enlarging the font size to Tailchat, which is convenient for different user",
-    "description.zh-CN": "为Tailchat增加放大字号的功能,方便不同用户群体",
+    "description": "Add the feature of enlarging the font size to Anchor Chat, which is convenient for different user",
+    "description.zh-CN": "为Anchor Chat增加放大字号的功能,方便不同用户群体",
     "requireRestart": true
   },
   {
@@ -64,8 +64,8 @@
     "icon": "/plugins/com.msgbyte.genshin/assets/icon.jpg",
     "version": "0.0.0",
     "author": "msgbyte",
-    "description": "Add Genshin-related entertainment capabilities to Tailchat",
-    "description.zh-CN": "为Tailchat增加原神相关的娱乐能力",
+    "description": "Add Genshin-related entertainment capabilities to Anchor Chat",
+    "description.zh-CN": "为Anchor Chat增加原神相关的娱乐能力",
     "requireRestart": true
   },
   {
@@ -206,13 +206,13 @@
     "description": "Add sakana widget in tailchat"
   },
   {
-    "label": "AI Assistant",
+    "label": "BASsie",
     "name": "com.msgbyte.ai-assistant",
     "url": "/plugins/com.msgbyte.ai-assistant/index.js",
     "icon": "/plugins/com.msgbyte.ai-assistant/assets/icon.png",
     "version": "0.0.0",
     "author": "moonrailgun",
-    "description": "Add chatgpt into Tailchat",
+    "description": "BASsie writing and conversation assistance for Anchor Chat",
     "requireRestart": true
   }
 ]

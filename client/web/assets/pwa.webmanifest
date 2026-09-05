@@ -1,7 +1,7 @@
 {
-  "name": "Tailchat Application",
-  "short_name": "Tailchat",
-  "description": "A open source chat application",
+  "name": "Anchor Chat by STC Worldwide",
+  "short_name": "Anchor Chat",
+  "description": "Team conversations and collaboration by STC Worldwide",
   "icons": [
     {
       "src": "/images/logo/logo@32.png",
@@ -16,11 +16,11 @@
     {
       "src": "/images/logo/logo@512.png",
       "sizes": "512x512",
-      "type": "image/svg"
+      "type": "image/png"
     }
   ],
   "start_url": "/",
   "display": "standalone",
-  "theme_color": "#374151",
+  "theme_color": "#087c8c",
   "background_color": "#374151"
 }

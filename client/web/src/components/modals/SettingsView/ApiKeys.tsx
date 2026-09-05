@@ -122,7 +122,7 @@ export const SettingsApiKeys: React.FC = React.memo(() => {
     <SettingsPage
       title={t('API 密钥')}
       description={t(
-        '密钥以你自己的身份调用 Tailchat 接口, 权限不会超过你本人, 并由所选作用域进一步限制。'
+        '密钥以你自己的身份调用 Anchor Chat 接口, 权限不会超过你本人, 并由所选作用域进一步限制。'
       )}
     >
       <SettingsSection

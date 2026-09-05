@@ -1,4 +1,5 @@
 import {
+  getServerDisplayName,
   isValidStr,
   localTrans,
   loginWithEmail,
@@ -74,7 +75,7 @@ export const LoginView: React.FC = React.memo(() => {
   return (
     <EntryView
       title={t('登录 {{serverName}}', {
-        serverName: serverName || 'Tailchat',
+        serverName: getServerDisplayName(serverName),
       })}
       description={localTrans({
         'zh-CN': '使用你的邮箱和密码继续。',

@@ -57,7 +57,8 @@ export const PluginControlsPreview: React.FC = React.memo(() => {
             Plugin control gallery
           </CardTitle>
           <CardDescription>
-            Official shadcn/ui primitives behind Tailchat's public plugin API.
+            Official shadcn/ui primitives behind Anchor Chat&apos;s public
+            plugin API.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6 py-1">
@@ -129,7 +130,7 @@ export const PluginControlsPreview: React.FC = React.memo(() => {
                   showCount={true}
                   maxLength={160}
                   rows={4}
-                  defaultValue="A modern plugin surface that follows the same visual language as the rest of Tailchat."
+                  defaultValue="A modern plugin surface that follows the same visual language as the rest of Anchor Chat."
                 />
               </div>
             </div>
@@ -193,7 +194,7 @@ export const PluginControlsPreview: React.FC = React.memo(() => {
                   </Tooltip>
                   <Popover
                     title="Plugin details"
-                    content="Extension actions now inherit Tailchat's modern component language."
+                    content="Extension actions now inherit Anchor Chat's modern component language."
                     placement="bottomLeft"
                     trigger="click"
                   >
