@@ -223,6 +223,32 @@ class GroupService extends TcService {
         ttl: 60 * 60, // 1 hour
       },
     });
+    this.registerAction(
+      'getUserAllPanelPermissions',
+      this.getUserAllPanelPermissions,
+      {
+        params: {
+          groupId: 'string',
+          userId: 'string',
+          panelId: 'string',
+        },
+        visibility: 'public',
+        cache: {
+          keys: ['groupId', 'userId', 'panelId'],
+          ttl: 60 * 60, // 1 hour
+        },
+      }
+    );
+    this.registerAction('findGroupIdByPanelId', this.findGroupIdByPanelId, {
+      params: {
+        panelId: 'string',
+      },
+      visibility: 'public',
+      cache: {
+        keys: ['panelId'],
+        ttl: 60 * 60, // 1 hour
+      },
+    });
     this.registerAction('muteGroupMember', this.muteGroupMember, {
       params: {
         groupId: 'string',
@@ -865,6 +891,7 @@ class GroupService extends TcService {
       );
     }
 
+    this.cleanPanelLookupCache(panelId);
     this.notifyGroupInfoUpdate(ctx, group);
   }
 
@@ -1228,6 +1255,34 @@ class GroupService extends TcService {
   }
 
   /**
+   * 用户在某个面板上的全部权限 (群组权限 ∪ 面板权限)
+   */
+  async getUserAllPanelPermissions(
+    ctx: TcContext<{
+      groupId: string;
+      userId: string;
+      panelId: string;
+    }>
+  ): Promise<string[]> {
+    const { groupId, userId, panelId } = ctx.params;
+
+    return this.adapter.model.getGroupUserPanelPermission(
+      groupId,
+      userId,
+      panelId
+    );
+  }
+
+  /**
+   * 面板 id 反查所属群组
+   */
+  async findGroupIdByPanelId(
+    ctx: TcContext<{ panelId: string }>
+  ): Promise<string | null> {
+    return this.adapter.model.findGroupIdByPanelId(ctx.params.panelId);
+  }
+
+  /**
    * 禁言群组成员
    */
   async muteGroupMember(
@@ -1429,6 +1484,17 @@ class GroupService extends TcService {
   private cleanGroupInfoCache(groupId: string) {
     this.cleanActionCache('getGroupBasicInfo', [groupId]);
     this.cleanActionCache('getGroupInfo', [groupId]);
+    // 面板权限是从群组信息算出来的, 群组一变就得跟着失效 —— 权限缓存过期
+    // 意味着"已经收回的可见性还能再用一小时", 宁可多清也不能少清
+    this.cleanActionCache('getUserAllPanelPermissions', [groupId]);
+  }
+
+  /**
+   * 清理面板反查缓存
+   * @param panelId 面板id
+   */
+  private cleanPanelLookupCache(panelId: string) {
+    this.cleanActionCache('findGroupIdByPanelId', [panelId]);
   }
 
   /**

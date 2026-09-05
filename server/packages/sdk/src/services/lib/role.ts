@@ -4,6 +4,11 @@ export const PERMISSION = {
    */
   core: {
     owner: '__group_owner__', // 保留字段, 用于标识群组所有者
+    /**
+     * 查看面板。客户端一直有这个权限点, 服务端以前没有 —— 也就是说它以前只管
+     * 界面上藏不藏, 接口从不校验。见 chat.message 的 checkConversePermission。
+     */
+    viewPanel: 'core.viewPanel',
     message: 'core.message',
     invite: 'core.invite',
     unlimitedInvite: 'core.unlimitedInvite',
