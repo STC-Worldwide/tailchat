@@ -15,6 +15,8 @@ These are local results, not a production deployment or a desktop upgrade.
 | Focused web tests | 13 passed across branding defaults, entry forms and BASsie popover |
 | `corepack yarn test --runInBand src/__tests__/App.test.tsx` in `client/desktop` | 3 passed |
 | Unsigned Windows unpacked package | Assembled successfully with `electron-builder --win --dir --publish never` |
+| Windows and macOS CI packages | Both passed in Desktop Build run `33984296905`; artifacts retained by GitHub |
+| Disposable Windows binary replacement | Passed: saved servers, real local login, persistent cookie and window bounds retained |
 | Package/PWA/plugin compatibility checks | Passed |
 | Changed email/OIDC templates | All four EJS templates compile |
 | Design detector on changed visual surfaces | No findings |
@@ -90,6 +92,23 @@ unpacked Windows package, `verify.cjs`, and
 `windows-package-evidence.json` with the exact executable size and SHA-256.
 It is a local build artifact, not an installer release.
 
+The [Desktop Build run](https://github.com/STC-Worldwide/tailchat/actions/runs/33984296905)
+passed on both Windows and macOS for source commit `cb772f6e`. Its non-publishing
+workflow retained `desktop-client-artifacts-windows-latest` and
+`desktop-client-artifacts-macos-latest`. The client, server, admin and workflow
+checks on [PR #83](https://github.com/STC-Worldwide/tailchat/pull/83) also passed.
+
+A baseline Windows package built from `79b30ef0` was launched against a fresh
+task-owned profile using `--user-data-dir`. A test server was saved, a real local
+account signed in, and a persistent test cookie and window bounds were recorded.
+After closing the baseline and launching the rebranded package against the same
+profile, the server list, authenticated session, cookie and bounds were retained.
+Both packaged applications reported the runtime name `tailchat-desktop`.
+Evidence is retained in `.tmp/anchor-chat-branding/desktop-upgrade-evidence.json`.
+This verifies replacement of portable Windows binaries with an explicitly isolated
+profile, not an installer upgrade or automatic discovery of an installed profile.
+Electron 18 has no `sessionData` path API; persistence was checked behaviorally.
+
 Earlier cleanup attempts were rejected before execution with `blocked by policy`;
 the tool did not expose the specific rejecting rule. On 2026-09-06, after Tim
 updated the session permissions, the same scoped PowerShell cleanup succeeded
@@ -106,7 +125,7 @@ ts-jest's TypeScript support range, bundle-size advisories, plugin circular or
 optional-import warnings, and the CSS minimizer's handling of Tailwind's
 `infinity * 1px`. They did not fail the builds.
 
-At this local validation stage, no macOS package build, actual installation/upgrade,
-live assistant request, authenticated production smoke test, version bump or
-release was performed. Follow the release and disposable upgrade checks in
+No installed-profile migration, macOS runtime upgrade test, live assistant request,
+authenticated production smoke test, version bump or release was performed during
+these validation runs. Follow the release checks in
 [branding.md](branding.md) before publishing.

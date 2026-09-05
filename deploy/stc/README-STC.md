@@ -38,11 +38,11 @@ aborts if it does not match. Tagging before the bump burns the tag: the image bu
 (~30–60 min) and then the deploy fails, and re-tagging needs the tag deleted first.
 
 1. On a `chore/release-1.x` branch, bump the version in all three places:
-   `package.json` `"version"`, the **four** `image:` lines in
+   `package.json` `"version"`, the **five** `image:` lines in
    `deploy/stc/docker-compose.yml`, and the `**Image:**` line above. PR it and merge.
 2. Tag the resulting merge commit on master: `git tag v1.x.y && git push origin v1.x.y`.
    Confirm first that `git show v1.x.y:deploy/stc/docker-compose.yml | grep -c 1.x.y`
-   returns `4`.
+   returns `5`.
 3. `docker-publish.yml` then builds, pushes `ghcr.io/stc-worldwide/tailchat:1.x.y`,
    canary-boots it, copies this compose file to the VPS and rolls the stack. No manual
    `docker compose` step is needed — the workflow does it (watch the Actions run).
